@@ -1,0 +1,23 @@
+<Project>
+
+  <!--
+    Single source of truth for cross-project MSBuild settings.
+    Mirrors the suite convention: Version drives CI tagging/release.
+  -->
+
+  <PropertyGroup Label="Identity">
+    <Version>0.1.0.0</Version>
+    <Authors>XeldarAlz</Authors>
+    <Copyright>Copyright (c) XeldarAlz</Copyright>
+    <PackageProjectUrl>https://github.com/XeldarAlz/FFXIV-Aetherphone</PackageProjectUrl>
+    <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/XeldarAlz/FFXIV-Aetherphone</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Determinism" Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+</Project>

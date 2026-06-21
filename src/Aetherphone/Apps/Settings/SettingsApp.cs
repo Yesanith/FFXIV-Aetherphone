@@ -1,0 +1,85 @@
+using System.Numerics;
+using Aetherphone.Apps.Settings.Pages;
+using Aetherphone.Core;
+using Aetherphone.Core.Apps;
+using Aetherphone.Core.Notifications;
+using Aetherphone.Core.Theme;
+using Aetherphone.Windows.Components;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
+
+namespace Aetherphone.Apps.Settings;
+
+// The device's settings, organised like the iOS Settings app: a root list of categories that
+// each drill into a self-contained page. The app is only the shell here — a ViewRouter owns the
+// page stack and the framework slides between pages; each ISettingsPage owns its own controls.
+internal sealed class SettingsApp : IPhoneApp, ISettingsNavigator
+{
+    public string Id => "settings";
+
+    public string DisplayName => "Settings";
+
+    public string Glyph => "S";
+
+    public Vector4 Accent => new(0.56f, 0.57f, 0.63f, 1f);
+
+    public int BadgeCount => 0;
+
+    private readonly ViewRouter<ISettingsPage> router;
+    private readonly RouterDraw<ISettingsPage> drawPage;
+    private readonly Action popBack;
+
+    private PhoneTheme frameTheme = PhoneTheme.Default;
+    private INavigator frameNavigation = null!;
+
+    public SettingsApp(Configuration configuration, ThemeProvider themes, IRingtone ringtone, Action showAbout)
+    {
+        var appearance = new AppearancePage(configuration, themes);
+        var notifications = new NotificationsPage(configuration);
+        var ringtonePage = new RingtonePage(configuration, ringtone);
+        var about = new AboutPage(showAbout);
+
+        var groups = new IReadOnlyList<ISettingsPage>[]
+        {
+            new ISettingsPage[] { appearance },
+            new ISettingsPage[] { notifications, ringtonePage },
+            new ISettingsPage[] { about },
+        };
+
+        router = new ViewRouter<ISettingsPage>(new RootSettingsPage(this, groups));
+        drawPage = DrawPage;
+        popBack = PopBack;
+    }
+
+    public void Open(ISettingsPage page) => router.Push(page);
+
+    public void OnOpened()
+    {
+    }
+
+    public void OnClosed() => router.Reset();
+
+    public void Draw(in PhoneContext context)
+    {
+        frameTheme = context.Theme;
+        frameNavigation = context.Navigation;
+        router.Draw(context.Content, context.Theme.AppBackground, ImGui.GetIO().DeltaTime, drawPage);
+    }
+
+    private void DrawPage(ISettingsPage page, Rect area, int depth)
+    {
+        var context = new PhoneContext(area, frameTheme, frameNavigation);
+        var onBack = depth > 1 ? popBack : null;
+        AppHeader.Draw(context, page.Title, onBack);
+
+        var scale = ImGuiHelpers.GlobalScale;
+        var body = new Rect(new Vector2(area.Min.X, area.Min.Y + AppHeader.Height * scale), area.Max);
+        page.Draw(context, body);
+    }
+
+    private void PopBack() => router.Pop();
+
+    public void Dispose()
+    {
+    }
+}

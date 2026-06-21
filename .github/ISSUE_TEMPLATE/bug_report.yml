@@ -1,0 +1,90 @@
+name: Bug report
+description: Something's broken or behaving unexpectedly.
+title: "[Bug] "
+labels: ["bug"]
+assignees: ["XeldarAlz"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. Please fill out as much as you can; it makes a huge difference.
+
+        If you're not sure whether it's a bug or expected behavior, prefer the [Q&A discussions](https://github.com/XeldarAlz/FFXIV-Aetherphone/discussions/new?category=q-a); triage is faster there.
+
+        For security issues, please use [private vulnerability reporting](https://github.com/XeldarAlz/FFXIV-Aetherphone/security/advisories/new) instead.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you see? What did you expect to see instead?
+      placeholder: "I opened Messages and a tell I'd just received didn't show up as a notification..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps to trigger the bug. If it's intermittent, say so.
+      placeholder: |
+        1. Open `/phone`
+        2. Go to Messages
+        3. Receive a /tell from another player
+        4. ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: Shown in `/xlplugins` next to "Aetherphone".
+      options:
+        - 0.1.0.0
+        - Older / not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the phone?
+      description: Where did the problem show up?
+      options:
+        - Messages
+        - Contacts
+        - My Character
+        - Skywatcher (weather)
+        - Clock
+        - Notifications / ringtone (toasts, sounds)
+        - Settings
+        - Home screen / device shell
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Attachments
+      description: |
+        **If you can provide any of these, it turns guesswork into a fix.**
+
+        - **Dalamud log**: open `/xllog`, click the *Open log folder* button at the bottom-right, attach `dalamud.log`. Filter by `Aetherphone` if you want to trim it down.
+        - **Screenshots / short clip** if the issue is visual (a misaligned row, wrong colors, a frozen animation, etc.)
+        - **Other plugins active** that touch chat, the message log, or UI — helps rule out conflicts.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Inline log excerpt (optional)
+      description: |
+        Short snippets (chat-log tail, Dalamud error text) belong here. For full log files, use **Attachments** above; don't paste them inline.
+      render: text
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Character data center/world, UI scale, game language, hunches, anything that helps the bug land.

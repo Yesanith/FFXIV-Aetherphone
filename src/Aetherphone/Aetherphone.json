@@ -1,0 +1,17 @@
+{
+    "Author": "XeldarAlz",
+    "Name": "Aetherphone",
+    "InternalName": "Aetherphone",
+    "Punchline": "Your phone, in Eorzea.",
+    "Description": "An in-game smartphone: a docked device with a home screen, apps, and notifications. Read and answer tells with chat bubbles, snap gpose photos, and browse a community feed — your social layer, in your pocket.",
+    "ApplicableVersion": "any",
+    "RepoUrl": "https://github.com/XeldarAlz/FFXIV-Aetherphone",
+    "IconUrl": "https://raw.githubusercontent.com/XeldarAlz/FFXIV-Aetherphone/master/src/Aetherphone/Images/Icon.png",
+    "Tags": [
+        "phone",
+        "messages",
+        "social",
+        "ui",
+        "quality of life"
+    ]
+}

@@ -3,7 +3,7 @@ using Lumina.Excel.Sheets;
 
 namespace Aetherphone.Core.Game;
 
-internal readonly record struct WeatherWindow(string Weather, int MinutesFromNow, bool IsCurrent);
+internal readonly record struct WeatherWindow(string Weather, int MinutesFromNow, bool IsCurrent, int StartBell);
 
 internal sealed class WeatherService
 {
@@ -56,7 +56,8 @@ internal sealed class WeatherService
             var timestamp = startUnix + index * RealSecondsPerWindow;
             var name = ResolveWeather(rate, ForecastTarget(timestamp));
             var minutes = (int)((timestamp - nowUnix) / 60);
-            into.Add(new WeatherWindow(name, minutes, index == 0));
+            var windowBell = (int)(timestamp / RealSecondsPerEorzeaHour % 24);
+            into.Add(new WeatherWindow(name, minutes, index == 0, windowBell));
         }
     }
 

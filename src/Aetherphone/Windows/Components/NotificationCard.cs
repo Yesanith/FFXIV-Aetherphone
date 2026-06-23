@@ -40,7 +40,7 @@ internal static class NotificationCard
         ImGui.Dummy(new Vector2(width, (Height + Gap) * scale));
     }
 
-    private static string RelativeTime(DateTime time)
+    internal static string RelativeTime(DateTime time)
     {
         var delta = DateTime.Now - time;
         if (delta.TotalMinutes < 1)

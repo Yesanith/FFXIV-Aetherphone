@@ -4,7 +4,6 @@ internal sealed class NotificationService
 {
     private const int MaxRetained = 50;
 
-    private readonly IToast toast;
     private readonly IRingtone ringtone;
     private readonly Configuration configuration;
     private readonly List<PhoneNotification> recent = new();
@@ -15,9 +14,10 @@ internal sealed class NotificationService
 
     public event Action? Changed;
 
-    public NotificationService(IToast toast, IRingtone ringtone, Configuration configuration)
+    public event Action<PhoneNotification>? Presented;
+
+    public NotificationService(IRingtone ringtone, Configuration configuration)
     {
-        this.toast = toast;
         this.ringtone = ringtone;
         this.configuration = configuration;
     }
@@ -34,7 +34,7 @@ internal sealed class NotificationService
 
         if (!configuration.DoNotDisturb)
         {
-            toast.Show(notification.Title, notification.Body);
+            Presented?.Invoke(notification);
             ringtone.Play();
         }
 

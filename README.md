@@ -31,14 +31,14 @@ A few of the things you can do — listen to music, check the weather, search th
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src="src/Aetherphone/Images/screenshots/Chat.png" width="240" alt="Messages chat thread" /><br /><sub><b>Message your contacts</b><br />Every <code>/tell</code> becomes a chat bubble</sub></td>
-    <td align="center" width="33%"><img src="src/Aetherphone/Images/screenshots/Music.png" width="240" alt="Music app" /><br /><sub><b>Listen to music</b><br />Internet radio, sorted by genre</sub></td>
-    <td align="center" width="33%"><img src="src/Aetherphone/Images/screenshots/Weather.png" width="240" alt="Skywatcher weather" /><br /><sub><b>Check the weather</b><br />Live Eorzean forecast for your zone</sub></td>
+    <td align="center" width="33%"><img src="src/Aetherphone/Images/screenshots/Chat.png" width="340" alt="Messages chat thread" /><br /><sub><b>Message your contacts</b><br />Every <code>/tell</code> becomes a chat bubble</sub></td>
+    <td align="center" width="33%"><img src="src/Aetherphone/Images/screenshots/Music.png" width="340" alt="Music app" /><br /><sub><b>Listen to music</b><br />Internet radio, sorted by genre</sub></td>
+    <td align="center" width="33%"><img src="src/Aetherphone/Images/screenshots/Weather.png" width="340" alt="Skywatcher weather" /><br /><sub><b>Check the weather</b><br />Live Eorzean forecast for your zone</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="src/Aetherphone/Images/screenshots/Market.png" width="240" alt="Market board" /><br /><sub><b>Search the market</b><br />Live Universalis prices, stats &amp; trends</sub></td>
-    <td align="center"><img src="src/Aetherphone/Images/screenshots/Contacts.png" width="240" alt="Contacts list" /><br /><sub><b>Browse your contacts</b><br />Your friend list as an address book</sub></td>
-    <td align="center"><img src="src/Aetherphone/Images/screenshots/Wallet.png" width="240" alt="Wallet" /><br /><sub><b>Track your wallet</b><br />Gil, currencies, tomestones &amp; seals</sub></td>
+    <td align="center"><img src="src/Aetherphone/Images/screenshots/Market.png" width="340" alt="Market board" /><br /><sub><b>Search the market</b><br />Live Universalis prices, stats &amp; trends</sub></td>
+    <td align="center"><img src="src/Aetherphone/Images/screenshots/Contacts.png" width="340" alt="Contacts list" /><br /><sub><b>Browse your contacts</b><br />Your friend list as an address book</sub></td>
+    <td align="center"><img src="src/Aetherphone/Images/screenshots/Wallet.png" width="340" alt="Wallet" /><br /><sub><b>Track your wallet</b><br />Gil, currencies, tomestones &amp; seals</sub></td>
   </tr>
   <tr>
     <td align="center" colspan="3"><img src="src/Aetherphone/Images/screenshots/Dynamic.png" width="240" alt="Now Playing banner" /><br /><sub><b>Now Playing</b><br />A dynamic island that follows your music</sub></td>

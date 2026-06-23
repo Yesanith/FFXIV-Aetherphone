@@ -25,9 +25,8 @@ internal static class StatusBar
 
         var localTime = DateTime.Now.ToString("HH:mm");
         var timeSize = Typography.Measure(localTime, TimeScale);
-        var clusterWidth = StatusIcons.MeasureWidth(scale, Plugin.Device.BatteryPercent);
 
-        var island = ComputeIsland(screen, scale, timeSize.X, clusterWidth);
+        var island = BaseIsland(screen);
         DeviceChrome.DrawIsland(island, theme);
 
         var earGap = EarGap * scale;
@@ -36,6 +35,14 @@ internal static class StatusBar
         Typography.Draw(new Vector2(timeLeft, rowCenterY - timeSize.Y * 0.5f), localTime, theme.TextStrong, TimeScale);
 
         StatusIcons.Draw(screen, theme, rowCenterY, island.Max.X + earGap);
+    }
+
+    internal static Rect BaseIsland(Rect screen)
+    {
+        var scale = ImGuiHelpers.GlobalScale;
+        var timeWidth = Typography.Measure(DateTime.Now.ToString("HH:mm"), TimeScale).X;
+        var clusterWidth = StatusIcons.MeasureWidth(scale, Plugin.Device.BatteryPercent);
+        return ComputeIsland(screen, scale, timeWidth, clusterWidth);
     }
 
     private static Rect ComputeIsland(Rect screen, float scale, float timeWidth, float clusterWidth)

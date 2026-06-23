@@ -8,22 +8,52 @@ internal sealed class FontService : IDisposable
 {
     private static readonly float[] Multipliers = { 0.8f, 1.0f, 1.2f, 1.45f, 1.9f };
 
-    private readonly IFontHandle[] handles;
+    private readonly IFontAtlas atlas;
+    private readonly float baseSize;
 
-    public FontService(IDalamudPluginInterface pluginInterface)
+    private IFontHandle[] handles;
+    private float zoom;
+
+    public FontService(IDalamudPluginInterface pluginInterface, float zoom)
     {
-        var atlas = pluginInterface.UiBuilder.FontAtlas;
-        var baseSize = UiBuilder.DefaultFontSizePx;
+        atlas = pluginInterface.UiBuilder.FontAtlas;
+        baseSize = UiBuilder.DefaultFontSizePx;
+        this.zoom = zoom;
+        handles = Build(zoom);
+    }
 
-        handles = new IFontHandle[Multipliers.Length];
-        for (var index = 0; index < Multipliers.Length; index++)
+    public float Zoom => zoom;
+
+    public void SetZoom(float value)
+    {
+        if (MathF.Abs(value - zoom) < 0.001f)
         {
-            var pixels = baseSize * Multipliers[index];
-            handles[index] = atlas.NewDelegateFontHandle(e => e.OnPreBuild(tk => tk.AddDalamudDefaultFont(pixels)));
+            return;
+        }
+
+        var previous = handles;
+        zoom = value;
+        handles = Build(value);
+
+        for (var index = 0; index < previous.Length; index++)
+        {
+            previous[index].Dispose();
         }
     }
 
     public IDisposable Push(float scale) => handles[Nearest(scale)].Push();
+
+    private IFontHandle[] Build(float scale)
+    {
+        var built = new IFontHandle[Multipliers.Length];
+        for (var index = 0; index < Multipliers.Length; index++)
+        {
+            var pixels = baseSize * Multipliers[index] * scale;
+            built[index] = atlas.NewDelegateFontHandle(e => e.OnPreBuild(tk => tk.AddDalamudDefaultFont(pixels)));
+        }
+
+        return built;
+    }
 
     private static int Nearest(float scale)
     {

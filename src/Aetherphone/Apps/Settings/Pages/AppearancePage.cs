@@ -50,6 +50,19 @@ internal sealed class AppearancePage : ISettingsPage
             }
 
             card.End();
+
+            SettingsSection.Header("Text Size", theme);
+            var zoomCard = GroupCard.Begin(theme, 1);
+            var zoomIndex = SegmentStrip.Draw(zoomCard.NextRow(), TextZoomCatalog.Labels, TextZoomCatalog.IndexOf(configuration.TextZoom), theme);
+            zoomCard.End();
+
+            var zoom = TextZoomCatalog.Scales[zoomIndex];
+            if (MathF.Abs(zoom - configuration.TextZoom) > 0.001f)
+            {
+                configuration.TextZoom = zoom;
+                Plugin.Fonts.SetZoom(zoom);
+                configuration.Save();
+            }
         }
     }
 

@@ -28,7 +28,7 @@ internal static class ConversationRow
 
         var avatarRadius = 20f * scale;
         var avatarCenter = new Vector2(min.X + 14f * scale + avatarRadius, min.Y + Height * scale * 0.5f);
-        AvatarView.Draw(dl, avatarCenter, avatarRadius, theme.Accent, Initial(conversation.Contact), 1.1f, lodestone.Avatar(conversation.Contact, conversation.World), 32);
+        AvatarView.Draw(dl, avatarCenter, avatarRadius, theme.Accent, Initials.Of(conversation.Contact), 1.1f, lodestone.Avatar(conversation.Contact, conversation.World), 32);
 
         var textLeft = avatarCenter.X + avatarRadius + 12f * scale;
         var textRight = max.X - 14f * scale;
@@ -55,6 +55,4 @@ internal static class ConversationRow
 
         return hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
     }
-
-    private static string Initial(string contact) => contact.Length > 0 ? contact.Substring(0, 1).ToUpperInvariant() : "?";
 }

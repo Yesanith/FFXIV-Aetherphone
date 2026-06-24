@@ -16,6 +16,22 @@ internal static class StatusBar
     private const float IslandHeight = 26f;
     private const float IslandTop = 9f;
 
+    private static string cachedTime = string.Empty;
+    private static int cachedTimeKey = -1;
+
+    private static string CurrentTime()
+    {
+        var now = DateTime.Now;
+        var key = now.Hour * 60 + now.Minute;
+        if (key != cachedTimeKey)
+        {
+            cachedTimeKey = key;
+            cachedTime = now.ToString("HH:mm");
+        }
+
+        return cachedTime;
+    }
+
     public static void Draw(Rect screen, PhoneTheme theme)
     {
         var scale = ImGuiHelpers.GlobalScale;
@@ -23,7 +39,7 @@ internal static class StatusBar
 
         Plugin.Device.SyncTarget();
 
-        var localTime = DateTime.Now.ToString("HH:mm");
+        var localTime = CurrentTime();
         var timeSize = Typography.Measure(localTime, TimeScale);
 
         var island = BaseIsland(screen);
@@ -40,7 +56,7 @@ internal static class StatusBar
     internal static Rect BaseIsland(Rect screen)
     {
         var scale = ImGuiHelpers.GlobalScale;
-        var timeWidth = Typography.Measure(DateTime.Now.ToString("HH:mm"), TimeScale).X;
+        var timeWidth = Typography.Measure(CurrentTime(), TimeScale).X;
         var clusterWidth = StatusIcons.MeasureWidth(scale, Plugin.Device.BatteryPercent);
         return ComputeIsland(screen, scale, timeWidth, clusterWidth);
     }

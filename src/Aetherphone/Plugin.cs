@@ -56,7 +56,7 @@ public sealed class Plugin : IDalamudPlugin
 
         services = PhoneServices.Build(Cfg, ChatGui, DataManager, ObjectTable, ClientState, TextureProvider, PluginInterface.ConfigDirectory);
         aboutWindow = new AboutWindow();
-        shell = new PhoneShell(services.Themes, AppRegistry.BuildDefault(services, ShowAbout), services.Notifications, services.RadioPlayer);
+        shell = new PhoneShell(services.Themes, AppRegistry.BuildDefault(services, ShowAbout), services.Notifications, services.Playback);
         phoneWindow = new PhoneWindow(shell) { IsOpen = Cfg.OpenOnStartup };
         windowSystem.AddWindow(phoneWindow);
         windowSystem.AddWindow(aboutWindow);

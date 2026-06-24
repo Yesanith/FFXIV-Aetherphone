@@ -1,0 +1,113 @@
+using Aetherphone.Core.Radio;
+using Aetherphone.Core.Songs;
+
+namespace Aetherphone.Core.Playback;
+
+internal sealed class PlaybackHub
+{
+    private readonly RadioPlayer radio;
+    private readonly SongPlayer songs;
+
+    private float volume = 0.6f;
+
+    public PlaybackHub(RadioPlayer radio, SongPlayer songs)
+    {
+        this.radio = radio;
+        this.songs = songs;
+        radio.Volume = volume;
+        songs.Volume = volume;
+    }
+
+    public RadioPlayer Radio => radio;
+
+    public SongPlayer Songs => songs;
+
+    public bool SongActive => songs.State != SongPlaybackState.Stopped;
+
+    public bool RadioActive => radio.State != RadioPlaybackState.Stopped;
+
+    public bool IsActive => SongActive || RadioActive;
+
+    public bool IsPlaying => SongActive ? songs.State == SongPlaybackState.Playing : radio.State == RadioPlaybackState.Playing;
+
+    public string Title => SongActive ? songs.CurrentTitle : radio.CurrentStation;
+
+    public string Subtitle => SongActive ? SongSubtitle() : RadioStateLabel(radio.State);
+
+    public bool HasQueue => SongActive ? songs.HasQueue : radio.HasQueue;
+
+    public float Volume
+    {
+        get => volume;
+        set
+        {
+            volume = Math.Clamp(value, 0f, 1f);
+            radio.Volume = volume;
+            songs.Volume = volume;
+        }
+    }
+
+    public void PlayStations(RadioStation[] stations, int index)
+    {
+        songs.Stop();
+        radio.Play(stations, index);
+    }
+
+    public void PlaySongs(Song[] list, int index)
+    {
+        radio.Stop();
+        songs.Play(list, index);
+    }
+
+    public void Next()
+    {
+        if (SongActive)
+        {
+            songs.Next();
+        }
+        else
+        {
+            radio.Next();
+        }
+    }
+
+    public void Previous()
+    {
+        if (SongActive)
+        {
+            songs.Previous();
+        }
+        else
+        {
+            radio.Previous();
+        }
+    }
+
+    public void Stop()
+    {
+        radio.Stop();
+        songs.Stop();
+    }
+
+    private string SongSubtitle()
+    {
+        return songs.State switch
+        {
+            SongPlaybackState.Resolving => "Loading…",
+            SongPlaybackState.Buffering => "Buffering…",
+            SongPlaybackState.Failed => "Playback failed",
+            _ => songs.CurrentAuthor,
+        };
+    }
+
+    private static string RadioStateLabel(RadioPlaybackState state)
+    {
+        return state switch
+        {
+            RadioPlaybackState.Buffering => "Buffering…",
+            RadioPlaybackState.Playing => "Now playing",
+            RadioPlaybackState.Failed => "Connection lost",
+            _ => string.Empty,
+        };
+    }
+}

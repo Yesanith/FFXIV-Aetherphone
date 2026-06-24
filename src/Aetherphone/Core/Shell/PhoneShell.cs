@@ -2,7 +2,7 @@ using System.Numerics;
 using Aetherphone.Core.Animation;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Notifications;
-using Aetherphone.Core.Radio;
+using Aetherphone.Core.Playback;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
 using Dalamud.Bindings.ImGui;
@@ -23,13 +23,13 @@ internal sealed class PhoneShell : IDisposable
     private readonly NowPlayingIsland nowPlaying;
     private readonly BootSequence boot = new();
 
-    public PhoneShell(ThemeProvider themes, IReadOnlyList<IPhoneApp> apps, NotificationService notifications, RadioPlayer radioPlayer)
+    public PhoneShell(ThemeProvider themes, IReadOnlyList<IPhoneApp> apps, NotificationService notifications, PlaybackHub playback)
     {
         this.themes = themes;
         this.apps = apps;
         navigation = new NavigationStack(apps);
         banner = new NotificationBanner(notifications);
-        nowPlaying = new NowPlayingIsland(radioPlayer);
+        nowPlaying = new NowPlayingIsland(playback);
     }
 
     public void OnOpened() => boot.Begin(!Plugin.Cfg.WelcomeShown);

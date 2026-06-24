@@ -1,7 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
-using Aetherphone.Core.Radio;
+using Aetherphone.Core.Playback;
 using Aetherphone.Core.Shell;
 using Aetherphone.Core.Theme;
 using Dalamud.Bindings.ImGui;
@@ -24,19 +24,19 @@ internal sealed class NowPlayingIsland
     private const float CompactPadY = 5f;
     private const float ControlThreshold = 0.6f;
 
-    private readonly RadioPlayer player;
+    private readonly PlaybackHub playback;
 
     private float expand;
     private float clock;
 
-    public NowPlayingIsland(RadioPlayer player)
+    public NowPlayingIsland(PlaybackHub playback)
     {
-        this.player = player;
+        this.playback = playback;
     }
 
     public bool CapturesPointer(Rect screen)
     {
-        if (player.State == RadioPlaybackState.Stopped)
+        if (!playback.IsActive)
         {
             return false;
         }
@@ -47,7 +47,7 @@ internal sealed class NowPlayingIsland
 
     public void Draw(Rect screen, PhoneTheme theme, INavigator navigation)
     {
-        if (player.State == RadioPlaybackState.Stopped)
+        if (!playback.IsActive)
         {
             expand = 0f;
             return;
@@ -62,7 +62,7 @@ internal sealed class NowPlayingIsland
 
     private void DrawContent(Rect screen, PhoneTheme theme, INavigator navigation)
     {
-        var playbackState = player.State;
+        var playing = playback.IsPlaying;
         var scale = ImGuiHelpers.GlobalScale;
         var delta = MathF.Min(ImGui.GetIO().DeltaTime, 0.1f);
         clock += delta;
@@ -89,8 +89,8 @@ internal sealed class NowPlayingIsland
         dl.AddRectFilled(bounds.Min, bounds.Max, ImGui.GetColorU32(theme.BezelOuter), rounding);
         dl.AddRect(bounds.Min, bounds.Max, ImGui.GetColorU32(Palette.WithAlpha(Accent, 0.14f + 0.46f * eased)), rounding, ImDrawFlags.RoundCornersAll, 1.5f * scale);
 
-        DrawCompact(dl, compact, scale, playbackState, collapsedAlpha);
-        var consumed = DrawExpanded(dl, bounds, scale, theme, playbackState, eased);
+        DrawCompact(dl, compact, scale, playing, collapsedAlpha);
+        var consumed = DrawExpanded(dl, bounds, scale, theme, eased);
 
         if (consumed || !hovered)
         {
@@ -118,7 +118,7 @@ internal sealed class NowPlayingIsland
         dl.AddRect(compact.Min - new Vector2(spread, spread), compact.Max + new Vector2(spread, spread), ImGui.GetColorU32(Palette.WithAlpha(Accent, alpha)), rounding, ImDrawFlags.RoundCornersAll, 2.4f * scale);
     }
 
-    private void DrawCompact(ImDrawListPtr dl, Rect compact, float scale, RadioPlaybackState state, float alpha)
+    private void DrawCompact(ImDrawListPtr dl, Rect compact, float scale, bool playing, float alpha)
     {
         if (alpha <= 0.01f)
         {
@@ -127,13 +127,13 @@ internal sealed class NowPlayingIsland
 
         var discRadius = compact.Height * 0.34f;
         var discCenter = new Vector2(compact.Min.X + 9f * scale + discRadius, compact.Center.Y);
-        ArtGradient.DrawDisc(dl, discCenter, discRadius, ArtGradient.FromName(player.CurrentStation), alpha);
+        ArtGradient.DrawDisc(dl, discCenter, discRadius, ArtGradient.FromName(playback.Title), alpha);
 
         var eqCenter = new Vector2(compact.Max.X - 13f * scale, compact.Center.Y);
-        Equalizer.Draw(dl, eqCenter, scale, compact.Height * 0.5f, clock, Accent, alpha, state == RadioPlaybackState.Playing);
+        Equalizer.Draw(dl, eqCenter, scale, compact.Height * 0.5f, clock, Accent, alpha, playing);
     }
 
-    private bool DrawExpanded(ImDrawListPtr dl, Rect bounds, float scale, PhoneTheme theme, RadioPlaybackState state, float alpha)
+    private bool DrawExpanded(ImDrawListPtr dl, Rect bounds, float scale, PhoneTheme theme, float alpha)
     {
         if (alpha <= 0.05f)
         {
@@ -146,34 +146,34 @@ internal sealed class NowPlayingIsland
 
         var discRadius = 19f * scale;
         var discCenter = new Vector2(left + 18f * scale + discRadius, top + 30f * scale);
-        ArtGradient.DrawDisc(dl, discCenter, discRadius, ArtGradient.FromName(player.CurrentStation), alpha);
+        ArtGradient.DrawDisc(dl, discCenter, discRadius, ArtGradient.FromName(playback.Title), alpha);
 
         var textLeft = discCenter.X + discRadius + 12f * scale;
-        Typography.Draw(new Vector2(textLeft, top + 18f * scale), Truncate(player.CurrentStation, 16), Palette.WithAlpha(theme.TextStrong, alpha), 1.0f);
-        Typography.Draw(new Vector2(textLeft, top + 40f * scale), StateLabel(state), Palette.WithAlpha(Accent, 0.9f * alpha), 0.8f);
+        Typography.Draw(new Vector2(textLeft, top + 18f * scale), Truncate(playback.Title, 16), Palette.WithAlpha(theme.TextStrong, alpha), 1.0f);
+        Typography.Draw(new Vector2(textLeft, top + 40f * scale), Truncate(playback.Subtitle, 18), Palette.WithAlpha(Accent, 0.9f * alpha), 0.8f);
 
         var active = alpha > ControlThreshold;
         var controlY = top + 66f * scale;
         var consumed = false;
 
-        if (player.HasQueue)
+        if (playback.HasQueue)
         {
             if (TransportButton.Draw(new Vector2(centerX - 46f * scale, controlY), 16f * scale, TransportAction.Previous, Accent, Ink, alpha, active))
             {
-                player.Previous();
+                playback.Previous();
                 consumed = true;
             }
 
             if (TransportButton.Draw(new Vector2(centerX + 46f * scale, controlY), 16f * scale, TransportAction.Next, Accent, Ink, alpha, active))
             {
-                player.Next();
+                playback.Next();
                 consumed = true;
             }
         }
 
         if (TransportButton.Draw(new Vector2(centerX, controlY), 18f * scale, TransportAction.Stop, Accent, Ink, alpha, active))
         {
-            player.Stop();
+            playback.Stop();
             consumed = true;
         }
 
@@ -181,7 +181,7 @@ internal sealed class NowPlayingIsland
         {
             var trackY = top + 99f * scale;
             var track = new Rect(new Vector2(left + 22f * scale, trackY - 2.5f * scale), new Vector2(bounds.Max.X - 22f * scale, trackY + 2.5f * scale));
-            player.Volume = Scrubber.Draw(track, player.Volume, Accent, Palette.WithAlpha(theme.TextStrong, 0.18f), alpha);
+            playback.Volume = Scrubber.Draw(track, playback.Volume, Accent, Palette.WithAlpha(theme.TextStrong, 0.18f), alpha);
         }
 
         return consumed;
@@ -215,17 +215,6 @@ internal sealed class NowPlayingIsland
     }
 
     private static float Ease(float t) => t * t * (3f - 2f * t);
-
-    private static string StateLabel(RadioPlaybackState state)
-    {
-        return state switch
-        {
-            RadioPlaybackState.Buffering => "Buffering…",
-            RadioPlaybackState.Playing => "Now playing",
-            RadioPlaybackState.Failed => "Connection lost",
-            _ => string.Empty,
-        };
-    }
 
     private static string Truncate(string value, int max)
     {

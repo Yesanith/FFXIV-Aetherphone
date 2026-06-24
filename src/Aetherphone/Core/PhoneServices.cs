@@ -6,9 +6,12 @@ using Aetherphone.Core.Market;
 using Aetherphone.Core.Messaging;
 using Aetherphone.Core.Net;
 using Aetherphone.Core.Notifications;
+using Aetherphone.Core.Playback;
 using Aetherphone.Core.Radio;
+using Aetherphone.Core.Songs;
 using Aetherphone.Core.Theme;
 using Dalamud.Plugin.Services;
+using YoutubeExplode;
 
 namespace Aetherphone.Core;
 
@@ -56,7 +59,15 @@ internal sealed class PhoneServices : IDisposable
 
     public RadioPlayer RadioPlayer { get; }
 
-    private PhoneServices(Configuration configuration, ThemeProvider themes, GameData gameData, ITextureProvider textures, WeatherService weather, NotificationService notifications, IRingtone ringtone, MessageStore messages, ChatBridge chatBridge, MessageLauncher messageLauncher, HttpService http, MediaCache media, LodestoneService lodestone, AethernetSession aethernetSession, AethernetClient aethernetClient, MarketItemIndex marketIndex, MarketboardService market, MarketLauncher marketLauncher, MarketAlertService marketAlerts, RadioService radio, RadioPlayer radioPlayer)
+    public SongSearchService SongSearch { get; }
+
+    public SongPlayer SongPlayer { get; }
+
+    public SongHistory SongHistory { get; }
+
+    public PlaybackHub Playback { get; }
+
+    private PhoneServices(Configuration configuration, ThemeProvider themes, GameData gameData, ITextureProvider textures, WeatherService weather, NotificationService notifications, IRingtone ringtone, MessageStore messages, ChatBridge chatBridge, MessageLauncher messageLauncher, HttpService http, MediaCache media, LodestoneService lodestone, AethernetSession aethernetSession, AethernetClient aethernetClient, MarketItemIndex marketIndex, MarketboardService market, MarketLauncher marketLauncher, MarketAlertService marketAlerts, RadioService radio, RadioPlayer radioPlayer, SongSearchService songSearch, SongPlayer songPlayer, SongHistory songHistory, PlaybackHub playback)
     {
         Configuration = configuration;
         Themes = themes;
@@ -79,6 +90,10 @@ internal sealed class PhoneServices : IDisposable
         MarketAlerts = marketAlerts;
         Radio = radio;
         RadioPlayer = radioPlayer;
+        SongSearch = songSearch;
+        SongPlayer = songPlayer;
+        SongHistory = songHistory;
+        Playback = playback;
     }
 
     public static PhoneServices Build(Configuration configuration, IChatGui chatGui, IDataManager dataManager, IObjectTable objectTable, IClientState clientState, ITextureProvider textures, DirectoryInfo configDirectory)
@@ -107,12 +122,21 @@ internal sealed class PhoneServices : IDisposable
         var marketAlerts = new MarketAlertService(market, notifications, configuration);
         var radio = new RadioService(http);
         var radioPlayer = new RadioPlayer();
+        var youtube = new YoutubeClient();
+        var songSearch = new SongSearchService(youtube);
+        var audioRoot = new DirectoryInfo(Path.Combine(cacheRoot.FullName, "audio"));
+        var audioCache = new DiskCache(audioRoot, 256L * 1024 * 1024);
+        var songPlayer = new SongPlayer(youtube, audioCache);
+        var songHistory = new SongHistory(configuration);
+        var playback = new PlaybackHub(radioPlayer, songPlayer);
 
-        return new PhoneServices(configuration, themes, gameData, textures, weather, notifications, ringtone, messages, chatBridge, messageLauncher, http, media, lodestone, aethernetSession, aethernetClient, marketIndex, market, marketLauncher, marketAlerts, radio, radioPlayer);
+        return new PhoneServices(configuration, themes, gameData, textures, weather, notifications, ringtone, messages, chatBridge, messageLauncher, http, media, lodestone, aethernetSession, aethernetClient, marketIndex, market, marketLauncher, marketAlerts, radio, radioPlayer, songSearch, songPlayer, songHistory, playback);
     }
 
     public void Dispose()
     {
+        SongPlayer.Dispose();
+        SongSearch.Dispose();
         RadioPlayer.Dispose();
         Radio.Dispose();
         ChatBridge.Dispose();

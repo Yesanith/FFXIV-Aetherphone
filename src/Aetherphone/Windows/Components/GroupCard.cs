@@ -37,7 +37,9 @@ internal struct GroupCard
         var origin = ImGui.GetCursorScreenPos();
         var right = origin.X + ImGui.GetContentRegionAvail().X;
         var height = rowCount * rowHeight * scale;
-        ImGui.GetWindowDrawList().AddRectFilled(origin, new Vector2(right, origin.Y + height), ImGui.GetColorU32(theme.GroupedCard), 12f * scale);
+        var cardMax = new Vector2(right, origin.Y + height);
+        ImGui.GetWindowDrawList().AddRectFilled(origin, cardMax, ImGui.GetColorU32(theme.GroupedCard), 12f * scale);
+        Material.Edge(ImGui.GetWindowDrawList(), origin, cardMax, 12f * scale, scale);
         return new GroupCard(theme, scale, rowHeight, origin.X, right, origin.Y, rowCount);
     }
 

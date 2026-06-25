@@ -86,11 +86,7 @@ internal sealed class NowPlayingIsland
 
         var rounding = float.Lerp(compact.Height * 0.5f, 30f * scale, eased);
 
-        var shadowSpread = (5f + 5f * eased) * scale;
-        var shadowDrop = 3f * scale;
-        var shadowMin = new Vector2(bounds.Min.X - shadowSpread, bounds.Min.Y + shadowDrop);
-        var shadowMax = new Vector2(bounds.Max.X + shadowSpread, bounds.Max.Y + shadowSpread + shadowDrop);
-        dl.AddRectFilled(shadowMin, shadowMax, ImGui.GetColorU32(new Vector4(0f, 0f, 0f, 0.16f + 0.12f * eased)), rounding + shadowSpread);
+        Elevation.Draw(dl, bounds.Min, bounds.Max, rounding, scale, 5f + 5f * eased, 3f, 0.30f + 0.16f * eased);
 
         dl.AddRectFilled(bounds.Min, bounds.Max, ImGui.GetColorU32(theme.BezelOuter), rounding);
         dl.AddRect(bounds.Min, bounds.Max, ImGui.GetColorU32(Palette.WithAlpha(Accent, 0.14f + 0.46f * eased)), rounding, ImDrawFlags.RoundCornersAll, 1.5f * scale);

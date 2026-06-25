@@ -132,10 +132,7 @@ internal sealed class NotificationBanner : IDisposable
     {
         var rounding = CornerRadius * scale;
 
-        var shadowSpread = 8f * scale;
-        var shadowMin = new Vector2(min.X - shadowSpread, min.Y - shadowSpread * 0.4f);
-        var shadowMax = new Vector2(max.X + shadowSpread, max.Y + shadowSpread);
-        dl.AddRectFilled(shadowMin, shadowMax, Color(new Vector4(0f, 0f, 0f, 0.30f), opacity), rounding + shadowSpread);
+        Elevation.Floating(dl, min, max, rounding, scale, opacity);
 
         var cardColor = Palette.Mix(theme.GroupedCard, theme.TextStrong, 0.06f);
         dl.AddRectFilled(min, max, Color(Palette.WithAlpha(cardColor, 0.99f), opacity), rounding);

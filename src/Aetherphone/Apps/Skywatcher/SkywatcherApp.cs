@@ -106,7 +106,7 @@ internal sealed class SkywatcherApp : IPhoneApp
 
         if (zone.Length > 0)
         {
-            Typography.DrawCentered(new Vector2(centerX, origin.Y + 16f * scale), zone, palette.Ink, 1.3f);
+            Typography.DrawCentered(new Vector2(centerX, origin.Y + 16f * scale), zone, palette.Ink, 1.3f, FontWeight.SemiBold);
         }
 
         var glyphCenter = new Vector2(centerX, origin.Y + 100f * scale);

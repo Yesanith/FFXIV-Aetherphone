@@ -615,7 +615,7 @@ internal sealed class MusicApp : IPhoneApp
         DrawThumb(dl, artMin, artMax, songs.CurrentThumbnail, songs.CurrentTitle, artRounding);
 
         var nameY = artMax.Y + 28f * scale;
-        Typography.DrawCentered(new Vector2(centerX, nameY), Truncate(songs.CurrentTitle, 30), theme.TextStrong, 1.4f);
+        Typography.DrawCentered(new Vector2(centerX, nameY), Truncate(songs.CurrentTitle, 30), theme.TextStrong, 1.4f, FontWeight.SemiBold);
         Typography.DrawCentered(new Vector2(centerX, nameY + 27f * scale), Truncate(SongNowPlayingSubtitle(), 34), Palette.WithAlpha(Accent, 0.95f), 0.9f);
 
         var duration = songs.Duration;

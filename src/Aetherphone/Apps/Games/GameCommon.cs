@@ -149,7 +149,7 @@ internal static class GameCommon
         FillRect(min, max, ScoreBg, 12f * scale);
         DrawRect(min, max, Styling.BorderDim, 12f * scale, 1f);
 
-        Typography.DrawCentered(new Vector2(center.X, center.Y - 6f * scale), valueText, theme.Accent, 1.3f);
+        Typography.DrawCentered(new Vector2(center.X, center.Y - 6f * scale), valueText, theme.Accent, 1.3f, FontWeight.Bold);
         Typography.DrawCentered(new Vector2(center.X, center.Y + 12f * scale), label, theme.TextMuted, 0.75f);
     }
 
@@ -160,7 +160,7 @@ internal static class GameCommon
         var scale = ImGuiHelpers.GlobalScale;
         var center = area.Center;
 
-        Typography.DrawCentered(new Vector2(center.X, center.Y - 60f * scale), "Game Over", theme.TextStrong, 1.6f);
+        Typography.DrawCentered(new Vector2(center.X, center.Y - 60f * scale), "Game Over", theme.TextStrong, 1.6f, FontWeight.Bold);
         Typography.DrawCentered(new Vector2(center.X, center.Y - 30f * scale), $"{scoreLabel}: {score}", theme.TextMuted, 1.1f);
 
         var buttonSize = new Vector2(100f * scale, 36f * scale);
@@ -174,7 +174,7 @@ internal static class GameCommon
         var scale = ImGuiHelpers.GlobalScale;
         var center = area.Center;
 
-        Typography.DrawCentered(new Vector2(center.X, center.Y - 70f * scale), "You Win!", theme.Accent, 1.6f);
+        Typography.DrawCentered(new Vector2(center.X, center.Y - 70f * scale), "You Win!", theme.Accent, 1.6f, FontWeight.Bold);
 
         var minutes = elapsedSeconds / 60;
         var seconds = elapsedSeconds % 60;

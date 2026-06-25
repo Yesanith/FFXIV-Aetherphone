@@ -73,7 +73,7 @@ internal sealed class PhotosApp : IPhoneApp
         var theme = context.Theme;
         var content = context.Content;
 
-        Typography.Draw(new Vector2(content.Min.X + 4f * scale, content.Min.Y + 2f * scale), "Photos", theme.TextStrong, 1.7f);
+        Typography.Draw(new Vector2(content.Min.X + 4f * scale, content.Min.Y + 2f * scale), "Photos", theme.TextStrong, 1.7f, FontWeight.Bold);
 
         if (countLabelKey != paths.Length)
         {

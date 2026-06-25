@@ -3,6 +3,7 @@ using Aetherphone.Core;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Character;
 using Aetherphone.Core.Game;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Lodestone;
 using Aetherphone.Windows.Components;
 using Dalamud.Bindings.ImGui;
@@ -17,7 +18,7 @@ internal sealed class MyCharacterApp : IPhoneApp
 
     public string Id => "character";
 
-    public string DisplayName => "Character";
+    public string DisplayName => Loc.T(L.Apps.Character);
 
     public string Glyph => "Me";
 
@@ -68,7 +69,7 @@ internal sealed class MyCharacterApp : IPhoneApp
 
         if (character is not { } snapshot)
         {
-            Typography.DrawCentered(body.Center, "Log in to view your character", theme.TextMuted);
+            Typography.DrawCentered(body.Center, Loc.T(L.Character.LogInToView), theme.TextMuted);
             return;
         }
 
@@ -76,20 +77,20 @@ internal sealed class MyCharacterApp : IPhoneApp
         {
             CharacterHeader.Draw(snapshot, theme, lodestone);
 
-            SettingsSection.Header("Profile", theme);
+            SettingsSection.Header(Loc.T(L.Character.Profile), theme);
             var card = GroupCard.Begin(theme, 7, ProfileRow.RowHeight);
-            ProfileRow.Stacked(card.NextRow(), "Race", snapshot.Race, theme);
-            ProfileRow.Stacked(card.NextRow(), "Clan", snapshot.Clan, theme);
-            ProfileRow.Stacked(card.NextRow(), "Gender", snapshot.Gender, theme);
-            ProfileRow.Stacked(card.NextRow(), "Nameday", snapshot.Nameday, theme);
-            ProfileRow.Stacked(card.NextRow(), "Guardian", snapshot.Guardian, theme);
-            ProfileRow.Stacked(card.NextRow(), "City-state", snapshot.CityState, theme);
-            ProfileRow.Stacked(card.NextRow(), "Grand Company", snapshot.GrandCompany, theme);
+            ProfileRow.Stacked(card.NextRow(), Loc.T(L.Character.Race), snapshot.Race, theme);
+            ProfileRow.Stacked(card.NextRow(), Loc.T(L.Character.Clan), snapshot.Clan, theme);
+            ProfileRow.Stacked(card.NextRow(), Loc.T(L.Character.Gender), snapshot.Gender, theme);
+            ProfileRow.Stacked(card.NextRow(), Loc.T(L.Character.Nameday), snapshot.Nameday, theme);
+            ProfileRow.Stacked(card.NextRow(), Loc.T(L.Character.Guardian), snapshot.Guardian, theme);
+            ProfileRow.Stacked(card.NextRow(), Loc.T(L.Character.CityState), snapshot.CityState, theme);
+            ProfileRow.Stacked(card.NextRow(), Loc.T(L.Character.GrandCompany), snapshot.GrandCompany, theme);
             card.End();
 
             if (snapshot.Gear.Count > 0)
             {
-                SettingsSection.Header("Equipment", theme);
+                SettingsSection.Header(Loc.T(L.Character.Equipment), theme);
                 GearGrid.Draw(snapshot.Gear, textures, theme);
             }
         }

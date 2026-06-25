@@ -2,6 +2,7 @@ using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Game;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Wallet;
 using Aetherphone.Windows.Components;
 using Dalamud.Bindings.ImGui;
@@ -16,7 +17,7 @@ internal sealed class WalletApp : IPhoneApp
 
     public string Id => "wallet";
 
-    public string DisplayName => "Wallet";
+    public string DisplayName => Loc.T(L.Apps.Wallet);
 
     public string Glyph => "G";
 
@@ -76,7 +77,7 @@ internal sealed class WalletApp : IPhoneApp
 
         if (gil is null)
         {
-            Typography.DrawCentered(body.Center, "Log in to view your wallet", theme.TextMuted);
+            Typography.DrawCentered(body.Center, Loc.T(L.Wallet.LogInToView), theme.TextMuted);
             return;
         }
 

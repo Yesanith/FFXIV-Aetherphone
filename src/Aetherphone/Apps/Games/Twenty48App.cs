@@ -1,6 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
 using Aetherphone.Windows;
@@ -77,7 +78,7 @@ internal sealed class Twenty48App : IPhoneApp
             UpdateAnimation(dt);
 
             var statsY = body.Min.Y + 26f * scale;
-            GameCommon.DrawScorePill(new Vector2(surface.Center.X, statsY), "Score", score, frameTheme);
+            GameCommon.DrawScorePill(new Vector2(surface.Center.X, statsY), Loc.T(L.Games.Score), score, frameTheme);
 
             var gridTop = statsY + 32f * scale;
             var gridArea = new Rect(new Vector2(surface.Min.X, gridTop), surface.Max);
@@ -96,7 +97,7 @@ internal sealed class Twenty48App : IPhoneApp
 
             if (lost)
             {
-                if (GameCommon.DrawGameOverOverlay(surface, frameTheme, score, "Score"))
+                if (GameCommon.DrawGameOverOverlay(surface, frameTheme, score, Loc.T(L.Games.Score)))
                 {
                     ResetGame();
                 }

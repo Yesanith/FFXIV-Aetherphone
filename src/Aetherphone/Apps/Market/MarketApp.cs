@@ -2,6 +2,7 @@ using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Game;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Market;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
@@ -25,7 +26,7 @@ internal sealed class MarketApp : IPhoneApp
 
     public string Id => "market";
 
-    public string DisplayName => "Market";
+    public string DisplayName => Loc.T(L.Apps.Market);
 
     public string Glyph => "$";
 
@@ -205,13 +206,13 @@ internal sealed class MarketApp : IPhoneApp
         var scope = CurrentScope;
         if (!index.Ready)
         {
-            CenteredHint(body, "Loading item list…");
+            CenteredHint(body, Loc.T(L.Market.LoadingItemList));
             return;
         }
 
         if (results.Count == 0)
         {
-            CenteredHint(body, "No matching items");
+            CenteredHint(body, Loc.T(L.Market.NoMatchingItems));
             return;
         }
 
@@ -240,7 +241,7 @@ internal sealed class MarketApp : IPhoneApp
     {
         if (!index.Ready)
         {
-            CenteredHint(body, "Loading item list…");
+            CenteredHint(body, Loc.T(L.Market.LoadingItemList));
             return;
         }
 
@@ -252,7 +253,7 @@ internal sealed class MarketApp : IPhoneApp
 
         if (!hasHovered && alertBuffer.Count == 0 && favorites.Count == 0 && recents.Count == 0)
         {
-            CenteredHint(body, "Search for an item, or right-click any item in-game.");
+            CenteredHint(body, Loc.T(L.Market.SearchHint));
             return;
         }
 
@@ -284,13 +285,13 @@ internal sealed class MarketApp : IPhoneApp
             DrawAlertsSection();
         }
 
-        DrawItemIdSection("Favorites", favorites, scope);
-        DrawItemIdSection("Recent", recents, scope);
+        DrawItemIdSection(Loc.T(L.Market.Favorites), favorites, scope);
+        DrawItemIdSection(Loc.T(L.Market.Recent), recents, scope);
     }
 
     private void DrawHoveredSection(MarketScope scope)
     {
-        SettingsSection.Header("Hovered in-game", frameTheme);
+        SettingsSection.Header(Loc.T(L.Market.HoveredInGame), frameTheme);
         var card = GroupCard.Begin(frameTheme, 1, MarketRowViews.ItemRowHeight);
         var price = market.AggregatedMin(lastHovered.Id, scope);
         if (MarketRowViews.ItemRow(card.NextRow(), lastHovered, price, textures, frameTheme))
@@ -303,7 +304,7 @@ internal sealed class MarketApp : IPhoneApp
 
     private void DrawAlertsSection()
     {
-        SettingsSection.Header("Alerts", frameTheme);
+        SettingsSection.Header(Loc.T(L.Common.Alerts), frameTheme);
         var card = GroupCard.Begin(frameTheme, alertBuffer.Count, MarketRowViews.DataRowHeight);
         for (var alertIndex = 0; alertIndex < alertBuffer.Count; alertIndex++)
         {
@@ -367,7 +368,7 @@ internal sealed class MarketApp : IPhoneApp
 
         if (!scope.IsValid)
         {
-            Typography.DrawCentered(area.Center, "Log in to view market prices", frameTheme.TextMuted);
+            Typography.DrawCentered(area.Center, Loc.T(L.Market.LogInToViewPrices), frameTheme.TextMuted);
             return;
         }
 
@@ -391,7 +392,7 @@ internal sealed class MarketApp : IPhoneApp
 
         if (snapshot is null)
         {
-            var message = entry.State == MarketState.Failed ? "Couldn't reach Universalis" : "Loading…";
+            var message = entry.State == MarketState.Failed ? Loc.T(L.Market.CouldntReach) : Loc.T(L.Common.Loading);
             Typography.DrawCentered(new Vector2(area.Center.X, body.Center.Y), message, frameTheme.TextMuted);
             return;
         }
@@ -425,7 +426,7 @@ internal sealed class MarketApp : IPhoneApp
 
         var textX = iconMax.X + 12f * scale;
         Typography.Draw(new Vector2(textX, iconMin.Y + 2f * scale), MarketFormat.Clip(view.Name, 16), frameTheme.TextStrong, 1.0f);
-        Typography.Draw(new Vector2(textX, iconMin.Y + 24f * scale), hq ? "Cheapest HQ" : "Cheapest", frameTheme.TextMuted, 0.82f);
+        Typography.Draw(new Vector2(textX, iconMin.Y + 24f * scale), hq ? Loc.T(L.Market.CheapestHq) : Loc.T(L.Market.Cheapest), frameTheme.TextMuted, 0.82f);
 
         var min = snapshot.Min(hq);
         var priceText = min > 0 ? MarketFormat.Gil(min) : "—";
@@ -441,23 +442,23 @@ internal sealed class MarketApp : IPhoneApp
         var hasVendor = index.TryGet(snapshot.ItemId, out var itemRef) && itemRef.VendorPrice > 0;
         var rowCount = hasVendor ? 6 : 5;
 
-        SettingsSection.Header("Prices", frameTheme);
+        SettingsSection.Header(Loc.T(L.Market.Prices), frameTheme);
         var card = GroupCard.Begin(frameTheme, rowCount);
-        SettingsRow.Info(card.NextRow(), "Average", PriceOrDash(snapshot.Average(hq)), frameTheme);
-        SettingsRow.Info(card.NextRow(), "Highest", PriceOrDash(snapshot.Max(hq)), frameTheme);
-        SettingsRow.Info(card.NextRow(), "Sales / day", MarketFormat.Velocity(snapshot.Velocity(hq)), frameTheme);
-        SettingsRow.Info(card.NextRow(), "Up / sold", $"{snapshot.UnitsForSale} / {snapshot.UnitsSold}", frameTheme);
-        SettingsRow.Info(card.NextRow(), "Updated", MarketFormat.Ago(snapshot.LastUpload), frameTheme);
+        SettingsRow.Info(card.NextRow(), Loc.T(L.Market.Average), PriceOrDash(snapshot.Average(hq)), frameTheme);
+        SettingsRow.Info(card.NextRow(), Loc.T(L.Market.Highest), PriceOrDash(snapshot.Max(hq)), frameTheme);
+        SettingsRow.Info(card.NextRow(), Loc.T(L.Market.SalesPerDay), MarketFormat.Velocity(snapshot.Velocity(hq)), frameTheme);
+        SettingsRow.Info(card.NextRow(), Loc.T(L.Market.UpSold), $"{snapshot.UnitsForSale} / {snapshot.UnitsSold}", frameTheme);
+        SettingsRow.Info(card.NextRow(), Loc.T(L.Market.Updated), MarketFormat.Ago(snapshot.LastUpload), frameTheme);
         if (hasVendor)
         {
             var marketMin = snapshot.Min(hq);
             var value = MarketFormat.Gil(itemRef.VendorPrice);
             if (marketMin > 0 && itemRef.VendorPrice < marketMin)
             {
-                value += "  ·  cheaper";
+                value += $"  ·  {Loc.T(L.Market.Cheaper)}";
             }
 
-            SettingsRow.Info(card.NextRow(), "Vendor (NPC)", value, frameTheme);
+            SettingsRow.Info(card.NextRow(), Loc.T(L.Market.VendorNpc), value, frameTheme);
         }
 
         card.End();
@@ -465,10 +466,10 @@ internal sealed class MarketApp : IPhoneApp
 
     private void DrawAlertEditor(MarketView view, MarketSnapshot snapshot, bool hq, MarketScope scope)
     {
-        SettingsSection.Header("Price alert", frameTheme);
+        SettingsSection.Header(Loc.T(L.Market.PriceAlert), frameTheme);
         var card = GroupCard.Begin(frameTheme, 1);
         var existing = alerts.HasAlertFor(view.ItemId);
-        var label = showAlertEditor ? "Cancel" : existing ? "Add another alert" : "Set a price alert";
+        var label = showAlertEditor ? Loc.T(L.Common.Cancel) : existing ? Loc.T(L.Market.AddAnotherAlert) : Loc.T(L.Market.SetPriceAlert);
         if (SettingsRow.Link(card.NextRow(), "!", frameTheme.Accent, label, string.Empty, frameTheme))
         {
             showAlertEditor = !showAlertEditor;
@@ -506,12 +507,12 @@ internal sealed class MarketApp : IPhoneApp
         var trackMax = new Vector2(origin.X + toggleWidth, origin.Y + 26f * scale);
         ImGui.GetWindowDrawList().AddRectFilled(trackMin, trackMax, ImGui.GetColorU32(frameTheme.GroupedCard), (trackMax.Y - trackMin.Y) * 0.5f);
         var middle = (trackMin.X + trackMax.X) * 0.5f;
-        if (DrawSegment(new Rect(trackMin, new Vector2(middle, trackMax.Y)), "At or below", alertBelow))
+        if (DrawSegment(new Rect(trackMin, new Vector2(middle, trackMax.Y)), Loc.T(L.Market.AtOrBelow), alertBelow))
         {
             alertBelow = true;
         }
 
-        if (DrawSegment(new Rect(new Vector2(middle, trackMin.Y), trackMax), "At or above", !alertBelow))
+        if (DrawSegment(new Rect(new Vector2(middle, trackMin.Y), trackMax), Loc.T(L.Market.AtOrAbove), !alertBelow))
         {
             alertBelow = false;
         }
@@ -520,7 +521,7 @@ internal sealed class MarketApp : IPhoneApp
         ImGui.Dummy(new Vector2(width, 26f * scale));
 
         ImGui.Dummy(new Vector2(0f, 4f * scale));
-        if (ImGui.Button("Create alert"))
+        if (ImGui.Button(Loc.T(L.Market.CreateAlert)))
         {
             alerts.Add(new MarketAlert
             {
@@ -547,7 +548,7 @@ internal sealed class MarketApp : IPhoneApp
             return;
         }
 
-        SettingsSection.Header("Trend", frameTheme);
+        SettingsSection.Header(Loc.T(L.Market.Trend), frameTheme);
         var scale = ImGuiHelpers.GlobalScale;
         var width = ImGui.GetContentRegionAvail().X;
         var origin = ImGui.GetCursorScreenPos();
@@ -574,11 +575,11 @@ internal sealed class MarketApp : IPhoneApp
     {
         var listings = snapshot.Listings;
         var count = CountListings(listings, hq);
-        SettingsSection.Header(count > 0 ? $"Listings · {count}" : "Listings", frameTheme);
+        SettingsSection.Header(count > 0 ? Loc.T(L.Market.ListingsCount, count) : Loc.T(L.Market.Listings), frameTheme);
 
         if (count == 0)
         {
-            DrawEmptyCard(hq ? "No HQ listings" : "No listings");
+            DrawEmptyCard(hq ? Loc.T(L.Market.NoHqListings) : Loc.T(L.Market.NoListings));
             return;
         }
 
@@ -603,11 +604,11 @@ internal sealed class MarketApp : IPhoneApp
     {
         var sales = snapshot.Sales;
         var count = CountQuality(sales, hq);
-        SettingsSection.Header(count > 0 ? $"Recent sales · {count}" : "Recent sales", frameTheme);
+        SettingsSection.Header(count > 0 ? Loc.T(L.Market.RecentSalesCount, count) : Loc.T(L.Market.RecentSales), frameTheme);
 
         if (count == 0)
         {
-            DrawEmptyCard(hq ? "No HQ sales" : "No recent sales");
+            DrawEmptyCard(hq ? Loc.T(L.Market.NoHqSales) : Loc.T(L.Market.NoRecentSales));
             return;
         }
 
@@ -650,7 +651,7 @@ internal sealed class MarketApp : IPhoneApp
         using (ImRaii.PushColor(ImGuiCol.FrameBg, new Vector4(0f, 0f, 0f, 0f)))
         using (ImRaii.PushColor(ImGuiCol.Text, frameTheme.TextStrong))
         {
-            ImGui.InputTextWithHint("##marketSearch", "Search items", ref search, 100, ImGuiInputTextFlags.None);
+            ImGui.InputTextWithHint("##marketSearch", Loc.T(L.Market.SearchItems), ref search, 100, ImGuiInputTextFlags.None);
         }
     }
 
@@ -690,12 +691,12 @@ internal sealed class MarketApp : IPhoneApp
         drawList.AddRectFilled(trackMin, trackMax, ImGui.GetColorU32(frameTheme.GroupedCard), (trackMax.Y - trackMin.Y) * 0.5f);
 
         var middle = (trackMin.X + trackMax.X) * 0.5f;
-        if (DrawSegment(new Rect(trackMin, new Vector2(middle, trackMax.Y)), "NQ", !showHq))
+        if (DrawSegment(new Rect(trackMin, new Vector2(middle, trackMax.Y)), Loc.T(L.Common.Nq), !showHq))
         {
             SetQuality(false);
         }
 
-        if (DrawSegment(new Rect(new Vector2(middle, trackMin.Y), trackMax), "HQ", showHq))
+        if (DrawSegment(new Rect(new Vector2(middle, trackMin.Y), trackMax), Loc.T(L.Common.Hq), showHq))
         {
             SetQuality(true);
         }

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Net;
 using Aetherphone.Core.Playback;
 using Aetherphone.Core.Radio;
@@ -57,7 +58,7 @@ internal sealed class MusicApp : IPhoneApp
 
     public string Id => "music";
 
-    public string DisplayName => "Music";
+    public string DisplayName => Loc.T(L.Apps.Music);
 
     public string Glyph => "M";
 
@@ -177,7 +178,7 @@ internal sealed class MusicApp : IPhoneApp
             ImGui.Dummy(new Vector2(0f, 2f * scale));
             DrawRecentSection(theme, scale);
             DrawFeaturedSection(theme, scale);
-            DrawSectionHeader(theme, scale, "Radio stations");
+            DrawSectionHeader(theme, scale, Loc.T(L.Music.RadioStations));
             DrawCategoryGrid(theme, scale);
             ImGui.Dummy(new Vector2(0f, 6f * scale));
         }
@@ -201,7 +202,7 @@ internal sealed class MusicApp : IPhoneApp
             return;
         }
 
-        DrawSectionHeader(theme, scale, "Recently played");
+        DrawSectionHeader(theme, scale, Loc.T(L.Music.RecentlyPlayed));
 
         var gap = 8f * scale;
         var available = ImGui.GetContentRegionAvail().X;
@@ -259,7 +260,7 @@ internal sealed class MusicApp : IPhoneApp
 
             DrawSectionHeader(theme, scale, featuredTitle);
             var caption = ImGui.GetCursorScreenPos();
-            Typography.Draw(caption, "Loading…", theme.TextMuted, 0.84f);
+            Typography.Draw(caption, Loc.T(L.Common.Loading), theme.TextMuted, 0.84f);
             ImGui.Dummy(new Vector2(ImGui.GetContentRegionAvail().X, 22f * scale));
             return;
         }
@@ -342,7 +343,7 @@ internal sealed class MusicApp : IPhoneApp
                 ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
             }
 
-            var label = categories[index].Display;
+            var label = CatalogLabels.RadioCategory(categories[index].Display);
             var labelPosition = new Vector2(min.X + 12f * scale, max.Y - 26f * scale);
             Typography.Draw(labelPosition + new Vector2(1f, 1f), label, new Vector4(0f, 0f, 0f, 0.5f), 1.0f);
             Typography.Draw(labelPosition, label, new Vector4(1f, 1f, 1f, 1f), 1.0f);
@@ -368,14 +369,14 @@ internal sealed class MusicApp : IPhoneApp
         var body = ScrollBody(content, scale);
         if (loading)
         {
-            Typography.DrawCentered(body.Center, "Tuning in…", theme.TextMuted);
+            Typography.DrawCentered(body.Center, Loc.T(L.Music.TuningIn), theme.TextMuted);
             DrawMiniPlayer(context, scale);
             return;
         }
 
         if (stations.Length == 0)
         {
-            Typography.DrawCentered(body.Center, "No stations found", theme.TextMuted);
+            Typography.DrawCentered(body.Center, Loc.T(L.Music.NoStations), theme.TextMuted);
             DrawMiniPlayer(context, scale);
             return;
         }
@@ -444,7 +445,7 @@ internal sealed class MusicApp : IPhoneApp
         var theme = context.Theme;
         var content = context.Content;
 
-        AppHeader.Draw(context, "Search", GoToBrowse);
+        AppHeader.Draw(context, Loc.T(L.Common.Search), GoToBrowse);
 
         var barRect = SearchBarRect(content, scale);
         if (DrawSearchBar(barRect, theme))
@@ -456,14 +457,14 @@ internal sealed class MusicApp : IPhoneApp
 
         if (searching)
         {
-            Typography.DrawCentered(body.Center, "Searching…", theme.TextMuted);
+            Typography.DrawCentered(body.Center, Loc.T(L.Common.Searching), theme.TextMuted);
             DrawMiniPlayer(context, scale);
             return;
         }
 
         if (results.Length == 0)
         {
-            Typography.DrawCentered(body.Center, hasSearched ? "No results" : "Search for a song", theme.TextMuted);
+            Typography.DrawCentered(body.Center, hasSearched ? Loc.T(L.Music.NoResults) : Loc.T(L.Music.SearchForSong), theme.TextMuted);
             DrawMiniPlayer(context, scale);
             return;
         }
@@ -540,7 +541,7 @@ internal sealed class MusicApp : IPhoneApp
         var tintBottom = ImGui.GetColorU32(Palette.WithAlpha(swatch.Top, 0f));
         dl.AddRectFilledMultiColor(content.Min, new Vector2(content.Max.X, content.Min.Y + content.Height * 0.6f), tintTop, tintTop, tintBottom, tintBottom);
 
-        AppHeader.Draw(context, "Now Playing", GoToReturnView);
+        AppHeader.Draw(context, Loc.T(L.Music.NowPlaying), GoToReturnView);
 
         var body = new Rect(new Vector2(content.Min.X, content.Min.Y + AppHeader.Height * scale), content.Max);
         var centerX = body.Center.X;
@@ -599,7 +600,7 @@ internal sealed class MusicApp : IPhoneApp
         var tintBottom = ImGui.GetColorU32(Palette.WithAlpha(swatch.Top, 0f));
         dl.AddRectFilledMultiColor(content.Min, new Vector2(content.Max.X, content.Min.Y + content.Height * 0.6f), tintTop, tintTop, tintBottom, tintBottom);
 
-        AppHeader.Draw(context, "Now Playing", GoToReturnView);
+        AppHeader.Draw(context, Loc.T(L.Music.NowPlaying), GoToReturnView);
 
         var body = new Rect(new Vector2(content.Min.X, content.Min.Y + AppHeader.Height * scale), content.Max);
         var centerX = body.Center.X;
@@ -731,7 +732,7 @@ internal sealed class MusicApp : IPhoneApp
         using (ImRaii.PushColor(ImGuiCol.FrameBg, new Vector4(0f, 0f, 0f, 0f)))
         using (ImRaii.PushColor(ImGuiCol.Text, theme.TextStrong))
         {
-            if (ImGui.InputTextWithHint("##songSearch", "Search songs", ref searchDraft, 120, ImGuiInputTextFlags.EnterReturnsTrue))
+            if (ImGui.InputTextWithHint("##songSearch", Loc.T(L.Music.SearchSongs), ref searchDraft, 120, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 submitted = true;
             }
@@ -925,7 +926,7 @@ internal sealed class MusicApp : IPhoneApp
 
     private string CategoryTitle()
     {
-        return categoryIndex >= 0 ? RadioService.Categories[categoryIndex].Display : DisplayName;
+        return categoryIndex >= 0 ? CatalogLabels.RadioCategory(RadioService.Categories[categoryIndex].Display) : DisplayName;
     }
 
     private string RadioNowPlayingSubtitle(RadioPlaybackState state)
@@ -935,7 +936,9 @@ internal sealed class MusicApp : IPhoneApp
             return RadioStateLabel(state);
         }
 
-        return categoryIndex >= 0 ? $"{RadioService.Categories[categoryIndex].Display} · LIVE" : "LIVE";
+        return categoryIndex >= 0
+            ? $"{CatalogLabels.RadioCategory(RadioService.Categories[categoryIndex].Display)} · {Loc.T(L.Common.Live)}"
+            : Loc.T(L.Common.Live);
     }
 
     private string SongNowPlayingSubtitle()
@@ -943,9 +946,9 @@ internal sealed class MusicApp : IPhoneApp
         var songs = playback.Songs;
         return songs.State switch
         {
-            SongPlaybackState.Resolving => "Loading…",
-            SongPlaybackState.Buffering => "Buffering…",
-            SongPlaybackState.Failed => "Couldn't play this track",
+            SongPlaybackState.Resolving => Loc.T(L.Common.Loading),
+            SongPlaybackState.Buffering => Loc.T(L.Music.Buffering),
+            SongPlaybackState.Failed => Loc.T(L.Music.CouldntPlay),
             _ => songs.CurrentAuthor,
         };
     }
@@ -966,17 +969,17 @@ internal sealed class MusicApp : IPhoneApp
         return subtitle;
     }
 
-    private static readonly Dictionary<(int, string), string> StationSubtitleCache = new();
+    private static readonly Dictionary<(string, int, string), string> StationSubtitleCache = new();
 
     private static string StationSubtitle(RadioStation station)
     {
-        var key = (station.Bitrate, station.Country);
+        var key = (Loc.Current.Code, station.Bitrate, station.Country);
         if (StationSubtitleCache.TryGetValue(key, out var cached))
         {
             return cached;
         }
 
-        var bitrate = station.Bitrate > 0 ? $"{station.Bitrate}kbps" : "live";
+        var bitrate = station.Bitrate > 0 ? $"{station.Bitrate}kbps" : Loc.T(L.Music.LiveLower);
         var subtitle = string.IsNullOrEmpty(station.Country) ? bitrate : $"{bitrate} · {station.Country}";
         StationSubtitleCache[key] = subtitle;
         return subtitle;
@@ -986,9 +989,9 @@ internal sealed class MusicApp : IPhoneApp
     {
         return state switch
         {
-            RadioPlaybackState.Buffering => "Buffering…",
-            RadioPlaybackState.Playing => "Playing",
-            RadioPlaybackState.Failed => "Connection lost",
+            RadioPlaybackState.Buffering => Loc.T(L.Music.Buffering),
+            RadioPlaybackState.Playing => Loc.T(L.Music.Playing),
+            RadioPlaybackState.Failed => Loc.T(L.Music.ConnectionLost),
             _ => string.Empty,
         };
     }

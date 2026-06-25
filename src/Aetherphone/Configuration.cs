@@ -21,6 +21,8 @@ internal sealed class Configuration : IPluginConfiguration
 
     public float TextZoom { get; set; } = 1.0f;
 
+    public string Language { get; set; } = string.Empty;
+
     public string AccentName { get; set; } = "Violet";
 
     public string WallpaperName { get; set; } = "Aurora";

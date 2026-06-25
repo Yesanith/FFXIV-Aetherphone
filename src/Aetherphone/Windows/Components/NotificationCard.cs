@@ -1,5 +1,6 @@
 using System.Numerics;
 using Aetherphone.Core;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Notifications;
 using Aetherphone.Core.Theme;
 using Dalamud.Bindings.ImGui;
@@ -47,19 +48,19 @@ internal static class NotificationCard
         var delta = DateTime.Now - time;
         if (delta.TotalMinutes < 1)
         {
-            return "now";
+            return Loc.T(L.Time.Now);
         }
 
         if (delta.TotalHours < 1)
         {
-            return $"{(int)delta.TotalMinutes}m";
+            return Loc.T(L.Time.MinutesShort, (int)delta.TotalMinutes);
         }
 
         if (delta.TotalDays < 1)
         {
-            return $"{(int)delta.TotalHours}h";
+            return Loc.T(L.Time.HoursShort, (int)delta.TotalHours);
         }
 
-        return $"{(int)delta.TotalDays}d";
+        return Loc.T(L.Time.DaysShort, (int)delta.TotalDays);
     }
 }

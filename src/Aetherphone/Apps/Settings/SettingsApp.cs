@@ -4,6 +4,7 @@ using Aetherphone.Core;
 using Aetherphone.Core.Aethernet;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Game;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Notifications;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
@@ -16,7 +17,7 @@ internal sealed class SettingsApp : IPhoneApp, ISettingsNavigator
 {
     public string Id => "settings";
 
-    public string DisplayName => "Settings";
+    public string DisplayName => Loc.T(L.Apps.Settings);
 
     public string Glyph => "S";
 
@@ -37,6 +38,7 @@ internal sealed class SettingsApp : IPhoneApp, ISettingsNavigator
     {
         accountPage = new AccountPage(aethernetSession, aethernetClient, gameData);
         var appearance = new AppearancePage(configuration, themes);
+        var language = new LanguagePage(configuration);
         var notifications = new NotificationsPage(configuration);
         var ringtonePage = new RingtonePage(configuration, ringtone);
         var about = new AboutPage(showAbout);
@@ -44,7 +46,7 @@ internal sealed class SettingsApp : IPhoneApp, ISettingsNavigator
         var groups = new IReadOnlyList<ISettingsPage>[]
         {
             new ISettingsPage[] { accountPage },
-            new ISettingsPage[] { appearance },
+            new ISettingsPage[] { appearance, language },
             new ISettingsPage[] { notifications, ringtonePage },
             new ISettingsPage[] { about },
         };

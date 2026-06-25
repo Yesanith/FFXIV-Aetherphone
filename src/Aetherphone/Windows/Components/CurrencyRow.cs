@@ -1,6 +1,6 @@
-using System.Globalization;
 using System.Numerics;
 using Aetherphone.Core;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Core.Wallet;
 using Dalamud.Bindings.ImGui;
@@ -74,7 +74,7 @@ internal static class CurrencyRow
         var drawList = ImGui.GetWindowDrawList();
         var centerX = origin.X + width * 0.5f;
 
-        Typography.DrawCentered(new Vector2(centerX, origin.Y + 11f * scale), "GIL BALANCE", theme.TextMuted, 0.78f);
+        Typography.DrawCentered(new Vector2(centerX, origin.Y + 11f * scale), Loc.T(L.Wallet.GilBalance), theme.TextMuted, 0.78f);
 
         var amountText = Format(gil.Amount);
         var amountSize = Typography.Measure(amountText, 2.0f);
@@ -109,7 +109,7 @@ internal static class CurrencyRow
         drawList.AddImageRounded(texture.Handle, min, max, Vector2.Zero, Vector2.One, 0xFFFFFFFFu, 6f * scale);
     }
 
-    private static string Format(long amount) => amount.ToString("N0", CultureInfo.InvariantCulture);
+    private static string Format(long amount) => amount.ToString("N0", Loc.Culture);
 
     private static string Fit(string text, float maxWidth, float scale)
     {

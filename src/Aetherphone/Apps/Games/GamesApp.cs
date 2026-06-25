@@ -1,6 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows;
 using Aetherphone.Windows.Components;
@@ -14,7 +15,7 @@ internal sealed class GamesApp : IPhoneApp
     private const int Columns = 2;
 
     public string Id => "games";
-    public string DisplayName => "Games";
+    public string DisplayName => Loc.T(L.Apps.Games);
     public string Glyph => ">";
 
     public Vector4 Accent => new(0.32f, 0.78f, 0.50f, 1f);

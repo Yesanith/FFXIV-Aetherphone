@@ -1,6 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Photos;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
@@ -20,7 +21,9 @@ internal sealed class CameraApp : IPhoneApp
     private const float ReticleDuration = 1.1f;
     private const float PressDuration = 0.18f;
 
-    private static readonly string[] Modes = { "SQUARE", "PHOTO", "PANO" };
+    private const int SquareModeIndex = 0;
+
+    private static readonly LocString[] Modes = { L.Camera.ModeSquare, L.Camera.ModePhoto, L.Camera.ModePano };
     private static readonly Vector4 SelectedMode = new(0.98f, 0.79f, 0.20f, 1f);
     private static readonly Vector4 ShutterRing = new(0.98f, 0.98f, 0.98f, 1f);
     private static readonly Vector4 BarTint = new(0f, 0f, 0f, 0.42f);
@@ -28,7 +31,7 @@ internal sealed class CameraApp : IPhoneApp
 
     public string Id => "camera";
 
-    public string DisplayName => "Camera";
+    public string DisplayName => Loc.T(L.Apps.Camera);
 
     public string Glyph => "O";
 
@@ -169,7 +172,7 @@ internal sealed class CameraApp : IPhoneApp
         var dl = ImGui.GetWindowDrawList();
         var radius = 14f * scale;
         dl.AddCircle(center, radius, ImGui.GetColorU32(new Vector4(0.92f, 0.92f, 0.94f, 0.55f)), 28, 1.4f * scale);
-        Typography.DrawCentered(center, "LIVE", new Vector4(0.92f, 0.92f, 0.94f, 0.85f), 0.55f);
+        Typography.DrawCentered(center, Loc.T(L.Common.Live), new Vector4(0.92f, 0.92f, 0.94f, 0.85f), 0.55f);
     }
 
     private void DrawViewfinder(Rect viewfinder, Rect captureRect, float scale)
@@ -252,7 +255,7 @@ internal sealed class CameraApp : IPhoneApp
         for (var index = 0; index < Modes.Length; index++)
         {
             var modeScale = index == modeIndex ? 0.78f : 0.72f;
-            widths[index] = Typography.Measure(Modes[index], modeScale).X;
+            widths[index] = Typography.Measure(Loc.T(Modes[index]), modeScale).X;
             total += widths[index];
             if (index > 0)
             {
@@ -268,7 +271,7 @@ internal sealed class CameraApp : IPhoneApp
             var modeScale = selected ? 0.78f : 0.72f;
             var color = selected ? SelectedMode : new Vector4(0.82f, 0.82f, 0.85f, 0.75f);
             var labelCenter = new Vector2(cursorX + widths[index] * 0.5f, rowCenterY);
-            Typography.DrawCentered(labelCenter, Modes[index], color, modeScale);
+            Typography.DrawCentered(labelCenter, Loc.T(Modes[index]), color, modeScale);
 
             var hitMin = new Vector2(cursorX - gap * 0.4f, rowCenterY - 14f * scale);
             var hitMax = new Vector2(cursorX + widths[index] + gap * 0.4f, rowCenterY + 14f * scale);
@@ -433,7 +436,7 @@ internal sealed class CameraApp : IPhoneApp
 
     private Rect CaptureRect(Rect viewfinder)
     {
-        if (Modes[modeIndex] != "SQUARE")
+        if (modeIndex != SquareModeIndex)
         {
             return viewfinder;
         }

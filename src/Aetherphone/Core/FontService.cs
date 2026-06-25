@@ -1,5 +1,6 @@
 using System.IO;
 using System.Numerics;
+using Aetherphone.Core.Localization;
 using Dalamud.Interface;
 using Dalamud.Interface.ManagedFontAtlas;
 using Dalamud.Plugin;
@@ -29,14 +30,13 @@ internal sealed class FontService : IDisposable
         0.60f, 0.72f, 0.80f, 0.88f, 0.95f, 1.00f, 1.10f, 1.20f, 1.32f, 1.45f, 1.65f, 1.90f,
     };
 
-    private static readonly ushort[] GlyphRanges =
+    private static readonly ushort[] BaseGlyphRanges =
     {
         0x0020, 0x00FF, // Basic Latin and Latin-1 Supplement
-        0x0100, 0x017F, // Latin Extended-A for European name accents
+        0x0100, 0x017F, // Latin Extended-A for European name accents and Turkish glyphs
         0x2000, 0x206F, // General Punctuation: ellipsis, em dash, curly quotes
         0x2200, 0x22FF, // Mathematical Operators for the market alert glyphs
         0x25A0, 0x27BF, // Geometric Shapes, Misc Symbols, Dingbats for game and gender glyphs
-        0,
     };
 
     private const float TrackingThreshold = 1.20f;
@@ -47,6 +47,7 @@ internal sealed class FontService : IDisposable
     private readonly float baseSize;
 
     private IFontHandle[,] handles;
+    private ushort[] glyphRanges;
     private float zoom;
 
     public FontService(IDalamudPluginInterface pluginInterface, float zoom)
@@ -55,6 +56,7 @@ internal sealed class FontService : IDisposable
         fontDirectory = Path.Combine(pluginInterface.AssemblyLocation.DirectoryName ?? string.Empty, "Fonts");
         baseSize = UiBuilder.DefaultFontSizePx;
         this.zoom = zoom;
+        glyphRanges = ComposeRanges(Loc.Current);
         handles = Build(zoom);
     }
 
@@ -70,6 +72,20 @@ internal sealed class FontService : IDisposable
         var previous = handles;
         zoom = value;
         handles = Build(value);
+        DisposeHandles(previous);
+    }
+
+    public void OnLanguageChanged()
+    {
+        var next = ComposeRanges(Loc.Current);
+        if (RangesEqual(next, glyphRanges))
+        {
+            return;
+        }
+
+        var previous = handles;
+        glyphRanges = next;
+        handles = Build(zoom);
         DisposeHandles(previous);
     }
 
@@ -101,14 +117,14 @@ internal sealed class FontService : IDisposable
             var primary = tk.AddFontFromFile(path, new SafeFontConfig
             {
                 SizePx = pixels,
-                GlyphRanges = GlyphRanges,
+                GlyphRanges = glyphRanges,
                 GlyphExtraSpacing = new Vector2(tracking, 0f),
             });
 
             tk.AddDalamudAssetFont(Dalamud.DalamudAsset.NotoSansCjkRegular, new SafeFontConfig
             {
                 SizePx = pixels,
-                GlyphRanges = GlyphRanges,
+                GlyphRanges = glyphRanges,
                 MergeFont = primary,
             });
         }));
@@ -129,6 +145,40 @@ internal sealed class FontService : IDisposable
         }
 
         return best;
+    }
+
+    private static ushort[] ComposeRanges(LanguageInfo language)
+    {
+        var extra = language.ExtraGlyphRanges;
+        if (extra is null || extra.Length == 0)
+        {
+            var ranges = new ushort[BaseGlyphRanges.Length + 1];
+            Array.Copy(BaseGlyphRanges, ranges, BaseGlyphRanges.Length);
+            return ranges;
+        }
+
+        var combined = new ushort[BaseGlyphRanges.Length + extra.Length + 1];
+        Array.Copy(BaseGlyphRanges, 0, combined, 0, BaseGlyphRanges.Length);
+        Array.Copy(extra, 0, combined, BaseGlyphRanges.Length, extra.Length);
+        return combined;
+    }
+
+    private static bool RangesEqual(ushort[] left, ushort[] right)
+    {
+        if (left.Length != right.Length)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < left.Length; index++)
+        {
+            if (left[index] != right[index])
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void Dispose() => DisposeHandles(handles);

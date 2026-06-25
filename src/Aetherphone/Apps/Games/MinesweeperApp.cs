@@ -1,6 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
 using Aetherphone.Windows;
@@ -37,7 +38,7 @@ internal sealed class MinesweeperApp : IPhoneApp
     };
 
     public string Id => "minesweeper";
-    public string DisplayName => "Sweeper";
+    public string DisplayName => Loc.T(L.Games.Sweeper);
     public string Glyph => "S";
     public Vector4 Accent => Styling.AccentBlue;
     public int BadgeCount => 0;
@@ -96,7 +97,7 @@ internal sealed class MinesweeperApp : IPhoneApp
 
             if (state == MineState.Lost)
             {
-                if (GameCommon.DrawGameOverOverlay(surface, frameTheme, 0, "Boom"))
+                if (GameCommon.DrawGameOverOverlay(surface, frameTheme, 0, Loc.T(L.Games.Boom)))
                 {
                     ResetGame();
                 }
@@ -328,7 +329,7 @@ internal sealed class MinesweeperApp : IPhoneApp
 
     private void DrawStatsBar(Rect surface, float statsY, float scale)
     {
-        GameCommon.DrawScorePill(new Vector2(surface.Center.X - 52f * scale, statsY), "Mines", MineCount - flagCount, frameTheme);
+        GameCommon.DrawScorePill(new Vector2(surface.Center.X - 52f * scale, statsY), Loc.T(L.Games.Mines), MineCount - flagCount, frameTheme);
 
         var resetCenter = new Vector2(surface.Center.X, statsY);
         var resetSize = 32f * scale;
@@ -356,7 +357,7 @@ internal sealed class MinesweeperApp : IPhoneApp
         }
 
         var elapsed = (int)(DateTime.Now - startTime).TotalSeconds;
-        GameCommon.DrawScorePill(new Vector2(surface.Center.X + 52f * scale, statsY), "Time", elapsed, frameTheme);
+        GameCommon.DrawScorePill(new Vector2(surface.Center.X + 52f * scale, statsY), Loc.T(L.Games.Time), elapsed, frameTheme);
     }
 
     private void DrawCell(Rect grid, int column, int row, float scale, float delta)

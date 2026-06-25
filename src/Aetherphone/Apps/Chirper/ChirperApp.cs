@@ -5,6 +5,7 @@ using Aetherphone.Core;
 using Aetherphone.Core.Aethernet;
 using Aetherphone.Core.Aethernet.Contracts;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Lodestone;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
@@ -28,7 +29,7 @@ internal sealed class ChirperApp : IPhoneApp
 
     public string Id => "chirper";
 
-    public string DisplayName => "Chirper";
+    public string DisplayName => Loc.T(L.Apps.Chirper);
 
     public string Glyph => "Ch";
 
@@ -122,7 +123,7 @@ internal sealed class ChirperApp : IPhoneApp
         if (!session.IsSignedIn)
         {
             var prompt = new Rect(new Vector2(area.Min.X, top), area.Max);
-            Typography.DrawCentered(prompt.Center, "Set up your account in Settings", frameTheme.TextMuted);
+            Typography.DrawCentered(prompt.Center, Loc.T(L.Chirper.SetUpAccount), frameTheme.TextMuted);
             return;
         }
 
@@ -139,7 +140,7 @@ internal sealed class ChirperApp : IPhoneApp
         {
             if (snapshot.Length == 0)
             {
-                Typography.DrawCentered(listRect.Center, "No chirps yet — post the first one", frameTheme.TextMuted);
+                Typography.DrawCentered(listRect.Center, Loc.T(L.Chirper.Empty), frameTheme.TextMuted);
             }
             else
             {
@@ -156,7 +157,7 @@ internal sealed class ChirperApp : IPhoneApp
     private void DrawDiscover(Rect area)
     {
         var context = new PhoneContext(area, frameTheme, frameNavigation);
-        AppHeader.Draw(context, "Find People", backToFeed);
+        AppHeader.Draw(context, Loc.T(L.Chirper.FindPeople), backToFeed);
 
         var scale = ImGuiHelpers.GlobalScale;
         var top = area.Min.Y + AppHeader.Height * scale;
@@ -170,7 +171,7 @@ internal sealed class ChirperApp : IPhoneApp
         {
             if (snapshot.Length == 0)
             {
-                Typography.DrawCentered(listRect.Center, searching ? "Searching…" : "Search by name or name@world", frameTheme.TextMuted);
+                Typography.DrawCentered(listRect.Center, searching ? Loc.T(L.Common.Searching) : Loc.T(L.Chirper.SearchByName), frameTheme.TextMuted);
             }
             else
             {
@@ -219,7 +220,7 @@ internal sealed class ChirperApp : IPhoneApp
         {
             using (ImRaii.PushColor(ImGuiCol.Text, theme.TextMuted))
             {
-                ImGui.TextUnformatted(post.Likes == 1 ? "1 like" : $"{post.Likes} likes");
+                ImGui.TextUnformatted(Loc.Plural(L.Chirper.Likes, post.Likes));
             }
         }
 
@@ -249,7 +250,7 @@ internal sealed class ChirperApp : IPhoneApp
         var buttonWidth = 92f * scale;
         var buttonHeight = 28f * scale;
         ImGui.SetCursorScreenPos(new Vector2(origin.X + width - buttonWidth, origin.Y + rowHeight * 0.5f - buttonHeight * 0.5f));
-        var label = user.IsFollowing ? "Following" : "Follow";
+        var label = user.IsFollowing ? Loc.T(L.Chirper.Following) : Loc.T(L.Chirper.Follow);
         var fill = user.IsFollowing ? theme.SurfaceMuted : theme.Accent;
         using (ImRaii.PushColor(ImGuiCol.Button, fill)
             .Push(ImGuiCol.ButtonHovered, Palette.Mix(fill, theme.TextStrong, 0.15f))
@@ -279,7 +280,7 @@ internal sealed class ChirperApp : IPhoneApp
         using (ImRaii.PushColor(ImGuiCol.FrameBg, new Vector4(0f, 0f, 0f, 0f)))
         using (ImRaii.PushColor(ImGuiCol.Text, theme.TextStrong))
         {
-            if (ImGui.InputTextWithHint("##chirperSearch", "Name or Name@World", ref searchDraft, 64, ImGuiInputTextFlags.EnterReturnsTrue))
+            if (ImGui.InputTextWithHint("##chirperSearch", Loc.T(L.Chirper.NameOrWorld), ref searchDraft, 64, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 StartSearch(searchDraft);
             }
@@ -304,7 +305,7 @@ internal sealed class ChirperApp : IPhoneApp
         using (ImRaii.PushColor(ImGuiCol.FrameBg, new Vector4(0f, 0f, 0f, 0f)))
         using (ImRaii.PushColor(ImGuiCol.Text, theme.TextStrong))
         {
-            if (ImGui.InputTextWithHint("##chirperComposer", "Chirp something", ref draft, MaxPostLength, ImGuiInputTextFlags.EnterReturnsTrue))
+            if (ImGui.InputTextWithHint("##chirperComposer", Loc.T(L.Chirper.Compose), ref draft, MaxPostLength, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 submitted = true;
             }
@@ -453,25 +454,25 @@ internal sealed class ChirperApp : IPhoneApp
         var span = DateTime.UtcNow - moment;
         if (span.TotalSeconds < 60)
         {
-            return "now";
+            return Loc.T(L.Time.Now);
         }
 
         if (span.TotalMinutes < 60)
         {
-            return $"{(int)span.TotalMinutes}m";
+            return Loc.T(L.Time.MinutesShort, (int)span.TotalMinutes);
         }
 
         if (span.TotalHours < 24)
         {
-            return $"{(int)span.TotalHours}h";
+            return Loc.T(L.Time.HoursShort, (int)span.TotalHours);
         }
 
         if (span.TotalDays < 7)
         {
-            return $"{(int)span.TotalDays}d";
+            return Loc.T(L.Time.DaysShort, (int)span.TotalDays);
         }
 
-        return moment.ToString("MMM d");
+        return moment.ToString("MMM d", Loc.Culture);
     }
 
     public void Dispose()

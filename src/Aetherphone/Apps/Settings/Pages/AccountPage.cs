@@ -5,6 +5,7 @@ using Aetherphone.Core;
 using Aetherphone.Core.Aethernet;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Game;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows;
 using Aetherphone.Windows.Components;
@@ -18,9 +19,9 @@ internal sealed class AccountPage : ISettingsPage, IDisposable
 {
     private const string LodestoneProfileUrl = "https://na.finalfantasyxiv.com/lodestone/my/setting/profile/";
 
-    public string Title => "Aethernet Account";
+    public string Title => Loc.T(L.Account.Title);
 
-    public string Summary => session.IsSignedIn ? session.CurrentUser?.DisplayName ?? "Signed in" : "Not signed in";
+    public string Summary => session.IsSignedIn ? session.CurrentUser?.DisplayName ?? Loc.T(L.Account.SignedIn) : Loc.T(L.Account.NotSignedIn);
 
     public string Glyph => "@";
 
@@ -74,7 +75,7 @@ internal sealed class AccountPage : ISettingsPage, IDisposable
         {
             using (ImRaii.PushColor(ImGuiCol.Text, theme.TextStrong))
             {
-                ImGui.TextUnformatted(user?.DisplayName ?? "Signed in");
+                ImGui.TextUnformatted(user?.DisplayName ?? Loc.T(L.Account.SignedIn));
             }
         }
 
@@ -83,12 +84,12 @@ internal sealed class AccountPage : ISettingsPage, IDisposable
             using (ImRaii.PushColor(ImGuiCol.Text, theme.TextMuted))
             {
                 ImGui.TextUnformatted($"{user.Name}@{user.World}");
-                ImGui.TextUnformatted($"{user.Followers} followers · {user.Following} following");
+                ImGui.TextUnformatted($"{Loc.Plural(L.Account.Followers, user.Followers)} · {Loc.Plural(L.Account.Following, user.Following)}");
             }
         }
 
         ImGui.Dummy(new Vector2(0f, 12f * ImGuiHelpers.GlobalScale));
-        if (Button("Sign out", theme))
+        if (Button(Loc.T(L.Account.SignOut), theme))
         {
             session.SignOut();
             ResetFlow();
@@ -100,7 +101,7 @@ internal sealed class AccountPage : ISettingsPage, IDisposable
         var player = gameData.LocalPlayer;
         if (player is null)
         {
-            Typography.DrawCentered(new Vector2(ImGui.GetContentRegionAvail().X * 0.5f + ImGui.GetCursorScreenPos().X, ImGui.GetCursorScreenPos().Y + 80f * ImGuiHelpers.GlobalScale), "Log in to your character first", theme.TextMuted);
+            Typography.DrawCentered(new Vector2(ImGui.GetContentRegionAvail().X * 0.5f + ImGui.GetCursorScreenPos().X, ImGui.GetCursorScreenPos().Y + 80f * ImGuiHelpers.GlobalScale), Loc.T(L.Account.LogInFirst), theme.TextMuted);
             return;
         }
 
@@ -110,7 +111,7 @@ internal sealed class AccountPage : ISettingsPage, IDisposable
         ImGui.Dummy(new Vector2(0f, 6f * ImGuiHelpers.GlobalScale));
         using (ImRaii.PushColor(ImGuiCol.Text, theme.TextMuted))
         {
-            ImGui.TextWrapped("Sign in to Aethernet to use Chirper. Ownership is verified through your Lodestone profile — no password.");
+            ImGui.TextWrapped(Loc.T(L.Account.SignInIntro));
         }
 
         ImGui.Dummy(new Vector2(0f, 4f * ImGuiHelpers.GlobalScale));
@@ -123,7 +124,7 @@ internal sealed class AccountPage : ISettingsPage, IDisposable
 
         if (challengeId is null)
         {
-            if (Button("Sign in with Lodestone", theme) && !busy && name.Length > 0 && world.Length > 0)
+            if (Button(Loc.T(L.Account.SignIn), theme) && !busy && name.Length > 0 && world.Length > 0)
             {
                 StartChallenge(name, world);
             }
@@ -148,7 +149,7 @@ internal sealed class AccountPage : ISettingsPage, IDisposable
     {
         using (ImRaii.PushColor(ImGuiCol.Text, theme.TextMuted))
         {
-            ImGui.TextUnformatted("Add this code to your Lodestone profile:");
+            ImGui.TextUnformatted(Loc.T(L.Account.AddCode));
         }
 
         using (Plugin.Fonts.Push(1.6f))
@@ -160,23 +161,23 @@ internal sealed class AccountPage : ISettingsPage, IDisposable
         }
 
         ImGui.Dummy(new Vector2(0f, 6f * ImGuiHelpers.GlobalScale));
-        if (Button("Copy code", theme))
+        if (Button(Loc.T(L.Account.CopyCode), theme))
         {
             ImGui.SetClipboardText(code);
         }
 
-        if (Button("Open Lodestone profile", theme))
+        if (Button(Loc.T(L.Account.OpenProfile), theme))
         {
             UrlActions.OpenInBrowser(LodestoneProfileUrl);
         }
 
         ImGui.Dummy(new Vector2(0f, 6f * ImGuiHelpers.GlobalScale));
-        if (Button("I've added it — Verify", theme) && !busy)
+        if (Button(Loc.T(L.Account.VerifyAdded), theme) && !busy)
         {
             StartVerify();
         }
 
-        if (Button("Cancel", theme))
+        if (Button(Loc.T(L.Common.Cancel), theme))
         {
             ResetFlow();
         }
@@ -185,14 +186,14 @@ internal sealed class AccountPage : ISettingsPage, IDisposable
     private void StartChallenge(string name, string world)
     {
         busy = true;
-        status = "Requesting a code…";
+        status = Loc.T(L.Account.RequestingCode);
         var token = cancellation.Token;
         _ = Task.Run(async () =>
         {
             var response = await client.ChallengeAsync(name, world, token).ConfigureAwait(false);
             if (response is null)
             {
-                status = "Could not reach Aethernet. Is the server running?";
+                status = Loc.T(L.Account.CannotReach);
                 busy = false;
                 return;
             }
@@ -213,14 +214,14 @@ internal sealed class AccountPage : ISettingsPage, IDisposable
         }
 
         busy = true;
-        status = "Verifying via Lodestone…";
+        status = Loc.T(L.Account.Verifying);
         var token = cancellation.Token;
         _ = Task.Run(async () =>
         {
             var auth = await client.VerifyAsync(id, token).ConfigureAwait(false);
             if (auth is null)
             {
-                status = "Code not found on your profile yet. Save it on Lodestone, then Verify again.";
+                status = Loc.T(L.Account.CodeNotFound);
                 busy = false;
                 return;
             }

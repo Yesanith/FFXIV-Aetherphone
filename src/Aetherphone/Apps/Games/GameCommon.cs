@@ -1,5 +1,6 @@
 using System.Numerics;
 using Aetherphone.Core;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows;
 using Aetherphone.Windows.Components;
@@ -160,11 +161,11 @@ internal static class GameCommon
         var scale = ImGuiHelpers.GlobalScale;
         var center = area.Center;
 
-        Typography.DrawCentered(new Vector2(center.X, center.Y - 60f * scale), "Game Over", theme.TextStrong, 1.6f, FontWeight.Bold);
-        Typography.DrawCentered(new Vector2(center.X, center.Y - 30f * scale), $"{scoreLabel}: {score}", theme.TextMuted, 1.1f);
+        Typography.DrawCentered(new Vector2(center.X, center.Y - 60f * scale), Loc.T(L.Games.GameOver), theme.TextStrong, 1.6f, FontWeight.Bold);
+        Typography.DrawCentered(new Vector2(center.X, center.Y - 30f * scale), $"{scoreLabel}: {Label(score)}", theme.TextMuted, 1.1f);
 
         var buttonSize = new Vector2(100f * scale, 36f * scale);
-        return DrawActionButton(new Vector2(center.X, center.Y + 20f * scale), buttonSize, "Play Again", theme);
+        return DrawActionButton(new Vector2(center.X, center.Y + 20f * scale), buttonSize, Loc.T(L.Games.PlayAgain), theme);
     }
 
     public static bool DrawWinOverlay(Rect area, PhoneTheme theme, int attempts, int elapsedSeconds)
@@ -174,14 +175,14 @@ internal static class GameCommon
         var scale = ImGuiHelpers.GlobalScale;
         var center = area.Center;
 
-        Typography.DrawCentered(new Vector2(center.X, center.Y - 70f * scale), "You Win!", theme.Accent, 1.6f, FontWeight.Bold);
+        Typography.DrawCentered(new Vector2(center.X, center.Y - 70f * scale), Loc.T(L.Games.YouWin), theme.Accent, 1.6f, FontWeight.Bold);
 
         var minutes = elapsedSeconds / 60;
         var seconds = elapsedSeconds % 60;
         var timeText = $"{minutes}:{seconds:D2}";
-        Typography.DrawCentered(new Vector2(center.X, center.Y - 38f * scale), $"{attempts} attempts  ·  {timeText}", theme.TextMuted, 1f);
+        Typography.DrawCentered(new Vector2(center.X, center.Y - 38f * scale), $"{Loc.Plural(L.Games.AttemptsCount, attempts)}  ·  {timeText}", theme.TextMuted, 1f);
 
         var buttonSize = new Vector2(100f * scale, 36f * scale);
-        return DrawActionButton(new Vector2(center.X, center.Y + 8f * scale), buttonSize, "Play Again", theme);
+        return DrawActionButton(new Vector2(center.X, center.Y + 8f * scale), buttonSize, Loc.T(L.Games.PlayAgain), theme);
     }
 }

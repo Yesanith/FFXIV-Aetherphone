@@ -1,5 +1,6 @@
 using System.Numerics;
 using Aetherphone.Core;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Market;
 using Aetherphone.Core.Theme;
 using Dalamud.Bindings.ImGui;
@@ -51,7 +52,7 @@ internal static class MarketRowViews
         var topY = row.Min.Y + 9f * scale;
         Typography.Draw(new Vector2(textX, topY), MarketFormat.Clip(alert.ItemName, 18), theme.TextStrong);
         var arrow = alert.Below ? "≤" : "≥";
-        var sub = $"{arrow} {MarketFormat.Gil(alert.Threshold)} · {alert.ScopeName}{(alert.HqOnly ? " · HQ" : string.Empty)}";
+        var sub = $"{arrow} {MarketFormat.Gil(alert.Threshold)} · {alert.ScopeName}{(alert.HqOnly ? $" · {Loc.T(L.Common.Hq)}" : string.Empty)}";
         var subSize = Typography.Measure(sub, 0.82f);
         Typography.Draw(new Vector2(textX, row.Max.Y - 9f * scale - subSize.Y), sub, theme.TextMuted, 0.82f);
 
@@ -158,17 +159,17 @@ internal static class MarketRowViews
         Typography.Draw(new Vector2(row.Min.X, row.Max.Y - 9f * scale - subSize.Y), sub, theme.TextMuted, 0.82f);
     }
 
-    private static readonly Dictionary<(int, string, string), string> SubCache = new();
+    private static readonly Dictionary<(string, int, string, string), string> SubCache = new();
 
     private static string BuildSub(int quantity, string world, string detail)
     {
-        var key = (quantity, world, detail);
+        var key = (Loc.Current.Code, quantity, world, detail);
         if (SubCache.TryGetValue(key, out var cached))
         {
             return cached;
         }
 
-        var result = $"Qty {quantity}";
+        var result = Loc.T(L.Market.Quantity, quantity);
         if (world.Length > 0)
         {
             result += $" · {world}";
@@ -186,14 +187,15 @@ internal static class MarketRowViews
     private static void DrawHqBadge(Vector2 position, float scale)
     {
         var drawList = ImGui.GetWindowDrawList();
-        var size = Typography.Measure("HQ", 0.72f);
+        var hq = Loc.T(L.Common.Hq);
+        var size = Typography.Measure(hq, 0.72f);
         var padX = 5f * scale;
         var padY = 2f * scale;
         var min = new Vector2(position.X, position.Y + 2f * scale);
         var max = new Vector2(min.X + size.X + padX * 2f, min.Y + size.Y + padY * 2f);
         var tint = new Vector4(0.96f, 0.78f, 0.32f, 1f);
         drawList.AddRectFilled(min, max, ImGui.GetColorU32(tint), 4f * scale);
-        Typography.Draw(new Vector2(min.X + padX, min.Y + padY), "HQ", new Vector4(0.1f, 0.08f, 0.02f, 1f), 0.72f);
+        Typography.Draw(new Vector2(min.X + padX, min.Y + padY), hq, new Vector4(0.1f, 0.08f, 0.02f, 1f), 0.72f);
     }
 
     private static void DrawChevronRight(Vector2 tip, float size, float thickness, Vector4 color)

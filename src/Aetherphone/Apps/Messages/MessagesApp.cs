@@ -1,6 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Lodestone;
 using Aetherphone.Core.Messaging;
 using Aetherphone.Core.Theme;
@@ -15,7 +16,7 @@ internal sealed class MessagesApp : IPhoneApp
 {
     public string Id => "messages";
 
-    public string DisplayName => "Messages";
+    public string DisplayName => Loc.T(L.Apps.Messages);
 
     public string Glyph => "M";
 
@@ -102,7 +103,7 @@ internal sealed class MessagesApp : IPhoneApp
         var conversations = store.Conversations;
         if (conversations.Count == 0)
         {
-            Typography.DrawCentered(body.Center, "No messages yet", frameTheme.TextMuted);
+            Typography.DrawCentered(body.Center, Loc.T(L.Messages.Empty), frameTheme.TextMuted);
             return;
         }
 
@@ -182,7 +183,7 @@ internal sealed class MessagesApp : IPhoneApp
         using (ImRaii.PushColor(ImGuiCol.FrameBg, new Vector4(0f, 0f, 0f, 0f)))
         using (ImRaii.PushColor(ImGuiCol.Text, theme.TextStrong))
         {
-            if (ImGui.InputTextWithHint("##composer", "Message", ref draft, 480, ImGuiInputTextFlags.EnterReturnsTrue))
+            if (ImGui.InputTextWithHint("##composer", Loc.T(L.Messages.Placeholder), ref draft, 480, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 submitted = true;
             }

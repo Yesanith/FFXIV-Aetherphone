@@ -1,6 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
 
@@ -8,9 +9,9 @@ namespace Aetherphone.Apps.Settings.Pages;
 
 internal sealed class AppearancePage : ISettingsPage
 {
-    public string Title => "Appearance";
+    public string Title => Loc.T(L.Settings.Appearance);
 
-    public string Summary => configuration.AccentName;
+    public string Summary => CatalogLabels.Accent(configuration.AccentName);
 
     public string Glyph => "A";
 
@@ -30,10 +31,10 @@ internal sealed class AppearancePage : ISettingsPage
         var theme = context.Theme;
         using (AppSurface.Begin(body))
         {
-            SettingsSection.Header("Theme", theme);
+            SettingsSection.Header(Loc.T(L.Settings.Theme), theme);
             var card = GroupCard.Begin(theme, 2);
 
-            var accentIndex = SwatchStrip.Draw(card.NextRow(), "Accent", ThemeCatalog.Accents, ThemeCatalog.IndexOf(ThemeCatalog.Accents, configuration.AccentName), theme);
+            var accentIndex = SwatchStrip.Draw(card.NextRow(), Loc.T(L.Settings.Accent), ThemeCatalog.Accents, ThemeCatalog.IndexOf(ThemeCatalog.Accents, configuration.AccentName), theme);
             var accentName = ThemeCatalog.Accents[accentIndex].Name;
             if (accentName != configuration.AccentName)
             {
@@ -41,7 +42,7 @@ internal sealed class AppearancePage : ISettingsPage
                 ApplyTheme();
             }
 
-            var wallpaperIndex = WallpaperStrip.Draw(card.NextRow(), "Wallpaper", WallpaperCatalog.All, WallpaperCatalog.IndexOf(WallpaperCatalog.Resolve(configuration.WallpaperName)), theme);
+            var wallpaperIndex = WallpaperStrip.Draw(card.NextRow(), Loc.T(L.Settings.Wallpaper), WallpaperCatalog.All, WallpaperCatalog.IndexOf(WallpaperCatalog.Resolve(configuration.WallpaperName)), theme);
             var wallpaperName = WallpaperCatalog.All[wallpaperIndex].ToString();
             if (wallpaperName != configuration.WallpaperName)
             {
@@ -51,7 +52,7 @@ internal sealed class AppearancePage : ISettingsPage
 
             card.End();
 
-            SettingsSection.Header("Text Size", theme);
+            SettingsSection.Header(Loc.T(L.Settings.TextSize), theme);
             var zoomCard = GroupCard.Begin(theme, 1);
             var zoomIndex = SegmentStrip.Draw(zoomCard.NextRow(), TextZoomCatalog.Labels, TextZoomCatalog.IndexOf(configuration.TextZoom), theme);
             zoomCard.End();

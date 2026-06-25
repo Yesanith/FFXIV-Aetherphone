@@ -1,6 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
 using Aetherphone.Windows;
@@ -51,7 +52,7 @@ internal sealed class Match3App : IPhoneApp
     private static readonly string[] GemSymbols = { "\u2605", "\u25C6", "\u25CF", "\u25B2", "\u25A0", "\u2665" };
 
     public string Id => "match3";
-    public string DisplayName => "Gem Swap";
+    public string DisplayName => Loc.T(L.Games.GemSwap);
     public string Glyph => "G";
     public Vector4 Accent => new(0.70f, 0.40f, 0.95f, 1f);
     public int BadgeCount => 0;
@@ -92,7 +93,7 @@ internal sealed class Match3App : IPhoneApp
             Tick(dt);
 
             var sy = body.Min.Y + 24f * sc;
-            GameCommon.DrawScorePill(new Vector2(area.Center.X, sy), "Score", score, th);
+            GameCommon.DrawScorePill(new Vector2(area.Center.X, sy), Loc.T(L.Games.Score), score, th);
 
             var gt = sy + 42f * sc;
             if (chain > 1)

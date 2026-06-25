@@ -1,6 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
 using Aetherphone.Windows;
@@ -37,7 +38,7 @@ internal sealed class MemoryMatchApp : IPhoneApp
     private const float ShakeDuration = 0.35f;
 
     public string Id => "memory";
-    public string DisplayName => "Pairs";
+    public string DisplayName => Loc.T(L.Games.Pairs);
     public string Glyph => "P";
     public Vector4 Accent => Styling.AccentAmber;
     public int BadgeCount => 0;
@@ -85,8 +86,8 @@ internal sealed class MemoryMatchApp : IPhoneApp
 
             var statsY = body.Min.Y + 30f * scale;
             var statsSpacing = 90f * scale;
-            GameCommon.DrawScorePill(new Vector2(surface.Center.X - statsSpacing * 0.5f, statsY), "Attempts", attempts, frameTheme);
-            GameCommon.DrawScorePill(new Vector2(surface.Center.X + statsSpacing * 0.5f, statsY), "Time", elapsed, frameTheme);
+            GameCommon.DrawScorePill(new Vector2(surface.Center.X - statsSpacing * 0.5f, statsY), Loc.T(L.Games.Attempts), attempts, frameTheme);
+            GameCommon.DrawScorePill(new Vector2(surface.Center.X + statsSpacing * 0.5f, statsY), Loc.T(L.Games.Time), elapsed, frameTheme);
 
             var gridTop = statsY + 36f * scale;
             var gridArea = new Rect(new Vector2(surface.Min.X, gridTop), surface.Max);

@@ -2,6 +2,7 @@ using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Game;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
 using Dalamud.Interface.Utility;
@@ -14,7 +15,7 @@ internal sealed class ClockApp : IPhoneApp
 
     public string Id => "clock";
 
-    public string DisplayName => "Clock";
+    public string DisplayName => Loc.T(L.Apps.Clock);
 
     public string Glyph => "T";
 
@@ -46,9 +47,9 @@ internal sealed class ClockApp : IPhoneApp
         using (AppSurface.Begin(body))
         {
             var card = GroupCard.Begin(theme, 3, 92f);
-            DrawRow(card.NextRow(), theme, "Local", LocalOffsetLabel(), local.ToString("HH:mm"), local.Hour, local.Minute, local.Second + local.Millisecond / 1000f);
-            DrawRow(card.NextRow(), theme, "Eorzea", "In-game", EorzeaTime.Now().Formatted, (float)Math.Floor(eorzea / 3600 % 24), (float)Math.Floor(eorzea / 60 % 60), (float)(eorzea % 60));
-            DrawRow(card.NextRow(), theme, "Server", "UTC", utc.ToString("HH:mm"), utc.Hour, utc.Minute, utc.Second + utc.Millisecond / 1000f);
+            DrawRow(card.NextRow(), theme, Loc.T(L.Clock.Local), LocalOffsetLabel(), local.ToString("HH:mm"), local.Hour, local.Minute, local.Second + local.Millisecond / 1000f);
+            DrawRow(card.NextRow(), theme, "Eorzea", Loc.T(L.Clock.InGame), EorzeaTime.Now().Formatted, (float)Math.Floor(eorzea / 3600 % 24), (float)Math.Floor(eorzea / 60 % 60), (float)(eorzea % 60));
+            DrawRow(card.NextRow(), theme, Loc.T(L.Clock.Server), "UTC", utc.ToString("HH:mm"), utc.Hour, utc.Minute, utc.Second + utc.Millisecond / 1000f);
             card.End();
         }
     }

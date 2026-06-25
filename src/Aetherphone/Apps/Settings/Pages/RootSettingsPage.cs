@@ -1,6 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Windows.Components;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
@@ -9,7 +10,7 @@ namespace Aetherphone.Apps.Settings.Pages;
 
 internal sealed class RootSettingsPage : ISettingsPage
 {
-    public string Title => "Settings";
+    public string Title => Loc.T(L.Settings.Title);
 
     public string Summary => string.Empty;
 

@@ -1,7 +1,9 @@
+using System.IO;
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Device;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Notifications;
 using Aetherphone.Core.Shell;
 using Aetherphone.Core.Theme;
@@ -50,7 +52,9 @@ public sealed class Plugin : IDalamudPlugin
     {
         Instance = this;
         Cfg = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+        InitializeLocalization();
         Fonts = new FontService(PluginInterface, Cfg.TextZoom);
+        Loc.LanguageChanged += Fonts.OnLanguageChanged;
         Wallpapers = new WallpaperTextureCache(TextureProvider);
         Device = new DeviceStatus(ClientState, ObjectTable, DataManager);
 
@@ -71,11 +75,11 @@ public sealed class Plugin : IDalamudPlugin
 
         CommandManager.AddHandler(AepConstants.PrimaryCommand, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Toggle the Aetherphone. /phone market [item] opens the market board, /phone about opens credits & links, /phone test sends a sample notification."
+            HelpMessage = Loc.T(L.Plugin.CommandHelp)
         });
         CommandManager.AddHandler(AepConstants.AliasCommand, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Alias for /phone."
+            HelpMessage = Loc.T(L.Plugin.CommandHelpAlias)
         });
 
         PluginInterface.UiBuilder.Draw += windowSystem.Draw;
@@ -87,6 +91,7 @@ public sealed class Plugin : IDalamudPlugin
         PluginInterface.UiBuilder.Draw -= windowSystem.Draw;
         PluginInterface.UiBuilder.OpenMainUi -= phoneWindow.Toggle;
 
+        Loc.LanguageChanged -= Fonts.OnLanguageChanged;
         services.Notifications.Changed -= UpdateDtrBadge;
         ContextMenu.OnMenuOpened -= OnMenuOpened;
         dtrEntry.Remove();
@@ -102,10 +107,32 @@ public sealed class Plugin : IDalamudPlugin
         CommandManager.RemoveHandler(AepConstants.AliasCommand);
     }
 
+    private static void InitializeLocalization()
+    {
+        var directory = Path.Combine(PluginInterface.AssemblyLocation.DirectoryName ?? string.Empty, "Localization");
+        if (string.IsNullOrEmpty(Cfg.Language))
+        {
+            Cfg.Language = DetectLanguage();
+            Cfg.Save();
+        }
+
+        Loc.Initialize(Cfg.Language, directory);
+    }
+
+    private static string DetectLanguage()
+    {
+        return ClientState.ClientLanguage switch
+        {
+            Dalamud.Game.ClientLanguage.German => "de",
+            Dalamud.Game.ClientLanguage.French => "fr",
+            _ => "en",
+        };
+    }
+
     private void UpdateDtrBadge()
     {
         var unread = services.Notifications.UnreadCount;
-        dtrEntry.Text = unread > 0 ? $"Phone {unread}" : "Phone";
+        dtrEntry.Text = unread > 0 ? Loc.T(L.Plugin.DtrBadge, unread) : Loc.T(L.Plugin.Dtr);
     }
 
     private void OnCommand(string command, string arguments)
@@ -146,7 +173,7 @@ public sealed class Plugin : IDalamudPlugin
 
         args.AddMenuItem(new MenuItem
         {
-            Name = "Search the Market",
+            Name = Loc.T(L.Plugin.SearchTheMarket),
             OnClicked = _ => OpenMarketAt(itemId),
         });
     }

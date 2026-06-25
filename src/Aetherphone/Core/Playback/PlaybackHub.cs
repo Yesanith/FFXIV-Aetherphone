@@ -1,3 +1,4 @@
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Radio;
 using Aetherphone.Core.Songs;
 
@@ -93,9 +94,9 @@ internal sealed class PlaybackHub
     {
         return songs.State switch
         {
-            SongPlaybackState.Resolving => "Loading…",
-            SongPlaybackState.Buffering => "Buffering…",
-            SongPlaybackState.Failed => "Playback failed",
+            SongPlaybackState.Resolving => Loc.T(L.Common.Loading),
+            SongPlaybackState.Buffering => Loc.T(L.Music.Buffering),
+            SongPlaybackState.Failed => Loc.T(L.Music.PlaybackFailed),
             _ => songs.CurrentAuthor,
         };
     }
@@ -104,9 +105,9 @@ internal sealed class PlaybackHub
     {
         return state switch
         {
-            RadioPlaybackState.Buffering => "Buffering…",
-            RadioPlaybackState.Playing => "Now playing",
-            RadioPlaybackState.Failed => "Connection lost",
+            RadioPlaybackState.Buffering => Loc.T(L.Music.Buffering),
+            RadioPlaybackState.Playing => Loc.T(L.Music.NowPlayingState),
+            RadioPlaybackState.Failed => Loc.T(L.Music.ConnectionLost),
             _ => string.Empty,
         };
     }

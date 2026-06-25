@@ -1,3 +1,4 @@
+using Aetherphone.Core.Localization;
 using Aetherphone.Windows.Components;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
@@ -41,62 +42,10 @@ public sealed class AboutWindow : Window, IDisposable
 
     private static readonly FactCategory[] Categories =
     {
-        new(FontAwesomeIcon.Heart, "A little reminder", Styling.AccentRose, new[]
-        {
-            "Been at it a while? Roll your shoulders and take one slow breath.",
-            "Hydration check. When did you last drink some water?",
-            "Blink a few times and let your eyes rest for a moment.",
-            "Stand up, stretch, and shake out your hands. Future you says thanks.",
-            "Sit up and settle in comfortably. Your back will thank you later.",
-            "Remember to eat something today. You matter more than any score.",
-            "Eyes feel tired? Look at something far away for twenty seconds.",
-            "Whatever you're chasing, you're allowed to take a break whenever.",
-            "You're doing great. Be a little kinder to yourself today.",
-            "A glass of water and a quick stretch can reset a long session.",
-            "Unclench your jaw and drop your shoulders. There you go.",
-            "Rest is part of the journey too. Step away whenever you need to.",
-        }),
-        new(FontAwesomeIcon.Lightbulb, "Did you know?", Styling.AccentAmberSoft, new[]
-        {
-            "Honey never spoils. Jars over 3,000 years old have been found still edible.",
-            "Octopuses have three hearts and blue blood.",
-            "A day on Venus is longer than a whole year on Venus.",
-            "Bananas are berries, but strawberries aren't.",
-            "There are more possible chess games than atoms in the observable universe.",
-            "Sharks have been around longer than trees have.",
-            "A group of flamingos is called a flamboyance.",
-            "Honeybees can recognize individual human faces.",
-            "Wombat droppings are cube shaped.",
-            "The Eiffel Tower can grow over 15 cm taller on a hot day.",
-            "Hot water can sometimes freeze faster than cold water.",
-            "A bolt of lightning is roughly five times hotter than the surface of the Sun.",
-        }),
-        new(FontAwesomeIcon.Star, "Words to live by", Styling.AccentMintSoft, new[]
-        {
-            "Done is better than perfect. You can always polish later.",
-            "Small steps every day add up to surprising distances.",
-            "Comparison is the thief of joy. Run your own race.",
-            "Progress, not perfection.",
-            "You don't have to be great to start, but you have to start to be great.",
-            "Be patient with yourself. Growth takes time.",
-            "The best time to begin was yesterday. The second best is right now.",
-            "Celebrate the small wins. They count too.",
-            "Slow progress is still progress.",
-            "Your only real competition is who you were yesterday.",
-        }),
-        new(FontAwesomeIcon.GrinBeam, "Just for fun", Styling.AccentBlueSoft, new[]
-        {
-            "Why don't scientists trust atoms? Because they make up everything.",
-            "I would tell you a chemistry joke, but I know I wouldn't get a reaction.",
-            "Why did the scarecrow win an award? He was outstanding in his field.",
-            "I'm reading a book about anti-gravity. It's impossible to put down.",
-            "Why don't skeletons fight each other? They don't have the guts.",
-            "What do you call fake spaghetti? An impasta.",
-            "Why did the bicycle fall over? It was two tired.",
-            "What do you call cheese that isn't yours? Nacho cheese.",
-            "I'm on a seafood diet. I see food, and I eat it.",
-            "I only know 25 letters of the alphabet. I don't know y.",
-        }),
+        new(FontAwesomeIcon.Heart, L.About.ReminderHeader, Styling.AccentRose, L.About.Reminders),
+        new(FontAwesomeIcon.Lightbulb, L.About.FactHeader, Styling.AccentAmberSoft, L.About.Facts),
+        new(FontAwesomeIcon.Star, L.About.QuoteHeader, Styling.AccentMintSoft, L.About.Quotes),
+        new(FontAwesomeIcon.GrinBeam, L.About.FunHeader, Styling.AccentBlueSoft, L.About.Fun),
     };
 
     private static readonly Dictionary<string, float> pillHover = new();
@@ -143,7 +92,7 @@ public sealed class AboutWindow : Window, IDisposable
         });
         RevealSection(2, () =>
         {
-            SectionHeader(FontAwesomeIcon.Link, "Connect", Styling.AccentBlue);
+            SectionHeader(FontAwesomeIcon.Link, Loc.T(L.About.Connect), Styling.AccentBlue);
             Styling.VSpace(6);
             DrawConnect();
             Styling.VSpace(16);
@@ -295,15 +244,15 @@ public sealed class AboutWindow : Window, IDisposable
                 ImGui.TextUnformatted(cat.Icon.ToIconString());
             ImGui.SameLine(0, 6f * s);
             using (ImRaii.PushColor(ImGuiCol.Text, cat.Color))
-                ImGui.TextUnformatted(cat.Header);
+                ImGui.TextUnformatted(Loc.T(cat.Header));
             ImGui.Spacing();
             using (ImRaii.PushColor(ImGuiCol.Text, Styling.TextSecondary))
-                ImGui.TextUnformatted(line);
+                ImGui.TextUnformatted(Loc.T(line));
             ImGui.PopTextWrapPos();
         }
     }
 
-    private readonly record struct FactCategory(FontAwesomeIcon Icon, string Header, Vector4 Color, string[] Lines);
+    private readonly record struct FactCategory(FontAwesomeIcon Icon, LocString Header, Vector4 Color, LocString[] Lines);
 
     private static int NextLineInCategory(int cat)
     {
@@ -344,8 +293,8 @@ public sealed class AboutWindow : Window, IDisposable
         var pulse = Styling.Pulse(Styling.PulseBreath);
         var accent = Styling.PulseColor(Styling.AccentPink, Styling.AccentViolet, 5200.0);
 
-        const string title = "Made with care";
-        const string body = "I build and maintain this in my spare time. If it has helped you, a sponsorship lets me keep improving it. No pressure, and thank you for being here.";
+        var title = Loc.T(L.About.MadeWithCare);
+        var body = Loc.T(L.About.SupportBody);
 
         var slotOrigin = ImGui.GetCursorScreenPos();
         var fullAvail = ImGui.GetContentRegionAvail().X;
@@ -438,7 +387,7 @@ public sealed class AboutWindow : Window, IDisposable
         dl.AddRect(origin, end, ImGui.GetColorU32(new Vector4(1f, 1f, 1f, hover ? 0.42f : 0.18f)),
             rounding, ImDrawFlags.None, 1f);
 
-        const string label = "Become a Sponsor";
+        var label = Loc.T(L.About.BecomeSponsor);
         var iconStr = FontAwesomeIcon.HandHoldingHeart.ToIconString();
         Vector2 iconSize;
         using (ImRaii.PushFont(UiBuilder.IconFont))
@@ -469,7 +418,7 @@ public sealed class AboutWindow : Window, IDisposable
         if (!hover) return;
         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
         using (ImRaii.Tooltip())
-            ImGui.TextUnformatted("Open GitHub Sponsors · right-click to copy");
+            ImGui.TextUnformatted(Loc.T(L.About.SponsorTooltip));
         if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) OpenUrl(SponsorUrl);
         else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) ImGui.SetClipboardText(SponsorUrl);
     }
@@ -510,7 +459,7 @@ public sealed class AboutWindow : Window, IDisposable
 
         var widths = new float[Links.Length];
         for (var i = 0; i < Links.Length; i++)
-            widths[i] = PillWidth(Links[i].Icon, Links[i].Label);
+            widths[i] = PillWidth(Links[i].Icon, LinkLabel(Links[i].Label));
 
         var rows = new List<List<int>>();
         var cur = new List<int>();
@@ -540,10 +489,19 @@ public sealed class AboutWindow : Window, IDisposable
                 if (j == 0) ImGui.SetCursorPosX(startX);
                 else ImGui.SameLine(0, gap);
                 var (icon, label, url, accentId) = Links[row[j]];
-                LinkPill(icon, label, url, accents[accentId % accents.Length], new Vector2(widths[row[j]], pillH));
+                LinkPill(icon, LinkLabel(label), url, accents[accentId % accents.Length], new Vector2(widths[row[j]], pillH));
             }
         }
     }
+
+    private static string LinkLabel(string identifier) => identifier switch
+    {
+        "Discussions" => Loc.T(L.About.LinkDiscussions),
+        "Report a bug" => Loc.T(L.About.LinkReportBug),
+        "More plugins" => Loc.T(L.About.LinkMorePlugins),
+        "Security" => Loc.T(L.About.LinkSecurity),
+        _ => identifier,
+    };
 
     private static float PillWidth(FontAwesomeIcon icon, string label)
     {
@@ -610,7 +568,7 @@ public sealed class AboutWindow : Window, IDisposable
         if (!hovered) return;
         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
         using (ImRaii.Tooltip())
-            ImGui.TextUnformatted("Click to open · right-click to copy");
+            ImGui.TextUnformatted(Loc.T(L.About.LinkTooltip));
         if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) OpenUrl(url);
         else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) ImGui.SetClipboardText(url);
     }
@@ -621,7 +579,7 @@ public sealed class AboutWindow : Window, IDisposable
         HairlineRule();
         Styling.VSpace(5);
 
-        var madeBy = $"Made by {Author}";
+        var madeBy = Loc.T(L.About.MadeBy, Author);
         var glyph = FontAwesomeIcon.Code.ToIconString();
         var twinkle = Styling.Pulse(2600.0);
         Vector2 glyphSize;

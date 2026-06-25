@@ -1,22 +1,24 @@
 using System.Collections.Concurrent;
-using System.Globalization;
+using Aetherphone.Core.Localization;
 
 namespace Aetherphone.Core.Market;
 
 internal static class MarketFormat
 {
-    private static readonly ConcurrentDictionary<long, string> GilCache = new();
+    private static readonly ConcurrentDictionary<(string, long), string> GilCache = new();
     private static readonly ConcurrentDictionary<(string, int), string> ClipCache = new();
 
     public static string Gil(long amount)
     {
-        if (GilCache.TryGetValue(amount, out var cached))
+        var culture = Loc.Culture;
+        var key = (culture.Name, amount);
+        if (GilCache.TryGetValue(key, out var cached))
         {
             return cached;
         }
 
-        var formatted = amount.ToString("N0", CultureInfo.InvariantCulture);
-        GilCache.TryAdd(amount, formatted);
+        var formatted = amount.ToString("N0", culture);
+        GilCache.TryAdd(key, formatted);
         return formatted;
     }
 
@@ -48,20 +50,20 @@ internal static class MarketFormat
 
         if (delta.TotalSeconds < 60)
         {
-            return "just now";
+            return Loc.T(L.Time.JustNow);
         }
 
         if (delta.TotalMinutes < 60)
         {
-            return $"{(int)delta.TotalMinutes}m ago";
+            return Loc.T(L.Time.MinutesAgo, (int)delta.TotalMinutes);
         }
 
         if (delta.TotalHours < 24)
         {
-            return $"{(int)delta.TotalHours}h ago";
+            return Loc.T(L.Time.HoursAgo, (int)delta.TotalHours);
         }
 
-        return $"{(int)delta.TotalDays}d ago";
+        return Loc.T(L.Time.DaysAgo, (int)delta.TotalDays);
     }
 
     public static string Velocity(double perDay)
@@ -73,10 +75,10 @@ internal static class MarketFormat
 
         if (perDay < 10)
         {
-            return perDay.ToString("0.0", CultureInfo.InvariantCulture) + "/day";
+            return Loc.T(L.Market.PerDay, perDay.ToString("0.0", Loc.Culture));
         }
 
-        return Gil(perDay) + "/day";
+        return Loc.T(L.Market.PerDay, Gil(perDay));
     }
 
     public static string Clip(string value, int maxLength)

@@ -3,6 +3,7 @@ using Aetherphone.Core;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Contacts;
 using Aetherphone.Core.Game;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Lodestone;
 using Aetherphone.Core.Messaging;
 using Aetherphone.Core.Theme;
@@ -23,7 +24,7 @@ internal sealed class ContactsApp : IPhoneApp
 
     public string Id => "contacts";
 
-    public string DisplayName => "Contacts";
+    public string DisplayName => Loc.T(L.Apps.Contacts);
 
     public string Glyph => "C";
 
@@ -141,14 +142,14 @@ internal sealed class ContactsApp : IPhoneApp
 
         if (friends.Count == 0)
         {
-            Typography.DrawCentered(body.Center, "Open your in-game friend list once", frameTheme.TextMuted);
+            Typography.DrawCentered(body.Center, Loc.T(L.Contacts.Empty), frameTheme.TextMuted);
             return;
         }
 
         using (AppSurface.Begin(body))
         {
-            DrawSection("Online", true);
-            DrawSection("Offline", false);
+            DrawSection(Loc.T(L.Contacts.Online), true);
+            DrawSection(Loc.T(L.Contacts.Offline), false);
         }
     }
 
@@ -189,7 +190,7 @@ internal sealed class ContactsApp : IPhoneApp
     private void DrawDetail(Rect area, FriendEntry friend)
     {
         var context = new PhoneContext(area, frameTheme, frameNavigation);
-        AppHeader.Draw(context, "Contact", backToList);
+        AppHeader.Draw(context, Loc.T(L.Contacts.Detail), backToList);
 
         var scale = ImGuiHelpers.GlobalScale;
         var theme = frameTheme;
@@ -205,28 +206,28 @@ internal sealed class ContactsApp : IPhoneApp
 
             var card = GroupCard.Begin(theme, rowCount);
 
-            if (SettingsRow.Link(card.NextRow(), "M", new Vector4(0.30f, 0.78f, 0.42f, 1f), "Message", string.Empty, theme))
+            if (SettingsRow.Link(card.NextRow(), "M", new Vector4(0.30f, 0.78f, 0.42f, 1f), Loc.T(L.Contacts.Message), string.Empty, theme))
             {
                 launcher.Request(friend.Name, SendTarget(friend));
                 frameNavigation.Open("messages");
             }
 
-            if (SettingsRow.Link(card.NextRow(), "P", new Vector4(0.45f, 0.55f, 0.95f, 1f), "Adventurer Plate", string.Empty, theme))
+            if (SettingsRow.Link(card.NextRow(), "P", new Vector4(0.45f, 0.55f, 0.95f, 1f), Loc.T(L.Contacts.AdventurerPlate), string.Empty, theme))
             {
                 FriendActions.OpenAdventurerPlate(friend.ContentId);
             }
 
-            if (SettingsRow.Link(card.NextRow(), "i", new Vector4(0.40f, 0.42f, 0.50f, 1f), "Search Info", string.Empty, theme))
+            if (SettingsRow.Link(card.NextRow(), "i", new Vector4(0.40f, 0.42f, 0.50f, 1f), Loc.T(L.Contacts.SearchInfo), string.Empty, theme))
             {
                 FriendActions.OpenSearchInfo(friend.ContentId);
             }
 
-            if (canInvite && SettingsRow.Link(card.NextRow(), "+", theme.Accent, "Invite to Party", string.Empty, theme))
+            if (canInvite && SettingsRow.Link(card.NextRow(), "+", theme.Accent, Loc.T(L.Contacts.InviteToParty), string.Empty, theme))
             {
                 FriendActions.InviteToParty(friend.ContentId, friend.CurrentWorldId);
             }
 
-            if (canVisit && SettingsRow.Link(card.NextRow(), "H", new Vector4(0.96f, 0.65f, 0.20f, 1f), "Visit Estate", string.Empty, theme))
+            if (canVisit && SettingsRow.Link(card.NextRow(), "H", new Vector4(0.96f, 0.65f, 0.20f, 1f), Loc.T(L.Contacts.VisitEstate), string.Empty, theme))
             {
                 FriendActions.VisitEstate(friend.ContentId);
             }
@@ -249,9 +250,10 @@ internal sealed class ContactsApp : IPhoneApp
 
         Typography.DrawCentered(new Vector2(centerX, avatarCenter.Y + avatarRadius + 18f * scale), friend.Name, theme.TextStrong, 1.3f, FontWeight.Bold);
 
+        var statusWord = friend.Online ? Loc.T(L.Contacts.Online) : Loc.T(L.Contacts.Offline);
         var status = friend.Online
-            ? (friend.JobName.Length > 0 ? $"{friend.WorldName} · {friend.JobName} · Online" : $"{friend.WorldName} · Online")
-            : $"{friend.WorldName} · Offline";
+            ? (friend.JobName.Length > 0 ? $"{friend.WorldName} · {friend.JobName} · {statusWord}" : $"{friend.WorldName} · {statusWord}")
+            : $"{friend.WorldName} · {statusWord}";
         Typography.DrawCentered(new Vector2(centerX, avatarCenter.Y + avatarRadius + 42f * scale), status, theme.TextMuted, 0.9f);
 
         var bottomPadding = 62f * scale;

@@ -2,6 +2,7 @@ using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Game;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows;
 using Aetherphone.Windows.Components;
@@ -18,7 +19,7 @@ internal sealed class SkywatcherApp : IPhoneApp
 
     public string Id => "skywatcher";
 
-    public string DisplayName => "Skywatcher";
+    public string DisplayName => Loc.T(L.Apps.Skywatcher);
 
     public string Glyph => "W";
 
@@ -91,9 +92,9 @@ internal sealed class SkywatcherApp : IPhoneApp
 
             var width = ImGui.GetContentRegionAvail().X;
             DrawHero(width, screen, palette, kind, isDay, scale);
-            SectionLabel("Next Few Hours", palette.InkSoft, scale);
+            SectionLabel(Loc.T(L.Skywatcher.NextFewHours), palette.InkSoft, scale);
             DrawHourly(screen, palette, scale);
-            SectionLabel("Forecast", palette.InkSoft, scale);
+            SectionLabel(Loc.T(L.Skywatcher.Forecast), palette.InkSoft, scale);
             DrawForecastList(screen, palette, scale);
             ImGui.Dummy(new Vector2(0f, 8f * scale));
         }
@@ -181,7 +182,7 @@ internal sealed class SkywatcherApp : IPhoneApp
                 drawList.AddLine(new Vector2(inner.Min.X + 12f * scale, rowTop), new Vector2(inner.Max.X - 10f * scale, rowTop), ImGui.GetColorU32(palette.Ink with { W = 0.10f }), 1f);
             }
 
-            var label = window.IsCurrent ? "Now" : BellLabel(window);
+            var label = window.IsCurrent ? Loc.T(L.Skywatcher.Now) : BellLabel(window);
             var labelSize = Typography.Measure(label);
             Typography.Draw(new Vector2(inner.Min.X + 12f * scale, rowCenterY - labelSize.Y * 0.5f), label, window.IsCurrent ? palette.Ink : palette.InkSoft);
 
@@ -212,7 +213,7 @@ internal sealed class SkywatcherApp : IPhoneApp
 
         var center = screen.Center;
         WeatherGlyph.Draw(WeatherKind.Clouds, center - new Vector2(0f, 28f * scale), 46f * scale, palette, false, SampleSky(palette, screen, center.Y - 28f * scale));
-        Typography.DrawCentered(new Vector2(center.X, center.Y + 48f * scale), "No weather data here", palette.InkSoft, 1.0f);
+        Typography.DrawCentered(new Vector2(center.X, center.Y + 48f * scale), Loc.T(L.Skywatcher.NoData), palette.InkSoft, 1.0f);
     }
 
     private static void SectionLabel(string title, Vector4 ink, float scale)
@@ -269,7 +270,7 @@ internal sealed class SkywatcherApp : IPhoneApp
     {
         if (forecast.Count < 2)
         {
-            return forecast.Count == 1 ? $"{forecast[0].Weather} continuing" : string.Empty;
+            return forecast.Count == 1 ? Loc.T(L.Skywatcher.Continuing, forecast[0].Weather) : string.Empty;
         }
 
         var current = forecast[0].Weather;
@@ -281,7 +282,7 @@ internal sealed class SkywatcherApp : IPhoneApp
             }
         }
 
-        return $"{current} for the next few hours";
+        return Loc.T(L.Skywatcher.ForNextHours, current);
     }
 
     private static Vector4 SampleSky(in SkyPalette palette, Rect screen, float y)
@@ -309,32 +310,32 @@ internal sealed class SkywatcherApp : IPhoneApp
     {
         if (window.IsCurrent || window.MinutesFromNow <= 0)
         {
-            return "Now";
+            return Loc.T(L.Skywatcher.Now);
         }
 
         if (window.MinutesFromNow < 60)
         {
-            return $"{window.MinutesFromNow}m";
+            return Loc.T(L.Time.MinutesShort, window.MinutesFromNow);
         }
 
-        return $"{window.MinutesFromNow / 60}h";
+        return Loc.T(L.Time.HoursShort, window.MinutesFromNow / 60);
     }
 
     private static string LongWhen(WeatherWindow window)
     {
         if (window.IsCurrent || window.MinutesFromNow <= 0)
         {
-            return "now";
+            return Loc.T(L.Time.Now);
         }
 
         if (window.MinutesFromNow < 60)
         {
-            return $"in {window.MinutesFromNow}m";
+            return Loc.T(L.Time.InMinutes, window.MinutesFromNow);
         }
 
         var hours = window.MinutesFromNow / 60;
         var minutes = window.MinutesFromNow % 60;
-        return minutes == 0 ? $"in {hours}h" : $"in {hours}h {minutes}m";
+        return minutes == 0 ? Loc.T(L.Time.InHours, hours) : Loc.T(L.Time.InHoursMinutes, hours, minutes);
     }
 
     public void Dispose()

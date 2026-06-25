@@ -1,4 +1,5 @@
 using System.Numerics;
+using Aetherphone.Core.Localization;
 using Aetherphone.Windows.Components;
 using Dalamud.Interface.Utility;
 
@@ -37,7 +38,7 @@ internal sealed class PlaceholderApp : IPhoneApp
         var scale = ImGuiHelpers.GlobalScale;
         var center = context.Content.Center;
         Typography.DrawCentered(center - new Vector2(0f, 14f * scale), DisplayName, context.Theme.TextStrong, 1.4f);
-        Typography.DrawCentered(center + new Vector2(0f, 14f * scale), "Coming soon", context.Theme.TextMuted);
+        Typography.DrawCentered(center + new Vector2(0f, 14f * scale), Loc.T(L.Common.ComingSoon), context.Theme.TextMuted);
     }
 
     public void Dispose()

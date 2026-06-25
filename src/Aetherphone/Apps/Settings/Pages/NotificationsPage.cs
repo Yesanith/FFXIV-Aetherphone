@@ -1,15 +1,16 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Windows.Components;
 
 namespace Aetherphone.Apps.Settings.Pages;
 
 internal sealed class NotificationsPage : ISettingsPage
 {
-    public string Title => "Notifications";
+    public string Title => Loc.T(L.Settings.Notifications);
 
-    public string Summary => configuration.DoNotDisturb ? "Do Not Disturb" : string.Empty;
+    public string Summary => configuration.DoNotDisturb ? Loc.T(L.Settings.DoNotDisturb) : string.Empty;
 
     public string Glyph => "N";
 
@@ -27,9 +28,9 @@ internal sealed class NotificationsPage : ISettingsPage
         var theme = context.Theme;
         using (AppSurface.Begin(body))
         {
-            SettingsSection.Header("Alerts", theme);
+            SettingsSection.Header(Loc.T(L.Common.Alerts), theme);
             var card = GroupCard.Begin(theme, 1);
-            var doNotDisturb = SettingsRow.Bool(card.NextRow(), "Do Not Disturb", configuration.DoNotDisturb, theme);
+            var doNotDisturb = SettingsRow.Bool(card.NextRow(), Loc.T(L.Settings.DoNotDisturb), configuration.DoNotDisturb, theme);
             card.End();
 
             if (doNotDisturb != configuration.DoNotDisturb)

@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Notifications;
 
 namespace Aetherphone.Core.Market;
@@ -189,9 +190,9 @@ internal sealed class MarketAlertService : IDisposable
 
     private void Present(MarketAlert alert, long price)
     {
-        var title = alert.HqOnly ? $"{alert.ItemName} (HQ)" : alert.ItemName;
+        var title = alert.HqOnly ? $"{alert.ItemName} ({Loc.T(L.Common.Hq)})" : alert.ItemName;
         var arrow = alert.Below ? "≤" : "≥";
-        var body = $"{arrow} {MarketFormat.Gil(alert.Threshold)} — now {MarketFormat.Gil(price)} on {alert.ScopeName}";
+        var body = Loc.T(L.Market.AlertBody, arrow, MarketFormat.Gil(alert.Threshold), MarketFormat.Gil(price), alert.ScopeName);
         notifications.Notify(new PhoneNotification("market", title, body, DateTime.Now, Accent));
     }
 

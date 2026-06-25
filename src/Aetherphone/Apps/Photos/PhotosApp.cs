@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Photos;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
@@ -21,7 +22,7 @@ internal sealed class PhotosApp : IPhoneApp
 
     public string Id => "photos";
 
-    public string DisplayName => "Photos";
+    public string DisplayName => Loc.T(L.Apps.Photos);
 
     public string Glyph => "P";
 
@@ -37,8 +38,6 @@ internal sealed class PhotosApp : IPhoneApp
 
     private string[] paths = Array.Empty<string>();
     private int? viewerIndex;
-    private int countLabelKey = -1;
-    private string countLabel = string.Empty;
 
     public PhotosApp(PhotoLibrary library)
     {
@@ -73,14 +72,9 @@ internal sealed class PhotosApp : IPhoneApp
         var theme = context.Theme;
         var content = context.Content;
 
-        Typography.Draw(new Vector2(content.Min.X + 4f * scale, content.Min.Y + 2f * scale), "Photos", theme.TextStrong, 1.7f, FontWeight.Bold);
+        Typography.Draw(new Vector2(content.Min.X + 4f * scale, content.Min.Y + 2f * scale), Loc.T(L.Apps.Photos), theme.TextStrong, 1.7f, FontWeight.Bold);
 
-        if (countLabelKey != paths.Length)
-        {
-            countLabelKey = paths.Length;
-            countLabel = paths.Length == 1 ? "1 Photo" : $"{paths.Length} Photos";
-        }
-
+        var countLabel = Loc.Plural(L.Photos.Count, paths.Length);
         Typography.Draw(new Vector2(content.Min.X + 4f * scale, content.Min.Y + 34f * scale), countLabel, theme.TextMuted, 0.85f);
 
         if (paths.Length == 0)
@@ -168,7 +162,7 @@ internal sealed class PhotosApp : IPhoneApp
         }
         else
         {
-            Typography.DrawCentered(stage.Center, "Loading", theme.TextMuted, 1f);
+            Typography.DrawCentered(stage.Center, Loc.T(L.Common.Loading), theme.TextMuted, 1f);
         }
 
         if (DrawChevron(new Vector2(content.Min.X + 16f * scale, content.Min.Y + 20f * scale), theme.TextStrong, true, scale))
@@ -206,8 +200,8 @@ internal sealed class PhotosApp : IPhoneApp
         var center = content.Center;
         var glyphCenter = center - new Vector2(0f, 18f * scale);
         AppIconArt.TryDraw("photos", glyphCenter, 64f * scale, theme.TextMuted, theme.AppBackground);
-        Typography.DrawCentered(center + new Vector2(0f, 34f * scale), "No Photos", theme.TextMuted, 1.1f);
-        Typography.DrawCentered(center + new Vector2(0f, 58f * scale), "Use the Camera to take a shot", theme.TextMuted with { W = 0.7f }, 0.8f);
+        Typography.DrawCentered(center + new Vector2(0f, 34f * scale), Loc.T(L.Photos.NoPhotos), theme.TextMuted, 1.1f);
+        Typography.DrawCentered(center + new Vector2(0f, 58f * scale), Loc.T(L.Photos.UseCameraHint), theme.TextMuted with { W = 0.7f }, 0.8f);
     }
 
     private static bool DrawChevron(Vector2 center, Vector4 color, bool pointsLeft, float scale)

@@ -1,6 +1,7 @@
 using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
+using Aetherphone.Core.Localization;
 using Aetherphone.Core.Notifications;
 using Aetherphone.Windows.Components;
 using Dalamud.Interface.Utility;
@@ -11,7 +12,7 @@ internal sealed class NotificationsApp : IPhoneApp
 {
     public string Id => "notifications";
 
-    public string DisplayName => "Notifications";
+    public string DisplayName => Loc.T(L.Apps.Notifications);
 
     public string Glyph => "N";
 
@@ -43,7 +44,7 @@ internal sealed class NotificationsApp : IPhoneApp
         var recent = notifications.Recent;
         if (recent.Count == 0)
         {
-            Typography.DrawCentered(body.Center, "No notifications", context.Theme.TextMuted);
+            Typography.DrawCentered(body.Center, Loc.T(L.Notifications.Empty), context.Theme.TextMuted);
             return;
         }
 

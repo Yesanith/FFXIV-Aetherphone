@@ -18,6 +18,8 @@ internal sealed class Configuration : IPluginConfiguration
 
     public bool DoNotDisturb { get; set; }
 
+    public bool ScrollWhileIdle { get; set; } = true;
+
     public bool ShowLodestonePortraits { get; set; } = true;
 
     public float TextZoom { get; set; } = 1.0f;

@@ -72,6 +72,12 @@ internal static class L
 
         public static readonly LocString DoNotDisturb = new("settings.doNotDisturb", "Do Not Disturb");
 
+        public static readonly LocString Immersion = new("settings.immersion", "Immersion");
+
+        public static readonly LocString ScrollWhileIdle = new("settings.scrollWhileIdle", "Scroll while idle");
+
+        public static readonly LocString ScrollWhileIdleHint = new("settings.scrollWhileIdleHint", "Your character scrolls through their phone (Tomescroll emote) while standing still and out of combat. Does nothing if you haven't unlocked the emote.");
+
         public static readonly LocString Ringtone = new("settings.ringtone", "Ringtone");
 
         public static readonly LocString Sound = new("settings.sound", "Sound");

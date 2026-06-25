@@ -3,6 +3,7 @@ using System.Numerics;
 using Aetherphone.Core;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Device;
+using Aetherphone.Core.Emote;
 using Aetherphone.Core.Localization;
 using Aetherphone.Core.Notifications;
 using Aetherphone.Core.Shell;
@@ -29,6 +30,8 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IDataManager DataManager { get; private set; } = null!;
     [PluginService] internal static IObjectTable ObjectTable { get; private set; } = null!;
     [PluginService] internal static IClientState ClientState { get; private set; } = null!;
+    [PluginService] internal static IFramework Framework { get; private set; } = null!;
+    [PluginService] internal static ICondition Condition { get; private set; } = null!;
     [PluginService] internal static ITextureProvider TextureProvider { get; private set; } = null!;
     [PluginService] internal static IGameGui GameGui { get; private set; } = null!;
     [PluginService] internal static IContextMenu ContextMenu { get; private set; } = null!;
@@ -46,6 +49,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly PhoneShell shell;
     private readonly PhoneWindow phoneWindow;
     private readonly AboutWindow aboutWindow;
+    private readonly PhoneEmoteController phoneEmote;
     private readonly IDtrBarEntry dtrEntry;
 
     private int sampleCounter;
@@ -69,6 +73,8 @@ public sealed class Plugin : IDalamudPlugin
         phoneWindow = new PhoneWindow(shell) { IsOpen = Cfg.OpenOnStartup };
         windowSystem.AddWindow(phoneWindow);
         windowSystem.AddWindow(aboutWindow);
+
+        phoneEmote = new PhoneEmoteController(Cfg, Framework, ClientState, Condition, DataManager, () => phoneWindow.IsOpen);
 
         dtrEntry = DtrBar.Get(AepConstants.Name);
         dtrEntry.OnClick = _ => phoneWindow.Toggle();
@@ -102,6 +108,7 @@ public sealed class Plugin : IDalamudPlugin
         dtrEntry.Remove();
 
         windowSystem.RemoveAllWindows();
+        phoneEmote.Dispose();
         shell.Dispose();
         services.Dispose();
         Device.Dispose();

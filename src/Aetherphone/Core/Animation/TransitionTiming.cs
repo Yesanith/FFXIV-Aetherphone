@@ -2,11 +2,11 @@ namespace Aetherphone.Core.Animation;
 
 internal static class TransitionTiming
 {
-    public const float PresentSmoothTime = 0.22f;
+    public const float PresentSmoothTime = 0.15f;
 
-    public const float DismissSmoothTime = 0.18f;
+    public const float DismissSmoothTime = 0.12f;
 
-    public const float PushSmoothTime = 0.20f;
+    public const float PushSmoothTime = 0.14f;
 
     public const float ShellDimMax = 0.45f;
 
@@ -21,8 +21,4 @@ internal static class TransitionTiming
     public const float RestPositionEpsilon = 0.0015f;
 
     public const float RestVelocityEpsilon = 0.02f;
-
-    public const float ZoomGrowEnd = 0.62f;
-
-    public const float ZoomRevealEnd = 0.92f;
 }

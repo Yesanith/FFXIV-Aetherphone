@@ -20,7 +20,6 @@ internal sealed class NavigationStack : INavigator
     private IPhoneApp? current;
     private IPhoneApp? motionOver;
     private IPhoneApp? motionUnder;
-    private Rect? motionOrigin;
     private ShellMotion motion = ShellMotion.None;
 
     public NavigationStack(IReadOnlyList<IPhoneApp> apps)
@@ -42,8 +41,6 @@ internal sealed class NavigationStack : INavigator
 
     public IPhoneApp? MotionUnder => motionUnder;
 
-    public Rect? MotionOrigin => motionOrigin;
-
     public void Advance(float deltaSeconds)
     {
         if (motion == ShellMotion.None)
@@ -62,16 +59,6 @@ internal sealed class NavigationStack : INavigator
     }
 
     public void OpenApp(IPhoneApp app)
-    {
-        OpenAppCore(app, null);
-    }
-
-    public void OpenApp(IPhoneApp app, Rect origin)
-    {
-        OpenAppCore(app, origin);
-    }
-
-    private void OpenAppCore(IPhoneApp app, Rect? origin)
     {
         if (motion == ShellMotion.None && ReferenceEquals(current, app))
         {
@@ -94,7 +81,7 @@ internal sealed class NavigationStack : INavigator
 
         current = app;
         app.OnOpened();
-        BeginPresent(app, under, origin);
+        BeginPresent(app, under);
     }
 
     public void Open(string appId)
@@ -151,12 +138,11 @@ internal sealed class NavigationStack : INavigator
         BeginDismiss(leaving, null);
     }
 
-    private void BeginPresent(IPhoneApp over, IPhoneApp? under, Rect? origin)
+    private void BeginPresent(IPhoneApp over, IPhoneApp? under)
     {
         motion = ShellMotion.Present;
         motionOver = over;
         motionUnder = under;
-        motionOrigin = origin;
         cover.SnapTo(0f);
         targetCover = 1f;
     }
@@ -166,7 +152,6 @@ internal sealed class NavigationStack : INavigator
         motion = ShellMotion.Dismiss;
         motionOver = over;
         motionUnder = under;
-        motionOrigin = null;
         cover.SnapTo(1f);
         targetCover = 0f;
     }
@@ -180,7 +165,6 @@ internal sealed class NavigationStack : INavigator
 
         current = motionOver;
         motion = ShellMotion.Present;
-        motionOrigin = null;
         targetCover = 1f;
     }
 
@@ -194,7 +178,6 @@ internal sealed class NavigationStack : INavigator
 
         current = under;
         motion = ShellMotion.Dismiss;
-        motionOrigin = null;
         targetCover = 0f;
     }
 
@@ -223,6 +206,5 @@ internal sealed class NavigationStack : INavigator
         motion = ShellMotion.None;
         motionOver = null;
         motionUnder = null;
-        motionOrigin = null;
     }
 }

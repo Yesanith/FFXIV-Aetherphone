@@ -29,9 +29,7 @@ internal static class HomeScreen
 
             if (AppIcon.Draw(iconCenter, iconSize, apps[index], theme, delta))
             {
-                var iconHalf = iconSize * 0.5f;
-                var origin = new Rect(iconCenter - new Vector2(iconHalf, iconHalf), iconCenter + new Vector2(iconHalf, iconHalf));
-                navigation.OpenApp(apps[index], origin);
+                navigation.OpenApp(apps[index]);
             }
         }
     }

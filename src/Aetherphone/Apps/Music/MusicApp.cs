@@ -223,7 +223,7 @@ internal sealed class MusicApp : IPhoneApp
             var playing = IsCurrentSong(song);
             var hovered = ImGui.IsMouseHoveringRect(min, max);
             var fill = Palette.WithAlpha(playing ? Accent : theme.TextStrong, playing ? 0.14f : hovered ? 0.10f : 0.05f);
-            dl.AddRectFilled(min, max, ImGui.GetColorU32(fill), rounding);
+            Squircle.Fill(dl, min, max, rounding, ImGui.GetColorU32(fill));
 
             var artSize = cardHeight - 12f * scale;
             var artMin = new Vector2(min.X + 6f * scale, min.Y + 6f * scale);
@@ -405,7 +405,7 @@ internal sealed class MusicApp : IPhoneApp
         var hovered = ImGui.IsMouseHoveringRect(min, max);
         if (hovered || playing)
         {
-            dl.AddRectFilled(min, max, ImGui.GetColorU32(Palette.WithAlpha(playing ? Accent : theme.TextStrong, playing ? 0.10f : 0.06f)), 14f * scale);
+            Squircle.Fill(dl, min, max, 14f * scale, ImGui.GetColorU32(Palette.WithAlpha(playing ? Accent : theme.TextStrong, playing ? 0.10f : 0.06f)));
         }
 
         if (hovered)
@@ -493,7 +493,7 @@ internal sealed class MusicApp : IPhoneApp
         var hovered = ImGui.IsMouseHoveringRect(min, max);
         if (hovered || playing)
         {
-            dl.AddRectFilled(min, max, ImGui.GetColorU32(Palette.WithAlpha(playing ? Accent : theme.TextStrong, playing ? 0.10f : 0.06f)), 14f * scale);
+            Squircle.Fill(dl, min, max, 14f * scale, ImGui.GetColorU32(Palette.WithAlpha(playing ? Accent : theme.TextStrong, playing ? 0.10f : 0.06f)));
         }
 
         if (hovered)
@@ -676,8 +676,8 @@ internal sealed class MusicApp : IPhoneApp
         var dl = ImGui.GetWindowDrawList();
 
         var hovered = ImGui.IsMouseHoveringRect(min, max);
-        dl.AddRectFilled(min, max, ImGui.GetColorU32(theme.Surface), rounding);
-        dl.AddRect(min, max, ImGui.GetColorU32(Palette.WithAlpha(theme.TextStrong, 0.08f)), rounding, ImDrawFlags.RoundCornersAll, 1f);
+        Squircle.Fill(dl, min, max, rounding, ImGui.GetColorU32(theme.Surface));
+        Squircle.Stroke(dl, min, max, rounding, ImGui.GetColorU32(Palette.WithAlpha(theme.TextStrong, 0.08f)), 1f);
 
         var discRadius = 18f * scale;
         var discCenter = new Vector2(min.X + 12f * scale + discRadius, min.Y + height * 0.5f);

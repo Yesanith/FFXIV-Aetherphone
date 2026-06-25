@@ -24,7 +24,7 @@ internal static class ConversationRow
         var dl = ImGui.GetWindowDrawList();
         if (hovered)
         {
-            dl.AddRectFilled(min, max, ImGui.GetColorU32(theme.GroupedCard), 12f * scale);
+            Squircle.Fill(dl, min, max, 12f * scale, ImGui.GetColorU32(theme.GroupedCard));
         }
 
         var avatarRadius = 20f * scale;

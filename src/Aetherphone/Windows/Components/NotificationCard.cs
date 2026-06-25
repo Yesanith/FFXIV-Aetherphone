@@ -21,8 +21,8 @@ internal static class NotificationCard
         var max = new Vector2(origin.X + width, origin.Y + Height * scale);
 
         var dl = ImGui.GetWindowDrawList();
-        dl.AddRectFilled(min, max, ImGui.GetColorU32(theme.GroupedCard), 14f * scale);
-        Material.Edge(dl, min, max, 14f * scale, scale);
+        Squircle.Fill(dl, min, max, 14f * scale, ImGui.GetColorU32(theme.GroupedCard));
+        Material.EdgeSquircle(dl, min, max, 14f * scale, scale);
         dl.AddCircleFilled(new Vector2(min.X + 18f * scale, min.Y + 23f * scale), 5f * scale, ImGui.GetColorU32(notification.Accent), 16);
 
         var textLeft = min.X + 32f * scale;

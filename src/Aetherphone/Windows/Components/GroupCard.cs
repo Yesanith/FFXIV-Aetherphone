@@ -38,8 +38,9 @@ internal struct GroupCard
         var right = origin.X + ImGui.GetContentRegionAvail().X;
         var height = rowCount * rowHeight * scale;
         var cardMax = new Vector2(right, origin.Y + height);
-        ImGui.GetWindowDrawList().AddRectFilled(origin, cardMax, ImGui.GetColorU32(theme.GroupedCard), 12f * scale);
-        Material.Edge(ImGui.GetWindowDrawList(), origin, cardMax, 12f * scale, scale);
+        var dl = ImGui.GetWindowDrawList();
+        Squircle.Fill(dl, origin, cardMax, 12f * scale, ImGui.GetColorU32(theme.GroupedCard));
+        Material.EdgeSquircle(dl, origin, cardMax, 12f * scale, scale);
         return new GroupCard(theme, scale, rowHeight, origin.X, right, origin.Y, rowCount);
     }
 

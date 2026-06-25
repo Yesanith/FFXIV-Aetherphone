@@ -23,20 +23,43 @@ internal static class Squircle
 
     public static void Fill(ImDrawListPtr drawList, Vector2 min, Vector2 max, float radius, uint color)
     {
-        var limit = MathF.Min(max.X - min.X, max.Y - min.Y) * 0.5f;
-        var cornerRadius = MathF.Min(radius, limit);
+        var cornerRadius = ClampRadius(min, max, radius);
         if (cornerRadius <= 0f)
         {
             drawList.AddRectFilled(min, max, color);
             return;
         }
 
+        BuildPath(drawList, min, max, cornerRadius);
+        drawList.PathFillConvex(color);
+    }
+
+    public static void Stroke(ImDrawListPtr drawList, Vector2 min, Vector2 max, float radius, uint color, float thickness)
+    {
+        var cornerRadius = ClampRadius(min, max, radius);
+        if (cornerRadius <= 0f)
+        {
+            drawList.AddRect(min, max, color, 0f, ImDrawFlags.RoundCornersAll, thickness);
+            return;
+        }
+
+        BuildPath(drawList, min, max, cornerRadius);
+        drawList.PathStroke(color, ImDrawFlags.Closed, thickness);
+    }
+
+    private static float ClampRadius(Vector2 min, Vector2 max, float radius)
+    {
+        var limit = MathF.Min(max.X - min.X, max.Y - min.Y) * 0.5f;
+        return MathF.Min(radius, limit);
+    }
+
+    private static void BuildPath(ImDrawListPtr drawList, Vector2 min, Vector2 max, float cornerRadius)
+    {
         drawList.PathClear();
         EmitCorner(drawList, new Vector2(min.X + cornerRadius, min.Y + cornerRadius), cornerRadius, -1f, -1f, false);
         EmitCorner(drawList, new Vector2(max.X - cornerRadius, min.Y + cornerRadius), cornerRadius, 1f, -1f, true);
         EmitCorner(drawList, new Vector2(max.X - cornerRadius, max.Y - cornerRadius), cornerRadius, 1f, 1f, false);
         EmitCorner(drawList, new Vector2(min.X + cornerRadius, max.Y - cornerRadius), cornerRadius, -1f, 1f, true);
-        drawList.PathFillConvex(color);
     }
 
     private static void EmitCorner(ImDrawListPtr drawList, Vector2 cornerCenter, float radius, float signX, float signY, bool swap)

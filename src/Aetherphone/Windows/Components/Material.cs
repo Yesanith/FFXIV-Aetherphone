@@ -22,7 +22,22 @@ internal static class Material
         }
 
         drawList.AddRect(min, max, ImGui.GetColorU32(new Vector4(1f, 1f, 1f, BorderAlpha * opacity)), rounding, ImDrawFlags.RoundCornersAll, 1f * scale);
+        Highlight(drawList, min, max, rounding, scale, opacity);
+    }
 
+    public static void EdgeSquircle(ImDrawListPtr drawList, Vector2 min, Vector2 max, float radius, float scale, float opacity = 1f)
+    {
+        if (opacity <= 0f)
+        {
+            return;
+        }
+
+        Squircle.Stroke(drawList, min, max, radius, ImGui.GetColorU32(new Vector4(1f, 1f, 1f, BorderAlpha * opacity)), 1f * scale);
+        Highlight(drawList, min, max, radius, scale, opacity);
+    }
+
+    private static void Highlight(ImDrawListPtr drawList, Vector2 min, Vector2 max, float rounding, float scale, float opacity)
+    {
         var highlight = ImGui.GetColorU32(new Vector4(1f, 1f, 1f, HighlightAlpha * opacity));
         var inset = MathF.Max(rounding, 1f);
         drawList.AddLine(new Vector2(min.X + inset, min.Y + 1f * scale), new Vector2(max.X - inset, min.Y + 1f * scale), highlight, 1f * scale);

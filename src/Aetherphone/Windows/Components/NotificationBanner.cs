@@ -135,14 +135,14 @@ internal sealed class NotificationBanner : IDisposable
         Elevation.Floating(dl, min, max, rounding, scale, opacity);
 
         var cardColor = Palette.Mix(theme.GroupedCard, theme.TextStrong, 0.06f);
-        dl.AddRectFilled(min, max, Color(Palette.WithAlpha(cardColor, 0.99f), opacity), rounding);
-        dl.AddRect(min, max, Color(Palette.WithAlpha(theme.TextStrong, 0.10f), opacity), rounding, ImDrawFlags.RoundCornersAll, scale);
+        Squircle.Fill(dl, min, max, rounding, Color(Palette.WithAlpha(cardColor, 0.99f), opacity));
+        Squircle.Stroke(dl, min, max, rounding, Color(Palette.WithAlpha(theme.TextStrong, 0.10f), opacity), scale);
 
         var iconExtent = IconSize * scale * 0.5f;
         var iconCenter = new Vector2(min.X + Padding * scale + iconExtent, (min.Y + max.Y) * 0.5f);
         var iconMin = new Vector2(iconCenter.X - iconExtent, iconCenter.Y - iconExtent);
         var iconMax = new Vector2(iconCenter.X + iconExtent, iconCenter.Y + iconExtent);
-        dl.AddRectFilled(iconMin, iconMax, Color(notification.Accent, opacity), iconExtent * 0.52f);
+        Squircle.Fill(dl, iconMin, iconMax, iconExtent * 0.52f, Color(notification.Accent, opacity));
 
         var ink = Palette.WithAlpha(theme.TextStrong, opacity);
         if (!AppIconArt.TryDraw(notification.AppId, iconCenter, IconSize * scale, ink, Palette.WithAlpha(notification.Accent, opacity)))

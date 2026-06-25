@@ -74,7 +74,7 @@ public sealed class Plugin : IDalamudPlugin
         windowSystem.AddWindow(phoneWindow);
         windowSystem.AddWindow(aboutWindow);
 
-        phoneEmote = new PhoneEmoteController(Cfg, Framework, ClientState, Condition, DataManager, () => phoneWindow.IsOpen);
+        phoneEmote = new PhoneEmoteController(Cfg, Framework, ObjectTable, Condition, DataManager, () => phoneWindow.IsOpen);
 
         dtrEntry = DtrBar.Get(AepConstants.Name);
         dtrEntry.OnClick = _ => phoneWindow.Toggle();

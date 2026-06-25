@@ -4,6 +4,7 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using CharacterStruct = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 
 namespace Aetherphone.Core.Emote;
 
@@ -37,7 +38,7 @@ internal sealed class PhoneEmoteController : IDisposable
 
     private readonly IFramework framework;
 
-    private readonly IClientState clientState;
+    private readonly IObjectTable objectTable;
 
     private readonly ICondition condition;
 
@@ -61,11 +62,11 @@ internal sealed class PhoneEmoteController : IDisposable
 
     private long lastCastMilliseconds;
 
-    public PhoneEmoteController(Configuration configuration, IFramework framework, IClientState clientState, ICondition condition, IDataManager dataManager, Func<bool> isPhoneVisible)
+    public PhoneEmoteController(Configuration configuration, IFramework framework, IObjectTable objectTable, ICondition condition, IDataManager dataManager, Func<bool> isPhoneVisible)
     {
         this.configuration = configuration;
         this.framework = framework;
-        this.clientState = clientState;
+        this.objectTable = objectTable;
         this.condition = condition;
         this.dataManager = dataManager;
         this.isPhoneVisible = isPhoneVisible;
@@ -85,7 +86,7 @@ internal sealed class PhoneEmoteController : IDisposable
             return;
         }
 
-        var player = clientState.LocalPlayer;
+        var player = objectTable.LocalPlayer;
         if (player is null || IsBlocked())
         {
             hasSample = false;
@@ -212,7 +213,7 @@ internal sealed class PhoneEmoteController : IDisposable
             return true;
         }
 
-        return ((Character*)address)->Mode != CharacterModes.Normal;
+        return ((CharacterStruct*)address)->Mode != CharacterModes.Normal;
     }
 
     private static unsafe bool IsUnlocked(ushort emoteId)

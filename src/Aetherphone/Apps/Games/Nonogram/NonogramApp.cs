@@ -156,7 +156,7 @@ internal sealed class NonogramApp : IMiniGame
             new Vector2(body.Min.X + 4f * scale, rowY - 13f * scale),
             new Vector2(body.Max.X - 44f * scale, rowY + 13f * scale));
 
-        var selected = SegmentStrip.Draw(segmentRow, difficultyLabels, difficulty, theme);
+        var selected = SegmentStrip.Draw("nonogram.difficulty", segmentRow, difficultyLabels, difficulty, theme);
         if (selected != difficulty)
         {
             StartNewGame(selected);

@@ -41,8 +41,6 @@ internal sealed class GamesApp : IPhoneApp
 
     private readonly int[] tileOrder;
 
-    private readonly int[] sectionSizes;
-
     private IMiniGame? currentGame;
 
     public string Id => "games";
@@ -83,10 +81,10 @@ internal sealed class GamesApp : IPhoneApp
             cardScale[index] = new Spring(1f);
         }
 
-        (tileOrder, sectionSizes) = BuildSections();
+        tileOrder = BuildDisplayOrder();
     }
 
-    private (int[] Order, int[] Sizes) BuildSections()
+    private int[] BuildDisplayOrder()
     {
         var distinct = new string[games.Length];
         var distinctCount = 0;
@@ -110,7 +108,6 @@ internal sealed class GamesApp : IPhoneApp
         }
 
         var order = new int[games.Length];
-        var sizes = new int[distinctCount];
         var cursor = 0;
         for (var section = 0; section < distinctCount; section++)
         {
@@ -122,11 +119,10 @@ internal sealed class GamesApp : IPhoneApp
                 }
 
                 order[cursor++] = index;
-                sizes[section]++;
             }
         }
 
-        return (order, sizes);
+        return order;
     }
 
     public void OnOpened()
@@ -190,49 +186,26 @@ internal sealed class GamesApp : IPhoneApp
             var spacing = 12f * scale;
             var cardWidth = (availableWidth - spacing * (Columns - 1)) / Columns;
             var cardHeight = cardWidth * 1.18f;
-            var headerHeight = 34f * scale;
-            var sectionGap = 14f * scale;
+            var topPadding = 4f * scale;
 
-            var offsetY = 4f * scale;
-            var sectionStart = 0;
-            for (var section = 0; section < sectionSizes.Length; section++)
+            for (var member = 0; member < tileOrder.Length; member++)
             {
-                var size = sectionSizes[section];
-                DrawSectionHeader(new Vector2(origin.X, origin.Y + offsetY), availableWidth, headerHeight, games[tileOrder[sectionStart]].Genre, size, context.Theme, scale);
-                offsetY += headerHeight;
-
-                for (var member = 0; member < size; member++)
+                var gameIndex = tileOrder[member];
+                var column = member % Columns;
+                var row = member / Columns;
+                var cardMin = new Vector2(origin.X + column * (cardWidth + spacing), origin.Y + topPadding + row * (cardHeight + spacing));
+                var cardRect = new Rect(cardMin, cardMin + new Vector2(cardWidth, cardHeight));
+                if (DrawCard(cardRect, games[gameIndex], gameIndex, deltaSeconds, context.Theme, scale))
                 {
-                    var gameIndex = tileOrder[sectionStart + member];
-                    var column = member % Columns;
-                    var row = member / Columns;
-                    var cardMin = new Vector2(origin.X + column * (cardWidth + spacing), origin.Y + offsetY + row * (cardHeight + spacing));
-                    var cardRect = new Rect(cardMin, cardMin + new Vector2(cardWidth, cardHeight));
-                    if (DrawCard(cardRect, games[gameIndex], gameIndex, deltaSeconds, context.Theme, scale))
-                    {
-                        OpenGame(games[gameIndex]);
-                    }
+                    OpenGame(games[gameIndex]);
                 }
-
-                var rows = (size + Columns - 1) / Columns;
-                offsetY += rows * cardHeight + (rows - 1) * spacing + sectionGap;
-                sectionStart += size;
             }
 
-            ImGui.SetCursorScreenPos(new Vector2(origin.X, origin.Y + offsetY));
-            ImGui.Dummy(new Vector2(availableWidth, 2f * scale));
+            var totalRows = (tileOrder.Length + Columns - 1) / Columns;
+            var totalHeight = topPadding + totalRows * cardHeight + MathF.Max(0, totalRows - 1) * spacing;
+            ImGui.SetCursorScreenPos(new Vector2(origin.X, origin.Y + totalHeight));
+            ImGui.Dummy(new Vector2(availableWidth, 6f * scale));
         }
-    }
-
-    private static void DrawSectionHeader(Vector2 position, float width, float height, string genre, int count, PhoneTheme theme, float scale)
-    {
-        var label = genre.ToUpperInvariant();
-        var labelSize = Typography.Measure(label, TextStyles.Title3);
-        Typography.Draw(new Vector2(position.X + 2f * scale, position.Y + (height - labelSize.Y) * 0.5f), label, theme.TextStrong, TextStyles.Title3);
-
-        var countText = GameNumber.Label(count);
-        var countSize = Typography.Measure(countText, TextStyles.Caption1);
-        Typography.Draw(new Vector2(position.X + width - countSize.X - 2f * scale, position.Y + (height - countSize.Y) * 0.5f), countText, theme.TextMuted, TextStyles.Caption1);
     }
 
     private bool DrawCard(Rect rect, IMiniGame game, int index, float deltaSeconds, PhoneTheme theme, float scale)
@@ -256,20 +229,10 @@ internal sealed class GamesApp : IPhoneApp
         var baseColor = GamePalette.Darken(accent, 0.16f);
 
         Elevation.Floating(drawList, min, max, rounding, scale, hovered ? 1f : 0.7f);
-        Squircle.Fill(drawList, min, max, rounding, ImGui.GetColorU32(baseColor));
 
-        var clear = ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 0f));
-        var gloss = ImGui.GetColorU32(GamePalette.Lighten(accent, 0.36f) with { W = 0.55f });
-        drawList.AddRectFilledMultiColor(
-            new Vector2(min.X + inset, min.Y + 1f * scale),
-            new Vector2(max.X - inset, min.Y + height * 0.52f),
-            gloss, gloss, clear, clear);
-
-        var scrim = ImGui.GetColorU32(new Vector4(0f, 0f, 0f, 0.48f));
-        drawList.AddRectFilledMultiColor(
-            new Vector2(min.X + inset, min.Y + height * 0.54f),
-            new Vector2(max.X - inset, max.Y - 1f * scale),
-            clear, clear, scrim, scrim);
+        var topTone = ImGui.GetColorU32(GamePalette.Lighten(accent, 0.30f));
+        var bottomTone = ImGui.GetColorU32(GamePalette.Darken(accent, 0.44f));
+        Squircle.FillVerticalGradient(drawList, min, max, rounding, topTone, bottomTone);
 
         var iconCenter = new Vector2(center.X, min.Y + height * 0.40f);
         if (hovered)

@@ -10,7 +10,6 @@ internal static class Material
     private const float HighlightAlpha = 0.11f;
 
     private static readonly Vector4 FrostedFill = new(0.12f, 0.12f, 0.15f, 0.86f);
-    private static readonly Vector4 FrostedSheen = new(1f, 1f, 1f, 0.06f);
 
     public static void TopGlow(ImDrawListPtr drawList, Vector2 min, Vector2 max, float rounding, Vector4 accent, float coverage, float strength)
     {
@@ -51,13 +50,6 @@ internal static class Material
         }
 
         Squircle.Fill(drawList, min, max, radius, ImGui.GetColorU32(FrostedFill with { W = FrostedFill.W * opacity }));
-
-        var sheen = ImGui.GetColorU32(FrostedSheen with { W = FrostedSheen.W * opacity });
-        var clear = ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 0f));
-        var sheenInset = MathF.Max(radius, 1f);
-        var sheenTop = new Vector2(min.X + sheenInset, min.Y + 1f * scale);
-        var sheenBottom = new Vector2(max.X - sheenInset, min.Y + (max.Y - min.Y) * 0.45f);
-        drawList.AddRectFilledMultiColor(sheenTop, sheenBottom, sheen, sheen, clear, clear);
 
         EdgeSquircle(drawList, min, max, radius, scale, opacity);
     }

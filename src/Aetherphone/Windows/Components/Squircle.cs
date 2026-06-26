@@ -10,6 +10,27 @@ internal static class Squircle
         drawList.AddRectFilled(min, max, color, ClampRadius(min, max, radius), ImDrawFlags.RoundCornersAll);
     }
 
+    public static void FillVerticalGradient(ImDrawListPtr drawList, Vector2 min, Vector2 max, float radius, uint topColor, uint bottomColor)
+    {
+        var clampedRadius = ClampRadius(min, max, radius);
+        if (clampedRadius <= 0f)
+        {
+            drawList.AddRectFilledMultiColor(min, max, topColor, topColor, bottomColor, bottomColor);
+            return;
+        }
+
+        var capTop = min.Y + clampedRadius;
+        var capBottom = max.Y - clampedRadius;
+        if (capBottom > capTop)
+        {
+            drawList.AddRectFilledMultiColor(new Vector2(min.X, capTop), new Vector2(max.X, capBottom), topColor, topColor, bottomColor, bottomColor);
+        }
+
+        const float overlap = 1.5f;
+        drawList.AddRectFilled(min, new Vector2(max.X, MathF.Min(capTop + overlap, max.Y)), topColor, clampedRadius, ImDrawFlags.RoundCornersTop);
+        drawList.AddRectFilled(new Vector2(min.X, MathF.Max(capBottom - overlap, min.Y)), max, bottomColor, clampedRadius, ImDrawFlags.RoundCornersBottom);
+    }
+
     public static void Stroke(ImDrawListPtr drawList, Vector2 min, Vector2 max, float radius, uint color, float thickness)
     {
         drawList.AddRect(min, max, color, ClampRadius(min, max, radius), ImDrawFlags.RoundCornersAll, thickness);

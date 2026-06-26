@@ -210,6 +210,8 @@
   "games.left": "Restant",
   "games.flow": "Flow",
   "games.flows": "Liens",
+  "games.solitaire": "Solitaire",
+  "games.genreCards": "Cartes",
   "time.now": "à l'instant",
   "time.justNow": "à l'instant",
   "time.minutesShort": "{0} min",

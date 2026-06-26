@@ -210,6 +210,8 @@
   "games.left": "Übrig",
   "games.flow": "Flow",
   "games.flows": "Linien",
+  "games.solitaire": "Solitär",
+  "games.genreCards": "Karten",
   "time.now": "gerade eben",
   "time.justNow": "gerade eben",
   "time.minutesShort": "{0} Min.",

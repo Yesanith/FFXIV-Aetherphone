@@ -497,6 +497,10 @@ internal static class L
         public static readonly LocString Flow = new("games.flow", "Flow");
 
         public static readonly LocString Flows = new("games.flows", "Flows");
+
+        public static readonly LocString Solitaire = new("games.solitaire", "Solitaire");
+
+        public static readonly LocString GenreCards = new("games.genreCards", "Cards");
     }
 
     internal static class Time

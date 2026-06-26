@@ -80,6 +80,9 @@ internal static class AppIconArt
             case "flow":
                 DrawFlow(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "solitaire":
+                DrawSolitaire(dl, center, extent, inkColor, holeColor);
+                return true;
             default:
                 return false;
         }
@@ -483,6 +486,32 @@ internal static class AppIconArt
             var fillTopY = bottomY - (bottomY - topY) * fillFractions[tube];
             dl.AddRectFilled(new Vector2(min.X + inset, fillTopY), new Vector2(max.X - inset, max.Y - inset), ink, halfWidth - inset, ImDrawFlags.RoundCornersBottom);
         }
+    }
+
+    private static void DrawSolitaire(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)
+    {
+        var rounding = extent * 0.16f;
+
+        var backMin = At(center, extent, -0.18f, -0.82f);
+        var backMax = At(center, extent, 0.82f, 0.5f);
+        dl.AddRectFilled(backMin, backMax, ink, rounding);
+
+        var gap = extent * 0.08f;
+        var frontMin = At(center, extent, -0.82f, -0.5f);
+        var frontMax = At(center, extent, 0.18f, 0.82f);
+        dl.AddRectFilled(frontMin - new Vector2(gap, gap), frontMax + new Vector2(gap, gap), hole, rounding);
+        dl.AddRectFilled(frontMin, frontMax, ink, rounding);
+
+        var pip = (frontMin + frontMax) * 0.5f;
+        var pipRadius = extent * 0.24f;
+        Span<Vector2> diamond = stackalloc Vector2[4]
+        {
+            new(pip.X, pip.Y - pipRadius),
+            new(pip.X + pipRadius * 0.72f, pip.Y),
+            new(pip.X, pip.Y + pipRadius),
+            new(pip.X - pipRadius * 0.72f, pip.Y),
+        };
+        FillConvex(dl, hole, diamond);
     }
 
     private static void DrawFlow(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)

@@ -367,5 +367,21 @@
   "venues.attendees": "Participants",
   "venues.about": "À propos",
   "venues.eventsCount": "{0} événements",
-  "venues.moreCount": "+{0} de plus"
+  "venues.moreCount": "+{0} de plus",
+  "app.news": "Actus",
+  "news.topics": "Actualités",
+  "news.notices": "Avis",
+  "news.maintenance": "Maintenance",
+  "news.updates": "Mises à jour",
+  "news.noNews": "Aucune actualité pour le moment",
+  "news.couldntReach": "Impossible de joindre le Lodestone",
+  "news.upcoming": "À venir",
+  "news.active": "En cours",
+  "news.ended": "Terminé",
+  "news.regionNorthAmerica": "Amérique du Nord",
+  "news.regionEurope": "Europe",
+  "news.regionFrance": "France",
+  "news.regionGermany": "Allemagne",
+  "news.regionJapan": "Japon",
+  "news.tryAgain": "Réessayer"
 }

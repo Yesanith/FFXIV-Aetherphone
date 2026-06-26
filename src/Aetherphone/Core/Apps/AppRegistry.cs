@@ -7,6 +7,7 @@ using Aetherphone.Apps.Market;
 using Aetherphone.Apps.Messages;
 using Aetherphone.Apps.Music;
 using Aetherphone.Apps.MyCharacter;
+using Aetherphone.Apps.News;
 using Aetherphone.Apps.Notifications;
 using Aetherphone.Apps.Photos;
 using Aetherphone.Apps.Settings;
@@ -39,6 +40,7 @@ internal static class AppRegistry
         apps.Add(new PhotosApp(photoLibrary));
         apps.Add(new SkywatcherApp(services.Weather));
         apps.Add(new VenuesApp(services.Venues, services.Media, services.Http, services.Textures, services.GameData, services.Configuration));
+        apps.Add(new NewsApp(services.News, services.Media, services.Http, services.GameData));
         apps.Add(new MarketApp(services.Market, services.MarketIndex, services.MarketAlerts, services.MarketLauncher, services.GameData, services.Textures, services.Configuration));
         apps.Add(new WalletApp(services.GameData, services.Textures));
         apps.Add(new MusicApp(services.Radio, services.SongSearch, services.Playback, services.SongHistory, services.Media, services.Http, services.Textures));

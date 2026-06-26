@@ -367,5 +367,21 @@
   "venues.attendees": "Katılımcılar",
   "venues.about": "Hakkında",
   "venues.eventsCount": "{0} etkinlik",
-  "venues.moreCount": "+{0} daha"
+  "venues.moreCount": "+{0} daha",
+  "app.news": "Haberler",
+  "news.topics": "Gündem",
+  "news.notices": "Duyurular",
+  "news.maintenance": "Bakım",
+  "news.updates": "Güncellemeler",
+  "news.noNews": "Şu an haber yok",
+  "news.couldntReach": "Lodestone'a ulaşılamadı",
+  "news.upcoming": "Yakında",
+  "news.active": "Sürüyor",
+  "news.ended": "Tamamlandı",
+  "news.regionNorthAmerica": "Kuzey Amerika",
+  "news.regionEurope": "Avrupa",
+  "news.regionFrance": "Fransa",
+  "news.regionGermany": "Almanya",
+  "news.regionJapan": "Japonya",
+  "news.tryAgain": "Tekrar Dene"
 }

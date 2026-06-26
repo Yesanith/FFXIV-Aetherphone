@@ -1,4 +1,5 @@
 using System.Globalization;
+using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Plugin.Services;
 using Lumina.Excel.Sheets;
@@ -89,6 +90,36 @@ internal sealed class GameData
         3 => "Europe",
         4 => "Oceania",
         _ => string.Empty,
+    };
+
+    public string LodestoneLocale() => RegionId() switch
+    {
+        1 => "jp",
+        3 => EuropeanLocale(),
+        _ => "na",
+    };
+
+    private uint RegionId()
+    {
+        var worldId = LocalCurrentWorldId;
+        if (worldId == 0)
+        {
+            worldId = LocalHomeWorldId;
+        }
+
+        if (worldId != 0 && data.GetExcelSheet<World>().TryGetRow(worldId, out var world) && world.DataCenter.RowId != 0)
+        {
+            return world.DataCenter.Value.Region.RowId;
+        }
+
+        return 0;
+    }
+
+    private string EuropeanLocale() => data.Language switch
+    {
+        ClientLanguage.French => "fr",
+        ClientLanguage.German => "de",
+        _ => "eu",
     };
 
     public string RaceName(uint raceId, bool female)

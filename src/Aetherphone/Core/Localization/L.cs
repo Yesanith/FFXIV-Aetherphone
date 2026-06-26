@@ -55,6 +55,8 @@ internal static class L
 
         public static readonly LocString Notifications = new("app.notifications", "Notifications");
 
+        public static readonly LocString News = new("app.news", "News");
+
         public static readonly LocString Settings = new("app.settings", "Settings");
     }
 
@@ -458,6 +460,39 @@ internal static class L
         public static readonly LocString Continuing = new("skywatcher.continuing", "{0} continuing");
 
         public static readonly LocString ForNextHours = new("skywatcher.forNextHours", "{0} for the next few hours");
+    }
+
+    internal static class News
+    {
+        public static readonly LocString Topics = new("news.topics", "Topics");
+
+        public static readonly LocString Notices = new("news.notices", "Notices");
+
+        public static readonly LocString Maintenance = new("news.maintenance", "Maintenance");
+
+        public static readonly LocString Updates = new("news.updates", "Updates");
+
+        public static readonly LocString NoNews = new("news.noNews", "No news right now");
+
+        public static readonly LocString CouldntReach = new("news.couldntReach", "Couldn't reach the Lodestone");
+
+        public static readonly LocString TryAgain = new("news.tryAgain", "Try Again");
+
+        public static readonly LocString Upcoming = new("news.upcoming", "Upcoming");
+
+        public static readonly LocString Active = new("news.active", "In progress");
+
+        public static readonly LocString Ended = new("news.ended", "Completed");
+
+        public static readonly LocString RegionNorthAmerica = new("news.regionNorthAmerica", "North America");
+
+        public static readonly LocString RegionEurope = new("news.regionEurope", "Europe");
+
+        public static readonly LocString RegionFrance = new("news.regionFrance", "France");
+
+        public static readonly LocString RegionGermany = new("news.regionGermany", "Germany");
+
+        public static readonly LocString RegionJapan = new("news.regionJapan", "Japan");
     }
 
     internal static class Wallet

@@ -224,6 +224,7 @@
   "games.lose": "Verloren",
   "games.draw": "Unentschieden",
   "games.pass": "Aussetzen",
+  "games.whack": "Whack",
   "time.now": "gerade eben",
   "time.justNow": "gerade eben",
   "time.minutesShort": "{0} Min.",

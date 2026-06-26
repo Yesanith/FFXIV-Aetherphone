@@ -525,6 +525,8 @@ internal static class L
         public static readonly LocString Draw = new("games.draw", "Draw");
 
         public static readonly LocString Pass = new("games.pass", "Pass");
+
+        public static readonly LocString Whack = new("games.whack", "Whack");
     }
 
     internal static class Time

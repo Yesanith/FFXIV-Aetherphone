@@ -13,6 +13,7 @@ using Aetherphone.Apps.Games.Solitaire;
 using Aetherphone.Apps.Games.Sweeper;
 using Aetherphone.Apps.Games.Twenty48;
 using Aetherphone.Apps.Games.WaterSort;
+using Aetherphone.Apps.Games.Whack;
 using Aetherphone.Core;
 using Aetherphone.Core.Animation;
 using Aetherphone.Core.Apps;
@@ -67,6 +68,7 @@ internal sealed class GamesApp : IPhoneApp
             new SimonApp(),
             new FlapApp(),
             new ReversiApp(),
+            new WhackApp(),
         };
 
         cardScale = new Spring[games.Length];
@@ -259,6 +261,7 @@ internal sealed class GamesApp : IPhoneApp
             case "bubbles":
             case "simon":
             case "flap":
+            case "whack":
             {
                 var best = stats.Get(gameId).BestScore;
                 return best > 0 ? GameNumber.Label(best) : string.Empty;

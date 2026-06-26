@@ -92,6 +92,9 @@ internal static class AppIconArt
             case "reversi":
                 DrawReversi(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "whack":
+                DrawWhack(dl, center, extent, inkColor, holeColor);
+                return true;
             default:
                 return false;
         }
@@ -542,6 +545,19 @@ internal static class AppIconArt
         dl.AddCircleFilled(fourth, dotRadius, ink, 24);
         dl.AddCircleFilled(first - new Vector2(dotRadius * 0.3f, dotRadius * 0.3f), dotRadius * 0.34f, hole, 16);
         dl.AddCircleFilled(fourth - new Vector2(dotRadius * 0.3f, dotRadius * 0.3f), dotRadius * 0.34f, hole, 16);
+    }
+
+    private static void DrawWhack(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)
+    {
+        var mole = At(center, extent, 0f, -0.05f);
+        var radius = extent * 0.52f;
+        dl.AddCircleFilled(mole, radius, ink, 30);
+        dl.AddCircleFilled(new Vector2(mole.X - radius * 0.34f, mole.Y - radius * 0.14f), radius * 0.16f, hole, 12);
+        dl.AddCircleFilled(new Vector2(mole.X + radius * 0.34f, mole.Y - radius * 0.14f), radius * 0.16f, hole, 12);
+        dl.AddCircleFilled(new Vector2(mole.X, mole.Y + radius * 0.16f), radius * 0.14f, hole, 12);
+
+        var lip = At(center, extent, 0f, 0.72f);
+        dl.AddRectFilled(new Vector2(lip.X - extent * 0.92f, lip.Y - extent * 0.18f), new Vector2(lip.X + extent * 0.92f, lip.Y + extent * 0.32f), hole, extent * 0.2f);
     }
 
     private static void DrawReversi(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)

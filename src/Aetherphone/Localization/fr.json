@@ -224,6 +224,7 @@
   "games.lose": "Perdu",
   "games.draw": "Égalité",
   "games.pass": "Passe",
+  "games.whack": "Whack",
   "time.now": "à l'instant",
   "time.justNow": "à l'instant",
   "time.minutesShort": "{0} min",

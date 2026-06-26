@@ -224,6 +224,7 @@
   "games.lose": "You Lose",
   "games.draw": "Draw",
   "games.pass": "Pass",
+  "games.whack": "Whack",
   "time.now": "now",
   "time.justNow": "just now",
   "time.minutesShort": "{0}m",

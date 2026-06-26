@@ -77,6 +77,8 @@ internal sealed class PairsApp : IMiniGame
 
     public string Title => Loc.T(L.Games.Pairs);
 
+    public string Genre => Loc.T(L.Games.GenreMemory);
+
     public Vector4 Accent => Styling.AccentAmber;
 
     public void Open()

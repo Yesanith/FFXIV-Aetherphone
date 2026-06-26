@@ -64,6 +64,8 @@ internal sealed class GemSwapApp : IMiniGame
 
     public string Title => Loc.T(L.Games.GemSwap);
 
+    public string Genre => Loc.T(L.Games.GenreMatch);
+
     public Vector4 Accent => new(0.72f, 0.46f, 0.96f, 1f);
 
     public void Open()

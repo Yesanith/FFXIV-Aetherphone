@@ -456,6 +456,14 @@ internal static class L
 
         public static readonly LocString Hard = new("games.hard", "Hard");
 
+        public static readonly LocString GenreMatch = new("games.genreMatch", "Match 3");
+
+        public static readonly LocString GenrePuzzle = new("games.genrePuzzle", "Puzzle");
+
+        public static readonly LocString GenreMemory = new("games.genreMemory", "Memory");
+
+        public static readonly LocString GenreLogic = new("games.genreLogic", "Logic");
+
         public static readonly LocPlural AttemptsCount = new("games.attemptsCount", "{0} attempt", "{0} attempts");
     }
 

@@ -9,6 +9,8 @@ internal interface IMiniGame : IDisposable
 
     string Title { get; }
 
+    string Genre { get; }
+
     Vector4 Accent { get; }
 
     void Open();

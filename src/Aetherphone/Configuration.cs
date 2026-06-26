@@ -2,6 +2,7 @@ using Aetherphone.Core.Games;
 using Aetherphone.Core.Home;
 using Aetherphone.Core.Market;
 using Aetherphone.Core.Songs;
+using Aetherphone.Core.Theme;
 using Aetherphone.Core.Wallpapers;
 using Dalamud.Configuration;
 
@@ -27,6 +28,8 @@ internal sealed class Configuration : IPluginConfiguration
     public float TextZoom { get; set; } = 1.0f;
 
     public string Language { get; set; } = string.Empty;
+
+    public ThemeMode ThemeMode { get; set; } = ThemeMode.Dark;
 
     public string AccentName { get; set; } = "Violet";
 

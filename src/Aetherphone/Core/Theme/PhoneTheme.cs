@@ -48,7 +48,7 @@ internal sealed class PhoneTheme
 
     public required float SidePadding { get; init; }
 
-    public static PhoneTheme From(Vector4 accent, string lightWallpaperId, string darkWallpaperId) => new()
+    public static PhoneTheme Dark(Vector4 accent, string lightWallpaperId, string darkWallpaperId) => new()
     {
         BezelOuter = new Vector4(0.03f, 0.03f, 0.04f, 1f),
         BezelRim = new Vector4(0.22f, 0.22f, 0.26f, 1f),
@@ -74,5 +74,31 @@ internal sealed class PhoneTheme
         SidePadding = 16f,
     };
 
-    public static PhoneTheme Default { get; } = From(new Vector4(0.55f, 0.45f, 0.95f, 1f), "DuskLight", "DuskDark");
+    public static PhoneTheme Light(Vector4 accent, string lightWallpaperId, string darkWallpaperId) => new()
+    {
+        BezelOuter = new Vector4(0.03f, 0.03f, 0.04f, 1f),
+        BezelRim = new Vector4(0.22f, 0.22f, 0.26f, 1f),
+        ScreenBase = new Vector4(0.90f, 0.90f, 0.93f, 1f),
+        LightWallpaperId = lightWallpaperId,
+        DarkWallpaperId = darkWallpaperId,
+        AppBackground = new Vector4(0.949f, 0.949f, 0.969f, 1f),
+        GroupedCard = new Vector4(1f, 1f, 1f, 1f),
+        Separator = new Vector4(0.235f, 0.235f, 0.262f, 0.29f),
+        ToggleOn = new Vector4(0.204f, 0.780f, 0.349f, 1f),
+        ToggleOff = new Vector4(0.902f, 0.902f, 0.922f, 1f),
+        Surface = new Vector4(0.97f, 0.97f, 0.98f, 0.92f),
+        SurfaceMuted = new Vector4(0.45f, 0.45f, 0.50f, 0.16f),
+        TextStrong = new Vector4(0.10f, 0.10f, 0.11f, 1f),
+        TextMuted = new Vector4(0.32f, 0.32f, 0.36f, 1f),
+        Accent = accent,
+        Danger = new Vector4(0.90f, 0.18f, 0.18f, 1f),
+        DeviceRounding = 46f,
+        BezelThickness = 9f,
+        ScreenRounding = 38f,
+        TopZoneHeight = 48f,
+        BottomZoneHeight = 30f,
+        SidePadding = 16f,
+    };
+
+    public static PhoneTheme Default { get; } = Dark(new Vector4(0.55f, 0.45f, 0.95f, 1f), "DuskLight", "DuskDark");
 }

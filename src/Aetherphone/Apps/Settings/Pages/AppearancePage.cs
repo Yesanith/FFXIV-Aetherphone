@@ -18,6 +18,8 @@ internal sealed class AppearancePage : ISettingsPage
 
     public Vector4 Tint => new(0.55f, 0.45f, 0.95f, 1f);
 
+    private static readonly ThemeMode[] ModeOrder = { ThemeMode.Light, ThemeMode.Dark, ThemeMode.Auto };
+
     private readonly Configuration configuration;
     private readonly ThemeProvider themes;
     private readonly ISettingsNavigator navigator;
@@ -37,7 +39,15 @@ internal sealed class AppearancePage : ISettingsPage
         using (AppSurface.Begin(body))
         {
             SettingsSection.Header(Loc.T(L.Settings.Theme), theme);
-            var card = GroupCard.Begin(theme, 2);
+            var card = GroupCard.Begin(theme, 3);
+
+            var modeIndex = SegmentStrip.Draw(card.NextRow(), ModeLabels(), CurrentModeIndex(), theme);
+            var mode = ModeOrder[modeIndex];
+            if (mode != configuration.ThemeMode)
+            {
+                configuration.ThemeMode = mode;
+                ApplyTheme();
+            }
 
             var accentIndex = SwatchStrip.Draw(card.NextRow(), Loc.T(L.Settings.Accent), ThemeCatalog.Accents, ThemeCatalog.IndexOf(ThemeCatalog.Accents, configuration.AccentName), theme);
             var accentName = ThemeCatalog.Accents[accentIndex].Name;
@@ -67,6 +77,26 @@ internal sealed class AppearancePage : ISettingsPage
                 configuration.Save();
             }
         }
+    }
+
+    private static string[] ModeLabels() => new[]
+    {
+        Loc.T(L.Settings.ThemeLight),
+        Loc.T(L.Settings.ThemeDark),
+        Loc.T(L.Settings.ThemeAuto),
+    };
+
+    private int CurrentModeIndex()
+    {
+        for (var index = 0; index < ModeOrder.Length; index++)
+        {
+            if (ModeOrder[index] == configuration.ThemeMode)
+            {
+                return index;
+            }
+        }
+
+        return 0;
     }
 
     private void ApplyTheme()

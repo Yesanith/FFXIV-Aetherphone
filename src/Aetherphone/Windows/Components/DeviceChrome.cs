@@ -48,7 +48,6 @@ internal static class DeviceChrome
         var rounding = theme.ScreenRounding * ImGuiHelpers.GlobalScale;
         var library = Plugin.Wallpapers;
         library.CurrentTargetAspect = screen.Height > 0f ? screen.Width / screen.Height : 0.5f;
-        library.StepDayNight(MathF.Min(ImGui.GetIO().DeltaTime, 0.1f));
 
         var light = library.Resolve(theme.LightWallpaperId);
         var dark = library.Resolve(theme.DarkWallpaperId);

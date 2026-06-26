@@ -1,7 +1,16 @@
+using Aetherphone.Core.Theme;
+
 namespace Aetherphone.Core.Localization;
 
 internal static class CatalogLabels
 {
+    public static string ThemeMode(ThemeMode mode) => mode switch
+    {
+        Core.Theme.ThemeMode.Light => Loc.T(L.Settings.ThemeLight),
+        Core.Theme.ThemeMode.Auto => Loc.T(L.Settings.ThemeAuto),
+        _ => Loc.T(L.Settings.ThemeDark),
+    };
+
     public static string Accent(string identifier) => identifier switch
     {
         "Violet" => Loc.T(L.Catalogs.AccentViolet),

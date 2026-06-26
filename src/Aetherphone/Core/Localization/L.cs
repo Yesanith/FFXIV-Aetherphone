@@ -62,6 +62,12 @@ internal static class L
 
         public static readonly LocString Theme = new("settings.theme", "Theme");
 
+        public static readonly LocString ThemeLight = new("settings.themeLight", "Light");
+
+        public static readonly LocString ThemeDark = new("settings.themeDark", "Dark");
+
+        public static readonly LocString ThemeAuto = new("settings.themeAuto", "Auto");
+
         public static readonly LocString Accent = new("settings.accent", "Accent");
 
         public static readonly LocString Wallpaper = new("settings.wallpaper", "Wallpaper");

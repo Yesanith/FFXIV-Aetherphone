@@ -59,8 +59,6 @@ internal sealed class WallpaperPage : ISettingsPage
 
     public void Draw(in PhoneContext context, Rect body)
     {
-        Plugin.Wallpapers.StepDayNight(MathF.Min(ImGui.GetIO().DeltaTime, 0.1f));
-
         var picked = Interlocked.Exchange(ref pendingFilePath, null);
         if (!string.IsNullOrEmpty(picked))
         {

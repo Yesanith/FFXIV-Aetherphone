@@ -55,10 +55,12 @@ internal sealed class PhoneShell : IDisposable
 
     public void Draw(Rect device)
     {
-        var theme = themes.Current;
+        var delta = MathF.Min(ImGui.GetIO().DeltaTime, TransitionTiming.MaxFrameSeconds);
+        Plugin.Wallpapers.StepDayNight(delta);
+
+        var theme = themes.Chrome;
         var screen = DeviceChrome.DrawBody(device, theme, !TransparencyActive());
 
-        var delta = MathF.Min(ImGui.GetIO().DeltaTime, TransitionTiming.MaxFrameSeconds);
         boot.Advance(delta);
         navigation.Advance(delta);
         banner.Advance(delta);
@@ -192,12 +194,13 @@ internal sealed class PhoneShell : IDisposable
 
     private void PaintApp(Rect screen, PhoneTheme theme, IPhoneApp app)
     {
+        var content = themes.Current;
         if (!app.WantsTransparentScreen)
         {
-            DeviceChrome.FillScreen(screen, theme, theme.AppBackground);
+            DeviceChrome.FillScreen(screen, theme, content.AppBackground);
         }
 
-        app.Draw(new PhoneContext(ContentRect(screen, theme), theme, navigation));
+        app.Draw(new PhoneContext(ContentRect(screen, theme), content, navigation));
     }
 
     private static Rect ContentRect(Rect screen, PhoneTheme theme)

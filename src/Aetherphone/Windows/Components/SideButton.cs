@@ -73,12 +73,22 @@ internal sealed class SideButton
 
     private static void DrawButton(Rect bounds, PhoneTheme theme, bool hovered, float progress)
     {
-        var fill = hovered ? Palette.Mix(theme.BezelRim, theme.TextStrong, 0.7f) : theme.BezelRim;
+        var scale = ImGuiHelpers.GlobalScale;
+        var dl = ImGui.GetWindowDrawList();
+        var rounding = bounds.Width * 0.5f;
+
+        var resting = Palette.Mix(theme.BezelRim, theme.Accent, 0.45f);
+        var fill = hovered ? Palette.Mix(resting, theme.Accent, 0.6f) : resting;
+        dl.AddRectFilled(bounds.Min, bounds.Max, ImGui.GetColorU32(fill), rounding);
+
         if (progress > 0f)
         {
-            fill = Palette.Mix(fill, theme.Accent, progress);
+            var top = bounds.Max.Y - bounds.Height * progress;
+            dl.AddRectFilled(new Vector2(bounds.Min.X, top), bounds.Max, ImGui.GetColorU32(theme.Accent), rounding, ImDrawFlags.RoundCornersBottom);
         }
 
-        ImGui.GetWindowDrawList().AddRectFilled(bounds.Min, bounds.Max, ImGui.GetColorU32(fill), bounds.Width * 0.5f);
+        var glowAlpha = hovered || progress > 0f ? 0.95f : 0.6f;
+        var glow = ImGui.GetColorU32(Palette.WithAlpha(theme.Accent, glowAlpha));
+        dl.AddLine(new Vector2(bounds.Max.X - scale, bounds.Min.Y + rounding), new Vector2(bounds.Max.X - scale, bounds.Max.Y - rounding), glow, 2f * scale);
     }
 }

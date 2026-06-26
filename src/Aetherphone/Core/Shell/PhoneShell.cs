@@ -6,6 +6,7 @@ using Aetherphone.Core.Playback;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
@@ -150,6 +151,25 @@ internal sealed class PhoneShell : IDisposable
         {
             StatusBar.Draw(screen, theme);
             DrawHomeIndicator(screen, theme);
+            DrawPositionLock(screen, theme);
+        }
+    }
+
+    private void DrawPositionLock(Rect screen, PhoneTheme theme)
+    {
+        if (lockScreen.IsActive)
+        {
+            return;
+        }
+
+        var scale = ImGuiHelpers.GlobalScale;
+        var radius = 13f * scale;
+        var center = new Vector2(screen.Max.X - 30f * scale, screen.Max.Y - 28f * scale);
+        var icon = Plugin.Cfg.LockPosition ? FontAwesomeIcon.Lock : FontAwesomeIcon.LockOpen;
+        if (LockButton.Draw(center, radius, icon, Plugin.Cfg.LockPosition, theme))
+        {
+            Plugin.Cfg.LockPosition = !Plugin.Cfg.LockPosition;
+            Plugin.Cfg.Save();
         }
     }
 

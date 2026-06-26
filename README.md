@@ -27,18 +27,23 @@ Puts a real smartphone on screen: a docked, always-on device with a home screen,
 
 ## Take a look
 
-A few of the things you can do — listen to music, check the weather, search the market, message your contacts, and more.
+A few of the things you can do — message your contacts, listen to music, check the weather, search the market, hop between venues, and more.
 
 <table>
   <tr>
     <td align="center" width="33%"><img src="src/Aetherphone/Images/screenshots/Chat.png" width="340" alt="Messages chat thread" /><br /><sub><b>Message your contacts</b><br />Every <code>/tell</code> becomes a chat bubble</sub></td>
-    <td align="center" width="33%"><img src="src/Aetherphone/Images/screenshots/Music.png" width="340" alt="Music app" /><br /><sub><b>Listen to music</b><br />Internet radio, sorted by genre</sub></td>
+    <td align="center" width="33%"><img src="src/Aetherphone/Images/screenshots/Music.png" width="340" alt="Music app" /><br /><sub><b>Listen to music</b><br />Internet radio &amp; song search, in-game</sub></td>
     <td align="center" width="33%"><img src="src/Aetherphone/Images/screenshots/Weather.png" width="340" alt="Skywatcher weather" /><br /><sub><b>Check the weather</b><br />Live Eorzean forecast for your zone</sub></td>
   </tr>
   <tr>
     <td align="center"><img src="src/Aetherphone/Images/screenshots/Market.png" width="340" alt="Market board" /><br /><sub><b>Search the market</b><br />Live Universalis prices, stats &amp; trends</sub></td>
+    <td align="center"><img src="src/Aetherphone/Images/screenshots/Venues.png" width="340" alt="Venues list" /><br /><sub><b>Find a venue</b><br />Live community events &amp; one-tap travel</sub></td>
+    <td align="center"><img src="src/Aetherphone/Images/screenshots/News.png" width="340" alt="News feed" /><br /><sub><b>Catch up on the news</b><br />Lodestone headlines for your region</sub></td>
+  </tr>
+  <tr>
     <td align="center"><img src="src/Aetherphone/Images/screenshots/Contacts.png" width="340" alt="Contacts list" /><br /><sub><b>Browse your contacts</b><br />Your friend list as an address book</sub></td>
     <td align="center"><img src="src/Aetherphone/Images/screenshots/Wallet.png" width="340" alt="Wallet" /><br /><sub><b>Track your wallet</b><br />Gil, currencies, tomestones &amp; seals</sub></td>
+    <td align="center"><img src="src/Aetherphone/Images/screenshots/Games.png" width="340" alt="Games arcade" /><br /><sub><b>Take a break</b><br />A pocket arcade of 15 mini-games</sub></td>
   </tr>
   <tr>
     <td align="center" colspan="3"><img src="src/Aetherphone/Images/screenshots/Dynamic.png" width="240" alt="Now Playing banner" /><br /><sub><b>Now Playing</b><br />A dynamic island that follows your music</sub></td>
@@ -59,14 +64,17 @@ A few of the things you can do — listen to music, check the weather, search th
 - **Messages**: reads incoming `/tell`s, lays them out as chat bubbles, and lets you reply — with notifications and an unread count.
 - **Contacts**: your friend list as an address book, with Lodestone portraits; start a conversation straight from a contact.
 - **Character**: a profile card for the local character, gear and Lodestone portrait included.
-- **Skywatcher**: live Eorzean weather for your current zone.
+- **Skywatcher**: live Eorzean weather for your current zone, with a forecast for the hours ahead.
+- **Venues**: browse community venues and events — nightclubs, bars, photography spots, and more — with live / upcoming filters, tag and name search, and favorites. One tap travels you there with Lifestream (or copies the command), or opens the venue's listing and Discord.
+- **News**: the Lodestone feed for your region — Topics, Notices, Maintenance, and Updates — with images, maintenance windows, and a tap to open the full story.
 - **Market**: live market board prices from Universalis — search any item (or right-click one in-game), see the cheapest listings, price stats, sale velocity, and recent-sale history with a trend graph across your World, Data Center, or Region. Set price-drop alerts that ping the phone, compare against NPC vendor prices, and star favorites.
 - **Wallet**: track your gil, currencies, tomestones, hunt seals, and PvP marks at a glance, with progress toward weekly caps.
-- **Music**: an internet-radio player — pick a genre station and listen in-game, with a Now Playing banner on the home screen.
+- **Music**: an in-game player — browse genre stations or search for any track, with playback controls and a Now Playing banner on the home screen.
 - **Camera**: capture in-game shots straight from the phone, with square / photo / pano modes, an optional framing grid, and a flash.
 - **Photos**: a gallery for your captures, laid out like a real photo library with a full-screen viewer.
-- **Games**: a small arcade on the device — Sweeper, Pairs, Gem Swap, and 2048.
+- **Games**: a pocket arcade of 15 mini-games across logic, memory, match-3, and puzzle — Sweeper, Nonogram, Pairs, Simon, Gem Swap, 2048, Water Sort, Flow, Solitaire, Reversi, Breakout, Bubble Shooter, Snake, Flap, and Whack — each tracking your best score.
 - **Clock**: an analog clock on Eorzea time.
+- **Timers**: countdowns to the daily, Grand Company, and weekly resets, plus Fashion Report, Jumbo Cactpot, and Ocean Fishing windows and your retainer ventures — with optional reminders.
 
 ### Personalization
 
@@ -78,7 +86,7 @@ A few of the things you can do — listen to music, check the weather, search th
 
 ## Roadmap
 
-Most of the original roadmap has shipped — Camera, Photos, Games, custom wallpapers, and Lodestone portraits are all in. What's left is mostly the social layer, which waits on the backend.
+Most of the original roadmap has shipped — Camera, Photos, Games, Market, Venues, News, Timers, custom wallpapers, and Lodestone portraits are all in. What's left is mostly the social layer, which waits on the backend.
 
 - **Backend integration**: a server layer so the phone can sync data, persist state, and power the social apps below across characters and sessions. (The Aethernet account flow is already built and will switch on once the server is live.)
 - **Friends**: add friends who also run Aetherphone, share stories, and keep up with each other in-game.
@@ -87,9 +95,8 @@ Most of the original roadmap has shipped — Camera, Photos, Games, custom wallp
 - **In-game voice call**: call your friends in-game right from the phone.
 - **Calendar**: events and reminders on Eorzean (and real) time.
 - **Maps**: in-world navigation and points of interest.
-- **Orchestrion**: a music player for in-game tracks.
+- **Orchestrion**: a player for in-game tracks.
 - **Memories**: a curated highlights view stitched from your photos and moments.
-- **Alarms**: timers and alarms tied to game or real time.
 
 ## Install
 

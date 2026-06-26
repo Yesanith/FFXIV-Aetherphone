@@ -25,9 +25,7 @@ internal static class CharacterHeader
 
         Elevation.Card(dl, cardMin, cardMax, rounding, scale, 0.7f);
         Squircle.Fill(dl, cardMin, cardMax, rounding, ImGui.GetColorU32(theme.GroupedCard));
-        var topTint = ImGui.GetColorU32(Palette.WithAlpha(theme.Accent, 0.22f));
-        var clear = ImGui.GetColorU32(Palette.WithAlpha(theme.Accent, 0f));
-        dl.AddRectFilledMultiColor(new Vector2(cardMin.X + rounding, cardMin.Y + 1f * scale), new Vector2(cardMax.X - rounding, cardMin.Y + height * 0.55f), topTint, topTint, clear, clear);
+        Material.TopGlow(dl, cardMin, cardMax, rounding, theme.Accent, 0.82f, 0.15f);
         Material.EdgeSquircle(dl, cardMin, cardMax, rounding, scale);
 
         var avatarCenter = new Vector2(centerX, cardMin.Y + 20f * scale + radius);

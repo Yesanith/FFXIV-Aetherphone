@@ -56,15 +56,14 @@ internal sealed class ClockApp : IPhoneApp
         {
             var available = ImGui.GetContentRegionAvail().Y;
             var spacer = 14f * scale;
-            var worldHeight = 3f * WorldRowHeight * scale;
+            var worldHeight = 2f * WorldRowHeight * scale;
             var heroHeight = Math.Clamp(available - worldHeight - spacer, 132f * scale, 208f * scale);
 
             DrawHero(theme, local, localSeconds, heroHeight);
 
             ImGui.Dummy(new Vector2(0f, spacer));
 
-            var card = GroupCard.Begin(theme, 3, WorldRowHeight);
-            DrawWorldRow(card.NextRow(), theme, Loc.T(L.Clock.Local), LocalOffsetLabel(), local.ToString("HH:mm"), local.Hour, local.Minute, localSeconds);
+            var card = GroupCard.Begin(theme, 2, WorldRowHeight);
             DrawWorldRow(card.NextRow(), theme, "Eorzea", Loc.T(L.Clock.InGame), eorzeaTime.Formatted, eorzeaTime.Hour, eorzeaTime.Minute, eorzeaSecondsOfMinute);
             DrawWorldRow(card.NextRow(), theme, Loc.T(L.Clock.Server), "UTC", utc.ToString("HH:mm"), utc.Hour, utc.Minute, utcSeconds);
             card.End();

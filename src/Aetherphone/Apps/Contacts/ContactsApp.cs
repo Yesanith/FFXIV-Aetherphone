@@ -245,9 +245,7 @@ internal sealed class ContactsApp : IPhoneApp
         Squircle.Fill(dl, heroMin, heroMax, rounding, ImGui.GetColorU32(theme.GroupedCard));
 
         var tint = friend.Online ? theme.Accent : theme.SurfaceMuted;
-        var topTint = ImGui.GetColorU32(Palette.WithAlpha(tint, 0.24f));
-        var clear = ImGui.GetColorU32(Palette.WithAlpha(tint, 0f));
-        dl.AddRectFilledMultiColor(new Vector2(heroMin.X + rounding, heroMin.Y + 1f * scale), new Vector2(heroMax.X - rounding, heroMin.Y + heroHeight * 0.62f), topTint, topTint, clear, clear);
+        Material.TopGlow(dl, heroMin, heroMax, rounding, tint, 0.82f, 0.15f);
         Material.EdgeSquircle(dl, heroMin, heroMax, rounding, scale);
 
         var centerX = heroMin.X + width * 0.5f;

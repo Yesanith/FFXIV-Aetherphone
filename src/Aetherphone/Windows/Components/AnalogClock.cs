@@ -7,10 +7,10 @@ namespace Aetherphone.Windows.Components;
 
 internal static class AnalogClock
 {
-    private static readonly Vector4 DayFace = new(0.92f, 0.95f, 0.99f, 1f);
-    private static readonly Vector4 NightFace = new(0.09f, 0.11f, 0.19f, 1f);
-    private static readonly Vector4 DayInk = new(0.22f, 0.25f, 0.34f, 1f);
-    private static readonly Vector4 NightInk = new(0.82f, 0.86f, 0.94f, 1f);
+    private static readonly Vector4 DayFace = new(0.90f, 0.93f, 0.98f, 1f);
+    private static readonly Vector4 NightFace = new(0.19f, 0.21f, 0.31f, 1f);
+    private static readonly Vector4 DayInk = new(0.20f, 0.23f, 0.32f, 1f);
+    private static readonly Vector4 NightInk = new(0.85f, 0.89f, 0.96f, 1f);
 
     public static void Draw(Vector2 center, float radius, float hours, float minutes, float seconds, PhoneTheme theme) =>
         Draw(center, radius, hours, minutes, seconds, DayFraction(hours), theme);
@@ -21,7 +21,7 @@ internal static class AnalogClock
         var drawList = ImGui.GetWindowDrawList();
 
         var face = Vector4.Lerp(NightFace, DayFace, dayFraction);
-        var ink = Vector4.Lerp(NightInk, DayInk, dayFraction);
+        var ink = Luminance(face) > 0.5f ? DayInk : NightInk;
 
         drawList.AddCircleFilled(center, radius, ImGui.GetColorU32(face), 64);
         drawList.AddCircleFilled(center - new Vector2(0f, radius * 0.4f), radius * 0.62f, ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 0.05f + 0.05f * dayFraction)), 48);
@@ -59,6 +59,8 @@ internal static class AnalogClock
         drawList.AddCircleFilled(tip, thickness * 0.5f, packed, 12);
         drawList.AddCircleFilled(back, thickness * 0.5f, packed, 8);
     }
+
+    private static float Luminance(Vector4 color) => color.X * 0.299f + color.Y * 0.587f + color.Z * 0.114f;
 
     private static float DayFraction(float hours)
     {

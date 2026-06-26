@@ -80,9 +80,7 @@ internal static class CurrencyRow
         var rounding = 22f * scale;
         Elevation.Card(drawList, cardMin, cardMax, rounding, scale, 0.7f);
         Squircle.Fill(drawList, cardMin, cardMax, rounding, ImGui.GetColorU32(theme.GroupedCard));
-        var topTint = ImGui.GetColorU32(Palette.WithAlpha(theme.Accent, 0.20f));
-        var clear = ImGui.GetColorU32(Palette.WithAlpha(theme.Accent, 0f));
-        drawList.AddRectFilledMultiColor(new Vector2(cardMin.X + rounding, cardMin.Y + 1f * scale), new Vector2(cardMax.X - rounding, cardMin.Y + height * 0.62f), topTint, topTint, clear, clear);
+        Material.TopGlow(drawList, cardMin, cardMax, rounding, theme.Accent, 0.82f, 0.15f);
         Material.EdgeSquircle(drawList, cardMin, cardMax, rounding, scale);
 
         Typography.DrawCentered(new Vector2(centerX, cardMin.Y + 22f * scale), Loc.T(L.Wallet.GilBalance), theme.TextMuted, TextStyles.Caption1);

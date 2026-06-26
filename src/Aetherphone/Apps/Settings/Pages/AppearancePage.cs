@@ -41,7 +41,7 @@ internal sealed class AppearancePage : ISettingsPage
             SettingsSection.Header(Loc.T(L.Settings.Theme), theme);
             var card = GroupCard.Begin(theme, 3);
 
-            var modeIndex = SegmentStrip.Draw(card.NextRow(), ModeLabels(), CurrentModeIndex(), theme);
+            var modeIndex = SegmentStrip.Draw("settings.themeMode", card.NextRow(), ModeLabels(), CurrentModeIndex(), theme);
             var mode = ModeOrder[modeIndex];
             if (mode != configuration.ThemeMode)
             {

@@ -144,7 +144,7 @@ internal sealed class SweeperApp : IMiniGame
             new Vector2(body.Min.X + 4f * scale, rowY - 13f * scale),
             new Vector2(body.Max.X - 44f * scale, rowY + 13f * scale));
 
-        var selected = SegmentStrip.Draw(segmentRow, difficultyLabels, (int)difficulty, theme);
+        var selected = SegmentStrip.Draw("sweeper.difficulty", segmentRow, difficultyLabels, (int)difficulty, theme);
         if (selected != (int)difficulty)
         {
             StartNewGame((Difficulty)selected);

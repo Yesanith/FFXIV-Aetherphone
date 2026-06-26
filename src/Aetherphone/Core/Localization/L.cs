@@ -252,6 +252,12 @@ internal static class L
         public static readonly LocString InviteToParty = new("contacts.inviteToParty", "Invite to Party");
 
         public static readonly LocString VisitEstate = new("contacts.visitEstate", "Visit Estate");
+
+        public static readonly LocString Plate = new("contacts.plate", "Plate");
+
+        public static readonly LocString Party = new("contacts.party", "Party");
+
+        public static readonly LocString Visit = new("contacts.visit", "Visit");
     }
 
     internal static class Chirper

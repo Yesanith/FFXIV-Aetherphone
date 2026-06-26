@@ -56,7 +56,7 @@ internal sealed class AppearancePage : ISettingsPage
 
             SettingsSection.Header(Loc.T(L.Settings.TextSize), theme);
             var zoomCard = GroupCard.Begin(theme, 1);
-            var zoomIndex = SegmentStrip.Draw(zoomCard.NextRow(), TextZoomCatalog.Labels, TextZoomCatalog.IndexOf(configuration.TextZoom), theme);
+            var zoomIndex = SegmentStrip.Draw("settings.textZoom", zoomCard.NextRow(), TextZoomCatalog.Labels, TextZoomCatalog.IndexOf(configuration.TextZoom), theme);
             zoomCard.End();
 
             var zoom = TextZoomCatalog.Scales[zoomIndex];

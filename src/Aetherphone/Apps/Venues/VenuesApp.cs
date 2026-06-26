@@ -508,7 +508,7 @@ internal sealed class VenuesApp : IPhoneApp
             TimeFilterLabel(VenueTimeFilter.All),
         };
 
-        var selected = SegmentStrip.Draw(bar, labels, (int)configuration.VenueTimeFilter, frameTheme);
+        var selected = SegmentStrip.Draw("venues.timeFilter", bar, labels, (int)configuration.VenueTimeFilter, frameTheme);
         if (selected != (int)configuration.VenueTimeFilter)
         {
             configuration.VenueTimeFilter = (VenueTimeFilter)selected;

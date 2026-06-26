@@ -10,7 +10,7 @@ namespace Aetherphone.Windows.Components;
 
 internal static class ConversationRow
 {
-    private const float Height = 60f;
+    private const float Height = 64f;
 
     public static bool Draw(Conversation conversation, PhoneTheme theme, LodestoneService lodestone)
     {
@@ -20,31 +20,51 @@ internal static class ConversationRow
         var min = origin;
         var max = new Vector2(origin.X + width, origin.Y + Height * scale);
         var hovered = ImGui.IsMouseHoveringRect(min, max);
+        var pressed = hovered && ImGui.IsMouseDown(ImGuiMouseButton.Left);
 
         var dl = ImGui.GetWindowDrawList();
         if (hovered)
         {
-            Squircle.Fill(dl, min, max, 12f * scale, ImGui.GetColorU32(theme.GroupedCard));
+            var hlMin = new Vector2(min.X + 6f * scale, min.Y + 3f * scale);
+            var hlMax = new Vector2(max.X - 6f * scale, max.Y - 3f * scale);
+            Squircle.Fill(dl, hlMin, hlMax, 12f * scale, ImGui.GetColorU32(new Vector4(1f, 1f, 1f, pressed ? 0.10f : 0.05f)));
         }
 
-        var avatarRadius = 20f * scale;
+        var avatarRadius = 21f * scale;
         var avatarCenter = new Vector2(min.X + 14f * scale + avatarRadius, min.Y + Height * scale * 0.5f);
-        AvatarView.Draw(dl, avatarCenter, avatarRadius, theme.Accent, Initials.Of(conversation.Contact), 1.1f, lodestone.Avatar(conversation.Contact, conversation.World), 32);
+        AvatarView.Draw(dl, avatarCenter, avatarRadius, theme.Accent, Initials.Of(conversation.Contact), 1.2f, lodestone.Avatar(conversation.Contact, conversation.World), 32);
 
         var textLeft = avatarCenter.X + avatarRadius + 12f * scale;
         var textRight = max.X - 14f * scale;
+        var hasUnread = conversation.Unread > 0;
 
-        Typography.Draw(new Vector2(textLeft, min.Y + 12f * scale), conversation.Contact, theme.TextStrong, 1f, FontWeight.SemiBold);
+        var time = NotificationCard.RelativeTime(conversation.LastActivity);
+        var timeSize = Typography.Measure(time, TextStyles.Caption1);
+        Typography.Draw(new Vector2(textRight - timeSize.X, min.Y + 13f * scale), time, hasUnread ? theme.Accent : theme.TextMuted, TextStyles.Caption1);
 
-        var preview = conversation.Last?.Text ?? string.Empty;
-        dl.PushClipRect(new Vector2(textLeft, min.Y), new Vector2(textRight, max.Y), true);
-        Typography.Draw(new Vector2(textLeft, min.Y + 33f * scale), preview, theme.TextMuted, 0.9f);
+        dl.PushClipRect(new Vector2(textLeft, min.Y), new Vector2(textRight - timeSize.X - 8f * scale, max.Y), true);
+        Typography.Draw(new Vector2(textLeft, min.Y + 11f * scale), conversation.Contact, theme.TextStrong, TextStyles.Headline);
         dl.PopClipRect();
 
-        if (conversation.Unread > 0)
+        var previewRight = textRight;
+        if (hasUnread)
         {
-            dl.AddCircleFilled(new Vector2(textRight - 5f * scale, min.Y + 18f * scale), 5f * scale, ImGui.GetColorU32(theme.Accent), 16);
+            var label = conversation.Unread > 99 ? "99+" : conversation.Unread.ToString();
+            var labelSize = Typography.Measure(label, TextStyles.Caption1);
+            var badgeHeight = 18f * scale;
+            var badgeWidth = MathF.Max(labelSize.X + 12f * scale, badgeHeight);
+            var badgeCenterY = min.Y + 42f * scale;
+            var badgeMin = new Vector2(textRight - badgeWidth, badgeCenterY - badgeHeight * 0.5f);
+            var badgeMax = new Vector2(textRight, badgeCenterY + badgeHeight * 0.5f);
+            Squircle.Fill(dl, badgeMin, badgeMax, badgeHeight * 0.5f, ImGui.GetColorU32(theme.Accent));
+            Typography.DrawCentered((badgeMin + badgeMax) * 0.5f, label, new Vector4(1f, 1f, 1f, 1f), TextStyles.Caption1);
+            previewRight = badgeMin.X - 8f * scale;
         }
+
+        var preview = conversation.Last?.Text ?? string.Empty;
+        dl.PushClipRect(new Vector2(textLeft, min.Y), new Vector2(previewRight, max.Y), true);
+        Typography.Draw(new Vector2(textLeft, min.Y + 34f * scale), preview, theme.TextMuted, TextStyles.Subheadline);
+        dl.PopClipRect();
 
         ImGui.SetCursorScreenPos(origin);
         ImGui.Dummy(new Vector2(width, Height * scale));

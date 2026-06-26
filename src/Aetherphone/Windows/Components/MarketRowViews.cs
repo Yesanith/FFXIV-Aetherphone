@@ -27,6 +27,12 @@ internal static class MarketRowViews
         var scale = ImGuiHelpers.GlobalScale;
         var drawList = ImGui.GetWindowDrawList();
 
+        var openRight = row.Max.X - 56f * scale;
+        if (ImGui.IsMouseHoveringRect(row.Min, new Vector2(openRight, row.Max.Y)))
+        {
+            DrawRowHighlight(drawList, new Rect(row.Min, new Vector2(openRight, row.Max.Y)), ImGui.IsMouseDown(ImGuiMouseButton.Left), scale);
+        }
+
         var iconSize = 30f * scale;
         var iconMin = new Vector2(row.Min.X, row.Center.Y - iconSize * 0.5f);
         var iconMax = iconMin + new Vector2(iconSize, iconSize);
@@ -80,6 +86,11 @@ internal static class MarketRowViews
         var scale = ImGuiHelpers.GlobalScale;
         var hovered = ImGui.IsMouseHoveringRect(row.Min, row.Max);
         var drawList = ImGui.GetWindowDrawList();
+
+        if (hovered)
+        {
+            DrawRowHighlight(drawList, row, ImGui.IsMouseDown(ImGuiMouseButton.Left), scale);
+        }
 
         var iconSize = 30f * scale;
         var iconMin = new Vector2(row.Min.X, row.Center.Y - iconSize * 0.5f);
@@ -204,5 +215,13 @@ internal static class MarketRowViews
         var packed = ImGui.GetColorU32(color);
         drawList.AddLine(new Vector2(tip.X - size, tip.Y - size), tip, packed, thickness);
         drawList.AddLine(tip, new Vector2(tip.X - size, tip.Y + size), packed, thickness);
+    }
+
+    private static void DrawRowHighlight(ImDrawListPtr drawList, Rect row, bool pressed, float scale)
+    {
+        var min = new Vector2(row.Min.X - 8f * scale, row.Min.Y + 2f * scale);
+        var max = new Vector2(row.Max.X + 8f * scale, row.Max.Y - 2f * scale);
+        var alpha = pressed ? 0.10f : 0.05f;
+        Squircle.Fill(drawList, min, max, 9f * scale, ImGui.GetColorU32(new Vector4(1f, 1f, 1f, alpha)));
     }
 }

@@ -74,28 +74,37 @@ internal static class CurrencyRow
         var drawList = ImGui.GetWindowDrawList();
         var centerX = origin.X + width * 0.5f;
 
-        Typography.DrawCentered(new Vector2(centerX, origin.Y + 11f * scale), Loc.T(L.Wallet.GilBalance), theme.TextMuted, 0.78f);
+        var height = 104f * scale;
+        var cardMin = origin;
+        var cardMax = new Vector2(origin.X + width, origin.Y + height);
+        var rounding = 22f * scale;
+        Elevation.Card(drawList, cardMin, cardMax, rounding, scale, 0.7f);
+        Squircle.Fill(drawList, cardMin, cardMax, rounding, ImGui.GetColorU32(theme.GroupedCard));
+        Material.TopGlow(drawList, cardMin, cardMax, rounding, theme.Accent, 0.82f, 0.15f);
+        Material.EdgeSquircle(drawList, cardMin, cardMax, rounding, scale);
+
+        Typography.DrawCentered(new Vector2(centerX, cardMin.Y + 22f * scale), Loc.T(L.Wallet.GilBalance), theme.TextMuted, TextStyles.Caption1);
 
         var amountText = Format(gil.Amount);
-        var amountSize = Typography.Measure(amountText, 2.0f);
-        var iconSize = 32f * scale;
+        var amountSize = Typography.Measure(amountText, TextStyles.LargeTitle);
+        var iconSize = 30f * scale;
         var gap = 10f * scale;
         var hasIcon = gil.IconId != 0;
         var totalWidth = amountSize.X + (hasIcon ? iconSize + gap : 0f);
-        var rowY = origin.Y + 34f * scale;
+        var rowCenterY = cardMin.Y + height * 0.60f;
         var startX = centerX - totalWidth * 0.5f;
 
         if (hasIcon)
         {
-            var iconMin = new Vector2(startX, rowY + amountSize.Y * 0.5f - iconSize * 0.5f);
+            var iconMin = new Vector2(startX, rowCenterY - iconSize * 0.5f);
             DrawIcon(drawList, gil.IconId, iconMin, iconMin + new Vector2(iconSize, iconSize), scale, textures);
             startX += iconSize + gap;
         }
 
-        Typography.Draw(new Vector2(startX, rowY), amountText, theme.TextStrong, 2.0f);
+        Typography.Draw(new Vector2(startX, rowCenterY - amountSize.Y * 0.5f), amountText, theme.TextStrong, TextStyles.LargeTitle);
 
         ImGui.SetCursorScreenPos(origin);
-        ImGui.Dummy(new Vector2(width, 80f * scale));
+        ImGui.Dummy(new Vector2(width, height + 4f * scale));
     }
 
     private static void DrawIcon(ImDrawListPtr drawList, uint iconId, Vector2 min, Vector2 max, float scale, ITextureProvider textures)

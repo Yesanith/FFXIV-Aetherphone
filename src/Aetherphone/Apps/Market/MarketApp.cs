@@ -51,6 +51,9 @@ internal sealed class MarketApp : IPhoneApp
     private readonly List<MarketItemRef> sectionBuffer = new();
     private readonly List<uint> prefetchBuffer = new();
     private readonly List<MarketAlert> alertBuffer = new();
+    private readonly List<string> scopeLabels = new();
+    private readonly string[] qualityLabels = new string[2];
+    private readonly string[] alertDirLabels = new string[2];
 
     private int scopeIndex = -1;
     private bool showHq;
@@ -415,23 +418,29 @@ internal sealed class MarketApp : IPhoneApp
         var origin = ImGui.GetCursorScreenPos();
         var drawList = ImGui.GetWindowDrawList();
 
-        var iconSize = 44f * scale;
+        var iconSize = 50f * scale;
         var iconMin = new Vector2(origin.X, origin.Y + 4f * scale);
         var iconMax = iconMin + new Vector2(iconSize, iconSize);
+        var tileRounding = 13f * scale;
+        Elevation.Card(drawList, iconMin, iconMax, tileRounding, scale, 0.6f);
+        Squircle.Fill(drawList, iconMin, iconMax, tileRounding, ImGui.GetColorU32(frameTheme.GroupedCard));
         if (view.IconId != 0)
         {
             var texture = textures.GetFromGameIcon(new GameIconLookup(view.IconId)).GetWrapOrEmpty();
-            drawList.AddImageRounded(texture.Handle, iconMin, iconMax, Vector2.Zero, Vector2.One, 0xFFFFFFFFu, 8f * scale);
+            var inset = 3f * scale;
+            drawList.AddImageRounded(texture.Handle, iconMin + new Vector2(inset, inset), iconMax - new Vector2(inset, inset), Vector2.Zero, Vector2.One, 0xFFFFFFFFu, tileRounding - inset);
         }
 
-        var textX = iconMax.X + 12f * scale;
-        Typography.Draw(new Vector2(textX, iconMin.Y + 2f * scale), MarketFormat.Clip(view.Name, 16), frameTheme.TextStrong, 1.0f);
-        Typography.Draw(new Vector2(textX, iconMin.Y + 24f * scale), hq ? Loc.T(L.Market.CheapestHq) : Loc.T(L.Market.Cheapest), frameTheme.TextMuted, 0.82f);
+        Material.EdgeSquircle(drawList, iconMin, iconMax, tileRounding, scale);
+
+        var textX = iconMax.X + 14f * scale;
+        Typography.Draw(new Vector2(textX, iconMin.Y + 6f * scale), MarketFormat.Clip(view.Name, 16), frameTheme.TextStrong, TextStyles.Title3);
+        Typography.Draw(new Vector2(textX, iconMin.Y + 30f * scale), hq ? Loc.T(L.Market.CheapestHq) : Loc.T(L.Market.Cheapest), frameTheme.TextMuted, TextStyles.Footnote);
 
         var min = snapshot.Min(hq);
         var priceText = min > 0 ? MarketFormat.Gil(min) : "—";
-        var priceSize = Typography.Measure(priceText, 1.5f, FontWeight.SemiBold);
-        Typography.Draw(new Vector2(origin.X + width - priceSize.X, iconMin.Y + 4f * scale), priceText, frameTheme.Accent, 1.5f, FontWeight.SemiBold);
+        var priceSize = Typography.Measure(priceText, TextStyles.Title1);
+        Typography.Draw(new Vector2(origin.X + width - priceSize.X, iconMin.Y + iconSize * 0.5f - priceSize.Y * 0.5f), priceText, frameTheme.Accent, TextStyles.Title1);
 
         ImGui.SetCursorScreenPos(origin);
         ImGui.Dummy(new Vector2(width, iconSize + 12f * scale));
@@ -489,39 +498,25 @@ internal sealed class MarketApp : IPhoneApp
         }
 
         var scale = ImGuiHelpers.GlobalScale;
-        ImGui.Dummy(new Vector2(0f, 6f * scale));
+        ImGui.Dummy(new Vector2(0f, 8f * scale));
 
-        ImGui.SetNextItemWidth(170f * scale);
-        ImGui.InputInt("gil##marketAlertThreshold", ref alertThreshold);
-        if (alertThreshold < 1)
-        {
-            alertThreshold = 1;
-        }
+        DrawThresholdField();
 
-        ImGui.Dummy(new Vector2(0f, 4f * scale));
+        ImGui.Dummy(new Vector2(0f, 8f * scale));
 
-        var origin = ImGui.GetCursorScreenPos();
-        var width = ImGui.GetContentRegionAvail().X;
-        var toggleWidth = 190f * scale;
-        var trackMin = origin;
-        var trackMax = new Vector2(origin.X + toggleWidth, origin.Y + 26f * scale);
-        ImGui.GetWindowDrawList().AddRectFilled(trackMin, trackMax, ImGui.GetColorU32(frameTheme.GroupedCard), (trackMax.Y - trackMin.Y) * 0.5f);
-        var middle = (trackMin.X + trackMax.X) * 0.5f;
-        if (DrawSegment(new Rect(trackMin, new Vector2(middle, trackMax.Y)), Loc.T(L.Market.AtOrBelow), alertBelow))
-        {
-            alertBelow = true;
-        }
+        var dirOrigin = ImGui.GetCursorScreenPos();
+        var toggleWidth = 220f * scale;
+        var toggleHeight = 30f * scale;
+        alertDirLabels[0] = Loc.T(L.Market.AtOrBelow);
+        alertDirLabels[1] = Loc.T(L.Market.AtOrAbove);
+        var dirIndex = SegmentStrip.Draw("market.alertDir", new Rect(dirOrigin, new Vector2(dirOrigin.X + toggleWidth, dirOrigin.Y + toggleHeight)), alertDirLabels, alertBelow ? 0 : 1, frameTheme);
+        alertBelow = dirIndex == 0;
+        ImGui.SetCursorScreenPos(dirOrigin);
+        ImGui.Dummy(new Vector2(toggleWidth, toggleHeight));
 
-        if (DrawSegment(new Rect(new Vector2(middle, trackMin.Y), trackMax), Loc.T(L.Market.AtOrAbove), !alertBelow))
-        {
-            alertBelow = false;
-        }
+        ImGui.Dummy(new Vector2(0f, 10f * scale));
 
-        ImGui.SetCursorScreenPos(origin);
-        ImGui.Dummy(new Vector2(width, 26f * scale));
-
-        ImGui.Dummy(new Vector2(0f, 4f * scale));
-        if (ImGui.Button(Loc.T(L.Market.CreateAlert)))
+        if (DrawPrimaryButton(Loc.T(L.Market.CreateAlert)))
         {
             alerts.Add(new MarketAlert
             {
@@ -537,6 +532,72 @@ internal sealed class MarketApp : IPhoneApp
             });
             showAlertEditor = false;
         }
+    }
+
+    private void DrawThresholdField()
+    {
+        var scale = ImGuiHelpers.GlobalScale;
+        var drawList = ImGui.GetWindowDrawList();
+        var origin = ImGui.GetCursorScreenPos();
+        var width = ImGui.GetContentRegionAvail().X;
+        var height = 40f * scale;
+        var pillMin = origin;
+        var pillMax = new Vector2(origin.X + width, origin.Y + height);
+        Squircle.Fill(drawList, pillMin, pillMax, 12f * scale, ImGui.GetColorU32(frameTheme.GroupedCard));
+        Material.EdgeSquircle(drawList, pillMin, pillMax, 12f * scale, scale);
+
+        var labelSize = Typography.Measure("Gil", TextStyles.FootnoteEmphasized);
+        Typography.Draw(new Vector2(pillMin.X + 14f * scale, pillMin.Y + height * 0.5f - labelSize.Y * 0.5f), "Gil", frameTheme.TextMuted, TextStyles.FootnoteEmphasized);
+
+        var inputLeft = pillMin.X + 48f * scale;
+        ImGui.SetCursorScreenPos(new Vector2(inputLeft, pillMin.Y + height * 0.5f - ImGui.GetFrameHeight() * 0.5f));
+        ImGui.SetNextItemWidth(pillMax.X - inputLeft - 14f * scale);
+        using (ImRaii.PushColor(ImGuiCol.FrameBg, new Vector4(0f, 0f, 0f, 0f)))
+        using (ImRaii.PushColor(ImGuiCol.Text, frameTheme.TextStrong))
+        {
+            ImGui.InputInt("##marketAlertThreshold", ref alertThreshold, 0, 0);
+        }
+
+        if (alertThreshold < 1)
+        {
+            alertThreshold = 1;
+        }
+
+        ImGui.SetCursorScreenPos(origin);
+        ImGui.Dummy(new Vector2(width, height));
+    }
+
+    private bool DrawPrimaryButton(string label)
+    {
+        var scale = ImGuiHelpers.GlobalScale;
+        var drawList = ImGui.GetWindowDrawList();
+        var origin = ImGui.GetCursorScreenPos();
+        var width = ImGui.GetContentRegionAvail().X;
+        var height = 42f * scale;
+        var min = origin;
+        var max = new Vector2(origin.X + width, origin.Y + height);
+        var hovered = ImGui.IsMouseHoveringRect(min, max);
+        var pressed = hovered && ImGui.IsMouseDown(ImGuiMouseButton.Left);
+
+        var fill = pressed
+            ? Palette.Mix(frameTheme.Accent, new Vector4(0f, 0f, 0f, 1f), 0.14f)
+            : hovered
+                ? Palette.Mix(frameTheme.Accent, frameTheme.TextStrong, 0.10f)
+                : frameTheme.Accent;
+        Elevation.Card(drawList, min, max, 12f * scale, scale, 0.6f);
+        Squircle.Fill(drawList, min, max, 12f * scale, ImGui.GetColorU32(fill));
+        drawList.AddLine(new Vector2(min.X + 12f * scale, min.Y + 1f * scale), new Vector2(max.X - 12f * scale, min.Y + 1f * scale), ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 0.12f)), 1f * scale);
+        Typography.DrawCentered((min + max) * 0.5f, label, new Vector4(0.99f, 0.99f, 1f, 1f), TextStyles.Headline);
+
+        ImGui.SetCursorScreenPos(origin);
+        ImGui.Dummy(new Vector2(width, height));
+
+        if (hovered)
+        {
+            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+        }
+
+        return hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
     }
 
     private void DrawTrendSection(MarketSnapshot snapshot, bool hq)
@@ -640,19 +701,7 @@ internal sealed class MarketApp : IPhoneApp
 
     private void DrawSearch(Rect bar)
     {
-        var scale = ImGuiHelpers.GlobalScale;
-        var drawList = ImGui.GetWindowDrawList();
-        var pillMin = new Vector2(bar.Min.X, bar.Min.Y + 6f * scale);
-        var pillMax = new Vector2(bar.Max.X, bar.Max.Y - 6f * scale);
-        drawList.AddRectFilled(pillMin, pillMax, ImGui.GetColorU32(frameTheme.GroupedCard), (pillMax.Y - pillMin.Y) * 0.5f);
-
-        ImGui.SetCursorScreenPos(new Vector2(pillMin.X + 14f * scale, (pillMin.Y + pillMax.Y) * 0.5f - ImGui.GetFrameHeight() * 0.5f));
-        ImGui.SetNextItemWidth(pillMax.X - pillMin.X - 28f * scale);
-        using (ImRaii.PushColor(ImGuiCol.FrameBg, new Vector4(0f, 0f, 0f, 0f)))
-        using (ImRaii.PushColor(ImGuiCol.Text, frameTheme.TextStrong))
-        {
-            ImGui.InputTextWithHint("##marketSearch", Loc.T(L.Market.SearchItems), ref search, 100, ImGuiInputTextFlags.None);
-        }
+        SearchField.Draw(bar, "##marketSearch", Loc.T(L.Market.SearchItems), ref search, frameTheme);
     }
 
     private void DrawScopeBar(Rect bar)
@@ -662,67 +711,32 @@ internal sealed class MarketApp : IPhoneApp
             return;
         }
 
-        var scale = ImGuiHelpers.GlobalScale;
-        var drawList = ImGui.GetWindowDrawList();
-        var trackMin = new Vector2(bar.Min.X, bar.Center.Y - 13f * scale);
-        var trackMax = new Vector2(bar.Max.X, bar.Center.Y + 13f * scale);
-        drawList.AddRectFilled(trackMin, trackMax, ImGui.GetColorU32(frameTheme.GroupedCard), (trackMax.Y - trackMin.Y) * 0.5f);
-
-        var segmentWidth = (trackMax.X - trackMin.X) / scopes.Count;
+        scopeLabels.Clear();
         for (var scopeIdx = 0; scopeIdx < scopes.Count; scopeIdx++)
         {
-            var segMin = new Vector2(trackMin.X + segmentWidth * scopeIdx, trackMin.Y);
-            var segMax = new Vector2(segMin.X + segmentWidth, trackMax.Y);
-            var label = MarketFormat.Clip(scopes[scopeIdx].ApiName, 11);
-            if (DrawSegment(new Rect(segMin, segMax), label, scopeIdx == scopeIndex))
-            {
-                SetScope(scopeIdx);
-            }
+            scopeLabels.Add(MarketFormat.Clip(scopes[scopeIdx].ApiName, 11));
+        }
+
+        var newIndex = SegmentStrip.Draw("market.scope", bar, scopeLabels, scopeIndex, frameTheme);
+        if (newIndex != scopeIndex && newIndex >= 0)
+        {
+            SetScope(newIndex);
         }
     }
 
     private void DrawQualityToggle(Rect bar)
     {
         var scale = ImGuiHelpers.GlobalScale;
-        var drawList = ImGui.GetWindowDrawList();
         var width = 120f * scale;
-        var trackMin = new Vector2(bar.Min.X, bar.Center.Y - 12f * scale);
-        var trackMax = new Vector2(bar.Min.X + width, bar.Center.Y + 12f * scale);
-        drawList.AddRectFilled(trackMin, trackMax, ImGui.GetColorU32(frameTheme.GroupedCard), (trackMax.Y - trackMin.Y) * 0.5f);
+        var stripRect = new Rect(new Vector2(bar.Min.X, bar.Min.Y), new Vector2(bar.Min.X + width, bar.Max.Y));
+        qualityLabels[0] = Loc.T(L.Common.Nq);
+        qualityLabels[1] = Loc.T(L.Common.Hq);
 
-        var middle = (trackMin.X + trackMax.X) * 0.5f;
-        if (DrawSegment(new Rect(trackMin, new Vector2(middle, trackMax.Y)), Loc.T(L.Common.Nq), !showHq))
+        var newIndex = SegmentStrip.Draw("market.quality", stripRect, qualityLabels, showHq ? 1 : 0, frameTheme);
+        if ((newIndex == 1) != showHq)
         {
-            SetQuality(false);
+            SetQuality(newIndex == 1);
         }
-
-        if (DrawSegment(new Rect(new Vector2(middle, trackMin.Y), trackMax), Loc.T(L.Common.Hq), showHq))
-        {
-            SetQuality(true);
-        }
-    }
-
-    private bool DrawSegment(Rect segment, string label, bool selected)
-    {
-        var scale = ImGuiHelpers.GlobalScale;
-        if (selected)
-        {
-            var drawList = ImGui.GetWindowDrawList();
-            var inset = 2f * scale;
-            var min = new Vector2(segment.Min.X + inset, segment.Min.Y + inset);
-            var max = new Vector2(segment.Max.X - inset, segment.Max.Y - inset);
-            drawList.AddRectFilled(min, max, ImGui.GetColorU32(frameTheme.Accent), (max.Y - min.Y) * 0.5f);
-        }
-
-        Typography.DrawCentered(segment.Center, label, selected ? frameTheme.TextStrong : frameTheme.TextMuted, 0.82f);
-
-        var hovered = ImGui.IsMouseHoveringRect(segment.Min, segment.Max);
-        if (hovered)
-        {
-            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-        }
-
-        return hovered && !selected && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
     }
 
     private void DrawHeaderButtons(Rect area, MarketView view, out bool forceRefresh)

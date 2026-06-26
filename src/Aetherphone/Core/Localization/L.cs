@@ -252,6 +252,12 @@ internal static class L
         public static readonly LocString InviteToParty = new("contacts.inviteToParty", "Invite to Party");
 
         public static readonly LocString VisitEstate = new("contacts.visitEstate", "Visit Estate");
+
+        public static readonly LocString Plate = new("contacts.plate", "Plate");
+
+        public static readonly LocString Party = new("contacts.party", "Party");
+
+        public static readonly LocString Visit = new("contacts.visit", "Visit");
     }
 
     internal static class Chirper
@@ -443,6 +449,44 @@ internal static class L
         public static readonly LocString YouWin = new("games.youWin", "You Win!");
 
         public static readonly LocString PlayAgain = new("games.playAgain", "Play Again");
+
+        public static readonly LocString Best = new("games.best", "Best");
+
+        public static readonly LocString NewBest = new("games.newBest", "New Best!");
+
+        public static readonly LocString Streak = new("games.streak", "Streak");
+
+        public static readonly LocString Easy = new("games.easy", "Easy");
+
+        public static readonly LocString Medium = new("games.medium", "Medium");
+
+        public static readonly LocString Hard = new("games.hard", "Hard");
+
+        public static readonly LocString GenreMatch = new("games.genreMatch", "Match 3");
+
+        public static readonly LocString GenrePuzzle = new("games.genrePuzzle", "Puzzle");
+
+        public static readonly LocString GenreMemory = new("games.genreMemory", "Memory");
+
+        public static readonly LocString GenreLogic = new("games.genreLogic", "Logic");
+
+        public static readonly LocString GenreArcade = new("games.genreArcade", "Arcade");
+
+        public static readonly LocString Breakout = new("games.breakout", "Breakout");
+
+        public static readonly LocString Bubbles = new("games.bubbles", "Bubbles");
+
+        public static readonly LocString WaterSort = new("games.waterSort", "Water Sort");
+
+        public static readonly LocString Level = new("games.level", "Level");
+
+        public static readonly LocString Lives = new("games.lives", "Lives");
+
+        public static readonly LocString Moves = new("games.moves", "Moves");
+
+        public static readonly LocString Undo = new("games.undo", "Undo");
+
+        public static readonly LocString NextLevel = new("games.nextLevel", "Next Level");
 
         public static readonly LocPlural AttemptsCount = new("games.attemptsCount", "{0} attempt", "{0} attempts");
     }

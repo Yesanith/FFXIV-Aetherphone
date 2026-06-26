@@ -1,5 +1,6 @@
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 namespace Aetherphone.Windows.Components;
 
@@ -10,6 +11,27 @@ internal static class Material
 
     private static readonly Vector4 FrostedFill = new(0.12f, 0.12f, 0.15f, 0.86f);
     private static readonly Vector4 FrostedSheen = new(1f, 1f, 1f, 0.06f);
+
+    public static void TopGlow(ImDrawListPtr drawList, Vector2 min, Vector2 max, float rounding, Vector4 accent, float coverage, float strength)
+    {
+        if (strength <= 0f)
+        {
+            return;
+        }
+
+        var scale = ImGuiHelpers.GlobalScale;
+        var tint = ImGui.GetColorU32(accent with { W = strength });
+        var clear = ImGui.GetColorU32(accent with { W = 0f });
+
+        var capBottom = min.Y + rounding + scale;
+        drawList.AddRectFilled(min, new Vector2(max.X, capBottom), tint, rounding, ImDrawFlags.RoundCornersTop);
+
+        var fadeBottom = min.Y + (max.Y - min.Y) * coverage;
+        if (fadeBottom > capBottom)
+        {
+            drawList.AddRectFilledMultiColor(new Vector2(min.X, capBottom), new Vector2(max.X, fadeBottom), tint, tint, clear, clear);
+        }
+    }
 
     public static void Veil(ImDrawListPtr drawList, Vector2 min, Vector2 max, float dim, float rounding = 0f)
     {

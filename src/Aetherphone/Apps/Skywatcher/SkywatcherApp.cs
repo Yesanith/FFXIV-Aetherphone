@@ -116,7 +116,7 @@ internal sealed class SkywatcherApp : IPhoneApp
         WeatherGlyph.Draw(kind, glyphCenter, radius, palette, isDay, SampleSky(palette, screen, glyphCenter.Y));
 
         Typography.DrawCentered(new Vector2(centerX, origin.Y + 176f * scale), forecast[0].Weather, palette.Ink, 1.9f);
-        Typography.DrawCentered(new Vector2(centerX, origin.Y + 210f * scale), Summary(), palette.InkSoft, 0.9f);
+        Typography.DrawCentered(new Vector2(centerX, origin.Y + 210f * scale), Summary(), palette.InkSoft, TextStyles.Subheadline);
 
         ImGui.SetCursorScreenPos(origin);
         ImGui.Dummy(new Vector2(width, 234f * scale));
@@ -147,7 +147,7 @@ internal sealed class SkywatcherApp : IPhoneApp
                 drawList.AddRectFilled(pillMin, pillMax, ImGui.GetColorU32(palette.Ink with { W = 0.12f }), columnWidth * 0.30f);
             }
 
-            Typography.DrawCentered(new Vector2(columnCenterX, inner.Min.Y + 10f * scale), ShortWhen(window), palette.InkSoft, 0.8f);
+            Typography.DrawCentered(new Vector2(columnCenterX, inner.Min.Y + 10f * scale), ShortWhen(window), palette.InkSoft, TextStyles.Footnote);
 
             var glyphCenter = new Vector2(columnCenterX, inner.Min.Y + inner.Height * 0.62f);
             var glyphRadius = MathF.Min(columnWidth * 0.34f, inner.Height * 0.28f);

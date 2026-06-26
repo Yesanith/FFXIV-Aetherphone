@@ -12,7 +12,7 @@ internal static class ProfileRow
     public static void Stacked(Rect row, string label, string value, PhoneTheme theme)
     {
         var scale = ImGuiHelpers.GlobalScale;
-        Typography.Draw(new Vector2(row.Min.X, row.Min.Y + 9f * scale), label, theme.TextMuted, 0.78f);
-        Typography.Draw(new Vector2(row.Min.X, row.Min.Y + 27f * scale), value, theme.TextStrong);
+        Typography.Draw(new Vector2(row.Min.X, row.Min.Y + 9f * scale), label, theme.TextMuted, TextStyles.Footnote);
+        Typography.Draw(new Vector2(row.Min.X, row.Min.Y + 27f * scale), value, theme.TextStrong, TextStyles.Body);
     }
 }

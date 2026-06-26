@@ -7,6 +7,7 @@ using Aetherphone.Core.Messaging;
 using Aetherphone.Core.Theme;
 using Aetherphone.Windows.Components;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
@@ -192,7 +193,7 @@ internal sealed class MessagesApp : IPhoneApp
         var hasText = !string.IsNullOrWhiteSpace(draft);
         var sendCenter = new Vector2(pillMax.X - sendDiameter * 0.5f - 6f * scale, (pillMin.Y + pillMax.Y) * 0.5f);
         dl.AddCircleFilled(sendCenter, sendDiameter * 0.5f, ImGui.GetColorU32(hasText ? theme.Accent : theme.SurfaceMuted), 24);
-        Typography.DrawCentered(sendCenter, ">", new Vector4(1f, 1f, 1f, 1f), 1.1f);
+        ProgressRing.CenterIcon(sendCenter, FontAwesomeIcon.ArrowUp, new Vector4(1f, 1f, 1f, 1f), sendDiameter * 0.46f);
 
         var sendMin = sendCenter - new Vector2(sendDiameter * 0.5f, sendDiameter * 0.5f);
         var sendMax = sendCenter + new Vector2(sendDiameter * 0.5f, sendDiameter * 0.5f);

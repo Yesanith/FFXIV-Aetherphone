@@ -6,6 +6,7 @@ using Aetherphone.Apps.Games.Framework;
 using Aetherphone.Apps.Games.GemSwap;
 using Aetherphone.Apps.Games.Nonogram;
 using Aetherphone.Apps.Games.Pairs;
+using Aetherphone.Apps.Games.Simon;
 using Aetherphone.Apps.Games.Solitaire;
 using Aetherphone.Apps.Games.Sweeper;
 using Aetherphone.Apps.Games.Twenty48;
@@ -61,6 +62,7 @@ internal sealed class GamesApp : IPhoneApp
             new NonogramApp(),
             new FlowApp(),
             new SolitaireApp(),
+            new SimonApp(),
         };
 
         cardScale = new Spring[games.Length];
@@ -251,6 +253,7 @@ internal sealed class GamesApp : IPhoneApp
             case "match3":
             case "breakout":
             case "bubbles":
+            case "simon":
             {
                 var best = stats.Get(gameId).BestScore;
                 return best > 0 ? GameNumber.Label(best) : string.Empty;

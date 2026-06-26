@@ -501,6 +501,12 @@ internal static class L
         public static readonly LocString Solitaire = new("games.solitaire", "Solitaire");
 
         public static readonly LocString GenreCards = new("games.genreCards", "Cards");
+
+        public static readonly LocString Simon = new("games.simon", "Simon");
+
+        public static readonly LocString Watch = new("games.watch", "Watch");
+
+        public static readonly LocString YourTurn = new("games.yourTurn", "Your Turn");
     }
 
     internal static class Time

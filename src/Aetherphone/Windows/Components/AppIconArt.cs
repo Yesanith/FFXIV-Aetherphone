@@ -83,6 +83,9 @@ internal static class AppIconArt
             case "solitaire":
                 DrawSolitaire(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "simon":
+                DrawSimon(dl, center, extent, inkColor, holeColor);
+                return true;
             default:
                 return false;
         }
@@ -533,6 +536,25 @@ internal static class AppIconArt
         dl.AddCircleFilled(fourth, dotRadius, ink, 24);
         dl.AddCircleFilled(first - new Vector2(dotRadius * 0.3f, dotRadius * 0.3f), dotRadius * 0.34f, hole, 16);
         dl.AddCircleFilled(fourth - new Vector2(dotRadius * 0.3f, dotRadius * 0.3f), dotRadius * 0.34f, hole, 16);
+    }
+
+    private static void DrawSimon(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)
+    {
+        Span<float> tracks = stackalloc float[2] { -0.46f, 0.46f };
+        var half = extent * 0.4f;
+        var rounding = extent * 0.16f;
+
+        for (var row = 0; row < 2; row++)
+        {
+            for (var column = 0; column < 2; column++)
+            {
+                var cell = At(center, extent, tracks[column], tracks[row]);
+                dl.AddRectFilled(new Vector2(cell.X - half, cell.Y - half), new Vector2(cell.X + half, cell.Y + half), ink, rounding);
+            }
+        }
+
+        dl.AddCircleFilled(center, extent * 0.3f, hole, 28);
+        dl.AddCircleFilled(center, extent * 0.18f, ink, 24);
     }
 
     private static void DrawNonogram(ImDrawListPtr dl, Vector2 center, float extent, uint ink)

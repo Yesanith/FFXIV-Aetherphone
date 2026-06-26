@@ -3,6 +3,7 @@ using Aetherphone.Core.Home;
 using Aetherphone.Core.Market;
 using Aetherphone.Core.Songs;
 using Aetherphone.Core.Theme;
+using Aetherphone.Core.Venues;
 using Aetherphone.Core.Wallpapers;
 using Dalamud.Configuration;
 
@@ -70,6 +71,16 @@ internal sealed class Configuration : IPluginConfiguration
     public List<GameStatRecord> GameStats { get; set; } = new();
 
     public HomeLayout? Home { get; set; }
+
+    public VenueTimeFilter VenueTimeFilter { get; set; } = VenueTimeFilter.LiveNow;
+
+    public int VenueSourceFilter { get; set; }
+
+    public bool VenueAllDataCenters { get; set; }
+
+    public bool VenueNotifyNewEvents { get; set; } = true;
+
+    public List<string> VenueFavorites { get; set; } = new();
 
     public void Save() => Plugin.PluginInterface.SavePluginConfig(this);
 }

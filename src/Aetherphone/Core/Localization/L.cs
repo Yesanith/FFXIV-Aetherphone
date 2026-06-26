@@ -39,6 +39,8 @@ internal static class L
 
         public static readonly LocString Skywatcher = new("app.skywatcher", "Skywatcher");
 
+        public static readonly LocString Venues = new("app.venues", "Venues");
+
         public static readonly LocString Market = new("app.market", "Market");
 
         public static readonly LocString Wallet = new("app.wallet", "Wallet");
@@ -54,6 +56,65 @@ internal static class L
         public static readonly LocString Notifications = new("app.notifications", "Notifications");
 
         public static readonly LocString Settings = new("app.settings", "Settings");
+    }
+
+    internal static class Venues
+    {
+        public static readonly LocString LiveNow = new("venues.liveNow", "Live");
+
+        public static readonly LocString Today = new("venues.today", "Today");
+
+        public static readonly LocString Upcoming = new("venues.upcoming", "Upcoming");
+
+        public static readonly LocString All = new("venues.all", "All");
+
+        public static readonly LocString Search = new("venues.search", "Search venues");
+
+        public static readonly LocString AllDataCenters = new("venues.allDataCenters", "All DCs");
+
+        public static readonly LocString AllSources = new("venues.allSources", "All");
+
+        public static readonly LocString SourceFfxiv = new("venues.sourceFfxiv", "FFXIV Venues");
+
+        public static readonly LocString SourcePartake = new("venues.sourcePartake", "Partake.gg");
+
+        public static readonly LocString Tags = new("venues.tags", "Tags");
+
+        public static readonly LocString ClearTags = new("venues.clearTags", "Clear tags");
+
+        public static readonly LocString Favorites = new("venues.favorites", "Favorites");
+
+        public static readonly LocString NoVenues = new("venues.noVenues", "No venues found");
+
+        public static readonly LocString Failed = new("venues.failed", "Couldn't reach venue listings");
+
+        public static readonly LocString Teleport = new("venues.teleport", "Teleport");
+
+        public static readonly LocString Open = new("venues.open", "Open");
+
+        public static readonly LocString Discord = new("venues.discord", "Discord");
+
+        public static readonly LocString NeedsLifestream = new("venues.needsLifestream", "Lifestream is not installed");
+
+        public static readonly LocString Details = new("venues.details", "Details");
+
+        public static readonly LocString When = new("venues.when", "When");
+
+        public static readonly LocString DataCenter = new("venues.dataCenter", "Data Center");
+
+        public static readonly LocString World = new("venues.world", "World");
+
+        public static readonly LocString Location = new("venues.location", "Location");
+
+        public static readonly LocString Host = new("venues.host", "Host");
+
+        public static readonly LocString Attendees = new("venues.attendees", "Attendees");
+
+        public static readonly LocString About = new("venues.about", "About");
+
+        public static readonly LocString EventsCount = new("venues.eventsCount", "{0} events");
+
+        public static readonly LocString MoreCount = new("venues.moreCount", "+{0} more");
     }
 
     internal static class Settings

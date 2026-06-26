@@ -32,6 +32,9 @@ internal static class AppIconArt
             case "skywatcher":
                 DrawSkywatcher(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "venues":
+                DrawVenues(dl, center, extent, inkColor, holeColor);
+                return true;
             case "market":
                 DrawMarket(dl, center, extent, inkColor);
                 return true;
@@ -696,6 +699,23 @@ internal static class AppIconArt
                 }
             }
         }
+    }
+
+    private static void DrawVenues(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)
+    {
+        var headCenter = At(center, extent, 0f, -0.22f);
+        var radius = extent * 0.74f;
+        dl.AddCircleFilled(headCenter, radius, ink, 32);
+
+        Span<Vector2> point = stackalloc Vector2[3]
+        {
+            At(center, extent, -0.52f, 0.02f),
+            At(center, extent, 0.52f, 0.02f),
+            At(center, extent, 0f, 1.05f),
+        };
+        dl.AddTriangleFilled(point[0], point[1], point[2], ink);
+
+        dl.AddCircleFilled(headCenter, radius * 0.42f, hole, 24);
     }
 
     private static Vector2 At(Vector2 center, float extent, float unitX, float unitY)

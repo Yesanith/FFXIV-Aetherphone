@@ -44,6 +44,9 @@ internal static class AppIconArt
             case "clock":
                 DrawClock(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "timers":
+                DrawTimers(dl, center, extent, inkColor);
+                return true;
             case "notifications":
                 DrawNotifications(dl, center, extent, inkColor);
                 return true;
@@ -288,6 +291,28 @@ internal static class AppIconArt
         dl.AddLine(center, Polar(center, extent, 0.46f, hourAngle), hole, extent * 0.12f);
 
         dl.AddCircleFilled(center, extent * 0.10f, hole, 16);
+    }
+
+    private static void DrawTimers(ImDrawListPtr dl, Vector2 center, float extent, uint ink)
+    {
+        dl.AddRectFilled(At(center, extent, -0.78f, -0.92f), At(center, extent, 0.78f, -0.72f), ink, extent * 0.10f);
+        dl.AddRectFilled(At(center, extent, -0.78f, 0.72f), At(center, extent, 0.78f, 0.92f), ink, extent * 0.10f);
+
+        Span<Vector2> upper = stackalloc Vector2[3]
+        {
+            At(center, extent, -0.62f, -0.64f),
+            At(center, extent, 0.62f, -0.64f),
+            At(center, extent, 0f, -0.02f),
+        };
+        FillConvex(dl, ink, upper);
+
+        Span<Vector2> lower = stackalloc Vector2[3]
+        {
+            At(center, extent, -0.62f, 0.64f),
+            At(center, extent, 0.62f, 0.64f),
+            At(center, extent, 0f, 0.02f),
+        };
+        FillConvex(dl, ink, lower);
     }
 
     private static void DrawNotifications(ImDrawListPtr dl, Vector2 center, float extent, uint ink)

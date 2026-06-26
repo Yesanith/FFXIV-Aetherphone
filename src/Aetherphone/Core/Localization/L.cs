@@ -47,6 +47,8 @@ internal static class L
 
         public static readonly LocString Clock = new("app.clock", "Clock");
 
+        public static readonly LocString Timers = new("app.timers", "Timers");
+
         public static readonly LocString Games = new("app.games", "Games");
 
         public static readonly LocString Notifications = new("app.notifications", "Notifications");
@@ -299,6 +301,55 @@ internal static class L
     internal static class Notifications
     {
         public static readonly LocString Empty = new("notifications.empty", "No notifications");
+    }
+
+    internal static class Timers
+    {
+        public static readonly LocString ServerResets = new("timers.serverResets", "Server Resets");
+
+        public static readonly LocString Activities = new("timers.activities", "Activities");
+
+        public static readonly LocString Retainers = new("timers.retainers", "Retainers");
+
+        public static readonly LocString DailyReset = new("timers.dailyReset", "Daily Reset");
+
+        public static readonly LocString WeeklyReset = new("timers.weeklyReset", "Weekly Reset");
+
+        public static readonly LocString GrandCompanyReset = new("timers.grandCompanyReset", "Grand Company");
+
+        public static readonly LocString FashionReport = new("timers.fashionReport", "Fashion Report");
+
+        public static readonly LocString JumboCactpot = new("timers.jumboCactpot", "Jumbo Cactpot");
+
+        public static readonly LocString OceanFishing = new("timers.oceanFishing", "Ocean Fishing");
+
+        public static readonly LocString Open = new("timers.open", "Open");
+
+        public static readonly LocString Closed = new("timers.closed", "Closed");
+
+        public static readonly LocString BoardingNow = new("timers.boardingNow", "Boarding now");
+
+        public static readonly LocString Ready = new("timers.ready", "Ready!");
+
+        public static readonly LocString NoVenture = new("timers.noVenture", "No venture");
+
+        public static readonly LocString NotifyVentures = new("timers.notifyVentures", "Notify when ventures finish");
+
+        public static readonly LocString OpenBellOnce = new("timers.openBellOnce", "Open your retainer bell once to load venture timers.");
+
+        public static readonly LocString OceanDay = new("timers.oceanDay", "Day");
+
+        public static readonly LocString OceanSunset = new("timers.oceanSunset", "Sunset");
+
+        public static readonly LocString OceanNight = new("timers.oceanNight", "Night");
+
+        public static readonly LocString InDays = new("timers.inDays", "in {0}d");
+
+        public static readonly LocString InDaysHours = new("timers.inDaysHours", "in {0}d {1}h");
+
+        public static readonly LocString ResetNotice = new("timers.resetNotice", "Server reset is here");
+
+        public static readonly LocString VentureComplete = new("timers.ventureComplete", "Venture complete");
     }
 
     internal static class ControlCenter

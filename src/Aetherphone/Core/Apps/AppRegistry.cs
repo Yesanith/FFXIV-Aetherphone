@@ -11,6 +11,7 @@ using Aetherphone.Apps.Notifications;
 using Aetherphone.Apps.Photos;
 using Aetherphone.Apps.Settings;
 using Aetherphone.Apps.Skywatcher;
+using Aetherphone.Apps.Timers;
 using Aetherphone.Apps.Wallet;
 using Aetherphone.Core.Photos;
 
@@ -40,6 +41,7 @@ internal static class AppRegistry
         apps.Add(new WalletApp(services.GameData, services.Textures));
         apps.Add(new MusicApp(services.Radio, services.SongSearch, services.Playback, services.SongHistory, services.Media, services.Http, services.Textures));
         apps.Add(new ClockApp());
+        apps.Add(new TimersApp(services.Configuration));
         apps.Add(new GamesApp(services.GameStats));
         apps.Add(new NotificationsApp(services.Notifications));
         apps.Add(new SettingsApp(services.Configuration, services.Themes, services.Ringtone, services.AethernetSession, services.AethernetClient, services.GameData, photoLibrary, showAbout));

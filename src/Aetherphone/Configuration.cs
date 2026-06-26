@@ -21,6 +21,14 @@ internal sealed class Configuration : IPluginConfiguration
 
     public bool DoNotDisturb { get; set; }
 
+    public bool NotifyDailyReset { get; set; }
+
+    public bool NotifyWeeklyReset { get; set; }
+
+    public bool NotifyGrandCompanyReset { get; set; }
+
+    public bool NotifyRetainerVentures { get; set; }
+
     public bool ScrollWhileIdle { get; set; } = true;
 
     public bool ShowLodestonePortraits { get; set; } = true;

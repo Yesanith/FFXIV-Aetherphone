@@ -50,6 +50,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly PhoneWindow phoneWindow;
     private readonly AboutWindow aboutWindow;
     private readonly PhoneEmoteController phoneEmote;
+    private readonly TimerNotifier timerNotifier;
     private readonly IDtrBarEntry dtrEntry;
 
     private int sampleCounter;
@@ -75,6 +76,7 @@ public sealed class Plugin : IDalamudPlugin
         windowSystem.AddWindow(aboutWindow);
 
         phoneEmote = new PhoneEmoteController(Cfg, Framework, ObjectTable, Condition, DataManager, () => phoneWindow.IsOpen);
+        timerNotifier = new TimerNotifier(Cfg, Framework, services.Notifications);
 
         dtrEntry = DtrBar.Get(AepConstants.Name);
         dtrEntry.OnClick = _ => phoneWindow.Toggle();
@@ -109,6 +111,7 @@ public sealed class Plugin : IDalamudPlugin
 
         windowSystem.RemoveAllWindows();
         phoneEmote.Dispose();
+        timerNotifier.Dispose();
         shell.Dispose();
         services.Dispose();
         Device.Dispose();

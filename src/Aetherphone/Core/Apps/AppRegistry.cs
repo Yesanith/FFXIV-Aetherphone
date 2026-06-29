@@ -1,6 +1,7 @@
 using Aetherphone.Apps.Camera;
 using Aetherphone.Apps.Chirper;
 using Aetherphone.Apps.Clock;
+using Aetherphone.Apps.Collections;
 using Aetherphone.Apps.Contacts;
 using Aetherphone.Apps.Dailies;
 using Aetherphone.Apps.Fishing;
@@ -45,6 +46,7 @@ internal static class AppRegistry
         apps.Add(new VenuesApp(services.Venues, services.Media, services.Http, services.Textures, services.GameData, services.Configuration));
         apps.Add(new MapsApp(services.Maps, services.Configuration));
         apps.Add(new NewsApp(services.News, services.Media, services.Http, services.GameData));
+        apps.Add(new CollectionsApp(services.Collections, services.Lodestone, services.Media, services.Http, services.GameData));
         apps.Add(new MarketApp(services.Market, services.MarketIndex, services.MarketAlerts, services.MarketLauncher, services.GameData, services.Textures, services.Configuration));
         apps.Add(new WalletApp(services.GameData, services.Textures));
         apps.Add(new MusicApp(services.Radio, services.SongSearch, services.Playback, services.SongHistory, services.Media, services.Http, services.Textures));

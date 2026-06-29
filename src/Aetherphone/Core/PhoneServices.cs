@@ -1,6 +1,7 @@
 using System.IO;
 using Aetherphone.Core.Aethernet;
 using Aetherphone.Core.Character;
+using Aetherphone.Core.Collections;
 using Aetherphone.Core.Game;
 using Aetherphone.Core.Games;
 using Aetherphone.Core.Lodestone;
@@ -82,7 +83,9 @@ internal sealed class PhoneServices : IDisposable
 
     public VenuesService Venues { get; }
 
-    private PhoneServices(Configuration configuration, ThemeProvider themes, GameData gameData, MapData maps, ITextureProvider textures, WeatherService weather, NotificationService notifications, IRingtone ringtone, MessageStore messages, ChatBridge chatBridge, MessageLauncher messageLauncher, HttpService http, MediaCache media, LodestoneService lodestone, CollectService collect, AethernetSession aethernetSession, AethernetClient aethernetClient, MarketItemIndex marketIndex, MarketboardService market, MarketLauncher marketLauncher, MarketAlertService marketAlerts, NewsService news, RadioService radio, RadioPlayer radioPlayer, SongSearchService songSearch, SongPlayer songPlayer, SongHistory songHistory, PlaybackHub playback, GameStatsStore gameStats, VenuesService venues)
+    public CollectionsCatalogService Collections { get; }
+
+    private PhoneServices(Configuration configuration, ThemeProvider themes, GameData gameData, MapData maps, ITextureProvider textures, WeatherService weather, NotificationService notifications, IRingtone ringtone, MessageStore messages, ChatBridge chatBridge, MessageLauncher messageLauncher, HttpService http, MediaCache media, LodestoneService lodestone, CollectService collect, AethernetSession aethernetSession, AethernetClient aethernetClient, MarketItemIndex marketIndex, MarketboardService market, MarketLauncher marketLauncher, MarketAlertService marketAlerts, NewsService news, RadioService radio, RadioPlayer radioPlayer, SongSearchService songSearch, SongPlayer songPlayer, SongHistory songHistory, PlaybackHub playback, GameStatsStore gameStats, VenuesService venues, CollectionsCatalogService collections)
     {
         Configuration = configuration;
         Themes = themes;
@@ -114,6 +117,7 @@ internal sealed class PhoneServices : IDisposable
         Playback = playback;
         GameStats = gameStats;
         Venues = venues;
+        Collections = collections;
     }
 
     public static PhoneServices Build(Configuration configuration, IChatGui chatGui, IDataManager dataManager, IObjectTable objectTable, IClientState clientState, ITextureProvider textures, DirectoryInfo configDirectory)
@@ -156,12 +160,16 @@ internal sealed class PhoneServices : IDisposable
         var playback = new PlaybackHub(radioPlayer, songPlayer);
         var gameStats = new GameStatsStore(configuration);
         var venues = new VenuesService(http, notifications, configuration, gameData);
+        var collectionsRoot = new DirectoryInfo(Path.Combine(cacheRoot.FullName, "collections"));
+        var collectionsDisk = new DiskCache(collectionsRoot, 32L * 1024 * 1024);
+        var collections = new CollectionsCatalogService(http, collectionsDisk);
 
-        return new PhoneServices(configuration, themes, gameData, maps, textures, weather, notifications, ringtone, messages, chatBridge, messageLauncher, http, media, lodestone, collect, aethernetSession, aethernetClient, marketIndex, market, marketLauncher, marketAlerts, news, radio, radioPlayer, songSearch, songPlayer, songHistory, playback, gameStats, venues);
+        return new PhoneServices(configuration, themes, gameData, maps, textures, weather, notifications, ringtone, messages, chatBridge, messageLauncher, http, media, lodestone, collect, aethernetSession, aethernetClient, marketIndex, market, marketLauncher, marketAlerts, news, radio, radioPlayer, songSearch, songPlayer, songHistory, playback, gameStats, venues, collections);
     }
 
     public void Dispose()
     {
+        Collections.Dispose();
         Venues.Dispose();
         SongPlayer.Dispose();
         SongSearch.Dispose();

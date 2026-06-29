@@ -33,6 +33,22 @@ internal sealed class LodestoneService : IDisposable
         idIndexPath = Path.Combine(cacheRoot.FullName, "lodestone-ids.tsv");
     }
 
+    public string? TryGetCachedId(string name, string world)
+    {
+        if (name.Length == 0 || world.Length == 0)
+        {
+            return null;
+        }
+
+        EnsureIdsLoaded();
+
+        var key = $"{name}@{world}";
+        lock (idSync)
+        {
+            return resolvedIds.TryGetValue(key, out var cached) ? cached : null;
+        }
+    }
+
     public AvatarHandle Avatar(string name, string world) => Image(name, world, false);
 
     public AvatarHandle Portrait(string name, string world) => Image(name, world, true);

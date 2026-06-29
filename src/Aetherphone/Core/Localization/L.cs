@@ -63,7 +63,82 @@ internal static class L
 
         public static readonly LocString Maps = new("app.maps", "Maps");
 
+        public static readonly LocString Collections = new("app.collections", "Collections");
+
         public static readonly LocString Settings = new("app.settings", "Settings");
+    }
+
+    internal static class Collections
+    {
+        public static readonly LocString Mounts = new("collections.mounts", "Mounts");
+
+        public static readonly LocString Minions = new("collections.minions", "Minions");
+
+        public static readonly LocString Emotes = new("collections.emotes", "Emotes");
+
+        public static readonly LocString Orchestrions = new("collections.orchestrions", "Orchestrions");
+
+        public static readonly LocString Hairstyles = new("collections.hairstyles", "Hairstyles");
+
+        public static readonly LocString Facewear = new("collections.facewear", "Facewear");
+
+        public static readonly LocString Achievements = new("collections.achievements", "Achievements");
+
+        public static readonly LocString TriadCards = new("collections.triadCards", "Triple Triad");
+
+        public static readonly LocString Search = new("collections.search", "Search");
+
+        public static readonly LocString FilterAll = new("collections.filterAll", "All");
+
+        public static readonly LocString FilterOwned = new("collections.filterOwned", "Owned");
+
+        public static readonly LocString FilterMissing = new("collections.filterMissing", "Missing");
+
+        public static readonly LocString AllSources = new("collections.allSources", "All sources");
+
+        public static readonly LocString Sources = new("collections.sources", "Sources");
+
+        public static readonly LocString Source = new("collections.source", "Source");
+
+        public static readonly LocString HowToObtain = new("collections.howToObtain", "How to obtain");
+
+        public static readonly LocString Patch = new("collections.patch", "Patch");
+
+        public static readonly LocString Tradeable = new("collections.tradeable", "Tradeable");
+
+        public static readonly LocString Yes = new("collections.yes", "Yes");
+
+        public static readonly LocString No = new("collections.no", "No");
+
+        public static readonly LocString Community = new("collections.community", "Owned by players");
+
+        public static readonly LocString Points = new("collections.points", "Points");
+
+        public static readonly LocString CardStats = new("collections.cardStats", "Card stats");
+
+        public static readonly LocString Owned = new("collections.owned", "Owned");
+
+        public static readonly LocString Missing = new("collections.missing", "Missing");
+
+        public static readonly LocString Details = new("collections.details", "Details");
+
+        public static readonly LocString About = new("collections.about", "About");
+
+        public static readonly LocString LinkHint = new("collections.linkHint", "Link your character to see what you own.");
+
+        public static readonly LocString CollectionPrivate = new("collections.collectionPrivate", "This collection is private on the Lodestone.");
+
+        public static readonly LocString OwnedUnavailable = new("collections.ownedUnavailable", "Couldn't load your owned items right now.");
+
+        public static readonly LocString Failed = new("collections.failed", "Couldn't reach FFXIV Collect.");
+
+        public static readonly LocString TryAgain = new("collections.tryAgain", "Try again");
+
+        public static readonly LocString NoResults = new("collections.noResults", "No items match your filters.");
+
+        public static readonly LocString MoreCount = new("collections.moreCount", "+{0} more");
+
+        public static readonly LocString CompletePercent = new("collections.completePercent", "{0}% complete");
     }
 
     internal static class Venues

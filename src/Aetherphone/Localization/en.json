@@ -483,6 +483,7 @@
   "inventory.freeCompanyNamed": "FC Chest · {0}",
   "inventory.totalItems": "Items carried",
   "inventory.gil": "Gil",
+  "inventory.onHand": "On hand",
   "inventory.cachedSources": "Stored away",
   "inventory.retainerEmpty": "Open a retainer at a summoning bell to store their contents here.",
   "inventory.freeCompanyEmpty": "Open your FC chest once to store its contents here.",

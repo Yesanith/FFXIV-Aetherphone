@@ -459,6 +459,7 @@
   "inventory.freeCompanyNamed": "FG-Truhe · {0}",
   "inventory.totalItems": "Getragene Gegenstände",
   "inventory.gil": "Gil",
+  "inventory.onHand": "Dabei",
   "inventory.cachedSources": "Eingelagert",
   "inventory.retainerEmpty": "Öffne einen Gehilfen an einer Rufglocke, um seinen Inhalt hier zu speichern.",
   "inventory.freeCompanyEmpty": "Öffne deine FG-Truhe einmal, um ihren Inhalt hier zu speichern.",

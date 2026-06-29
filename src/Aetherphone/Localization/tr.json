@@ -459,6 +459,7 @@
   "inventory.freeCompanyNamed": "FC Sandığı · {0}",
   "inventory.totalItems": "Taşınan eşya",
   "inventory.gil": "Gil",
+  "inventory.onHand": "Yanında",
   "inventory.cachedSources": "Saklananlar",
   "inventory.retainerEmpty": "İçeriğini burada saklamak için çağırma çanında bir hizmetkârı aç.",
   "inventory.freeCompanyEmpty": "İçeriğini burada saklamak için FC sandığını bir kez aç.",

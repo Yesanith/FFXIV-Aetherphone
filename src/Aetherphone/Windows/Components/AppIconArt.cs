@@ -53,6 +53,9 @@ internal static class AppIconArt
             case "wallet":
                 DrawWallet(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "inventory":
+                DrawInventory(dl, center, extent, inkColor, holeColor);
+                return true;
             case "clock":
                 DrawClock(dl, center, extent, inkColor, holeColor);
                 return true;
@@ -279,6 +282,28 @@ internal static class AppIconArt
         dl.AddRectFilled(pocketMin, pocketMax, hole, extent * 0.14f);
 
         dl.AddCircleFilled(At(center, extent, 0.60f, 0.31f), extent * 0.12f, ink, 24);
+    }
+
+    private static void DrawInventory(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)
+    {
+        var handleCenter = At(center, extent, 0f, -0.66f);
+        dl.PathClear();
+        dl.PathArcTo(handleCenter, extent * 0.36f, MathF.PI, MathF.PI * 2f, 24);
+        dl.PathFillConvex(ink);
+        dl.PathClear();
+        dl.PathArcTo(handleCenter, extent * 0.20f, MathF.PI, MathF.PI * 2f, 24);
+        dl.PathFillConvex(hole);
+
+        var bodyMin = At(center, extent, -0.82f, -0.66f);
+        var bodyMax = At(center, extent, 0.82f, 0.90f);
+        dl.AddRectFilled(bodyMin, bodyMax, ink, extent * 0.32f);
+
+        dl.AddLine(At(center, extent, -0.82f, 0.02f), At(center, extent, 0.82f, 0.02f), hole, extent * 0.055f);
+
+        var claspMin = At(center, extent, -0.16f, -0.10f);
+        var claspMax = At(center, extent, 0.16f, 0.30f);
+        dl.AddRectFilled(claspMin, claspMax, hole, extent * 0.07f);
+        dl.AddCircleFilled(At(center, extent, 0f, 0.10f), extent * 0.085f, ink, 20);
     }
 
     private static void DrawCloud(ImDrawListPtr dl, Vector2 center, float extent, uint color, float inflate)

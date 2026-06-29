@@ -740,6 +740,8 @@ internal static class L
 
         public static readonly LocString Gil = new("inventory.gil", "Gil");
 
+        public static readonly LocString OnHand = new("inventory.onHand", "On hand");
+
         public static readonly LocString CachedSources = new("inventory.cachedSources", "Stored away");
 
         public static readonly LocString RetainerEmpty = new("inventory.retainerEmpty", "Open a retainer at a summoning bell to store their contents here.");

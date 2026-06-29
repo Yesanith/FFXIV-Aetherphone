@@ -87,5 +87,7 @@ internal sealed class Configuration : IPluginConfiguration
 
     public List<string> VenueFavorites { get; set; } = new();
 
+    public List<uint> MapFavorites { get; set; } = new();
+
     public void Save() => Plugin.PluginInterface.SavePluginConfig(this);
 }

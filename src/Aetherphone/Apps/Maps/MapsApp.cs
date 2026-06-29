@@ -1,15 +1,14 @@
 using System.Numerics;
 using Aetherphone.Core;
+using Aetherphone.Core.Animation;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Localization;
 using Aetherphone.Core.Maps;
 using Aetherphone.Core.Theme;
 using Aetherphone.Core.Venues;
-using Aetherphone.Windows;
 using Aetherphone.Windows.Components;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
-using Dalamud.Plugin.Services;
 
 namespace Aetherphone.Apps.Maps;
 
@@ -17,12 +16,11 @@ internal sealed class MapsApp : IPhoneApp
 {
     private const float SearchHeight = 46f;
     private const float LocationCardHeight = 64f;
-    private const float ZoneRowHeight = 50f;
-    private const float AetheryteRowHeight = 56f;
-    private const float TravelButtonWidth = 86f;
-    private const float MapPreviewMaxHeight = 200f;
+    private const float DestinationRowHeight = 50f;
+    private const float ExpansionHeaderHeight = 40f;
 
     private static readonly Vector4 MapAccent = new(0.20f, 0.62f, 0.86f, 1f);
+    private static readonly Vector4 FavoriteStar = new(1f, 0.78f, 0.25f, 1f);
 
     public string Id => "maps";
 
@@ -35,13 +33,12 @@ internal sealed class MapsApp : IPhoneApp
     public int BadgeCount => 0;
 
     private readonly MapData maps;
-    private readonly MapTextureCache textureCache;
+    private readonly Configuration configuration;
 
-    private readonly ViewRouter<MapZone?> router;
-    private readonly RouterDraw<MapZone?> drawView;
-    private readonly Action backToList;
-
-    private readonly List<MapZone> searchResults = new();
+    private readonly List<MapAetheryte> favoriteDestinations = new();
+    private readonly List<MapAetheryte> searchResults = new();
+    private readonly HashSet<uint> favorites = new();
+    private readonly HashSet<byte> expandedExpansions = new();
 
     private string search = string.Empty;
     private bool lifestreamAvailable;
@@ -49,46 +46,39 @@ internal sealed class MapsApp : IPhoneApp
     private PhoneTheme frameTheme = PhoneTheme.Default;
     private INavigator frameNavigation = null!;
 
-    public MapsApp(MapData maps, ITextureProvider textures)
+    public MapsApp(MapData maps, Configuration configuration)
     {
         this.maps = maps;
-        textureCache = new MapTextureCache(textures);
-
-        router = new ViewRouter<MapZone?>(null);
-        drawView = DrawView;
-        backToList = () => router.Pop();
+        this.configuration = configuration;
     }
 
     public void OnOpened()
     {
-        router.Reset();
         search = string.Empty;
         lifestreamAvailable = LifestreamBridge.IsAvailable();
+        SyncFavorites();
     }
 
     public void OnClosed()
     {
-        router.Reset();
         search = string.Empty;
+    }
+
+    private void SyncFavorites()
+    {
+        favorites.Clear();
+        var stored = configuration.MapFavorites;
+        for (var index = 0; index < stored.Count; index++)
+        {
+            favorites.Add(stored[index]);
+        }
     }
 
     public void Draw(in PhoneContext context)
     {
         frameTheme = context.Theme;
         frameNavigation = context.Navigation;
-        router.Draw(context.Content, context.Theme.AppBackground, ImGui.GetIO().DeltaTime, drawView);
-    }
-
-    private void DrawView(MapZone? view, Rect area, int depth)
-    {
-        if (view is { } zone)
-        {
-            DrawDetail(area, zone);
-        }
-        else
-        {
-            DrawRoot(area);
-        }
+        SceneCompositor.DrawLayer(context.Content, new SceneCompositor.Layer("maps", Vector2.Zero, 0f, DrawRoot, context.Theme.AppBackground));
     }
 
     private void DrawRoot(Rect area)
@@ -106,15 +96,15 @@ internal sealed class MapsApp : IPhoneApp
         var body = new Rect(new Vector2(area.Min.X, searchBar.Max.Y), area.Max);
         using (AppSurface.Begin(body))
         {
-            DrawLocationCard();
-
             if (search.Length > 0)
             {
-                DrawSearchResults(body);
+                DrawSearchResults();
             }
             else
             {
-                DrawRegions();
+                DrawLocationCard();
+                DrawFavorites();
+                DrawExpansions();
             }
 
             ImGui.Dummy(new Vector2(0f, 10f * scale));
@@ -147,50 +137,95 @@ internal sealed class MapsApp : IPhoneApp
 
         ImGui.SetCursorScreenPos(origin);
         ImGui.Dummy(new Vector2(width, LocationCardHeight * scale + 4f * scale));
-
-        if (maps.TryGetCurrentZone(out var zone) && ImGui.IsMouseHoveringRect(cardMin, cardMax))
-        {
-            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-            if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-            {
-                router.Push(zone);
-            }
-        }
     }
 
-    private void DrawRegions()
+    private void DrawFavorites()
     {
-        var regions = maps.Regions;
-        if (regions.Count == 0)
+        favoriteDestinations.Clear();
+        var stored = configuration.MapFavorites;
+        for (var index = 0; index < stored.Count; index++)
+        {
+            if (maps.TryGetAetheryte(stored[index], out var aetheryte))
+            {
+                favoriteDestinations.Add(aetheryte);
+            }
+        }
+
+        if (favoriteDestinations.Count == 0)
+        {
+            return;
+        }
+
+        SettingsSection.Header(Loc.T(L.Maps.Favorites), frameTheme);
+        var card = GroupCard.Begin(frameTheme, favoriteDestinations.Count, DestinationRowHeight);
+        for (var index = 0; index < favoriteDestinations.Count; index++)
+        {
+            DrawDestinationRow(card.NextRow(), favoriteDestinations[index]);
+        }
+
+        card.End();
+    }
+
+    private void DrawExpansions()
+    {
+        var expansions = maps.Expansions;
+        if (expansions.Count == 0)
         {
             DrawEmptyState(Loc.T(L.Maps.NoZones));
             return;
         }
 
-        for (var regionIndex = 0; regionIndex < regions.Count; regionIndex++)
+        for (var expansionIndex = 0; expansionIndex < expansions.Count; expansionIndex++)
         {
-            var region = regions[regionIndex];
-            var zones = region.Zones;
-            if (zones.Count == 0)
+            var expansion = expansions[expansionIndex];
+            var expanded = expandedExpansions.Contains(expansion.Order);
+
+            if (DrawExpansionHeader(expansion, expanded))
+            {
+                if (expanded)
+                {
+                    expandedExpansions.Remove(expansion.Order);
+                }
+                else
+                {
+                    expandedExpansions.Add(expansion.Order);
+                }
+
+                expanded = !expanded;
+            }
+
+            if (!expanded)
             {
                 continue;
             }
 
-            SettingsSection.Header(region.Name, frameTheme);
-            var card = GroupCard.Begin(frameTheme, zones.Count, ZoneRowHeight);
-            for (var zoneIndex = 0; zoneIndex < zones.Count; zoneIndex++)
+            var expansionRegions = expansion.Regions;
+            for (var regionIndex = 0; regionIndex < expansionRegions.Count; regionIndex++)
             {
-                if (DrawZoneRow(card.NextRow(), zones[zoneIndex]))
-                {
-                    router.Push(zones[zoneIndex]);
-                }
+                DrawRegion(expansionRegions[regionIndex]);
             }
-
-            card.End();
         }
     }
 
-    private void DrawSearchResults(Rect body)
+    private void DrawRegion(MapRegion region)
+    {
+        var destinations = region.Aetherytes;
+        if (destinations.Count == 0)
+        {
+            return;
+        }
+
+        SettingsSection.Header(region.Name, frameTheme);
+        var card = GroupCard.Begin(frameTheme, destinations.Count, DestinationRowHeight);
+        for (var index = 0; index < destinations.Count; index++)
+        {
+            DrawDestinationRow(card.NextRow(), destinations[index]);
+        }
+
+        card.End();
+    }
+
+    private void DrawSearchResults()
     {
         CollectSearchResults();
         if (searchResults.Count == 0)
@@ -199,14 +234,10 @@ internal sealed class MapsApp : IPhoneApp
             return;
         }
 
-        SettingsSection.Header(Loc.T(L.Maps.ZonesCount, searchResults.Count), frameTheme);
-        var card = GroupCard.Begin(frameTheme, searchResults.Count, ZoneRowHeight);
+        var card = GroupCard.Begin(frameTheme, searchResults.Count, DestinationRowHeight);
         for (var index = 0; index < searchResults.Count; index++)
         {
-            if (DrawZoneRow(card.NextRow(), searchResults[index]))
-            {
-                router.Push(searchResults[index]);
-            }
+            DrawDestinationRow(card.NextRow(), searchResults[index]);
         }
 
         card.End();
@@ -218,160 +249,134 @@ internal sealed class MapsApp : IPhoneApp
         var regions = maps.Regions;
         for (var regionIndex = 0; regionIndex < regions.Count; regionIndex++)
         {
-            var zones = regions[regionIndex].Zones;
-            for (var zoneIndex = 0; zoneIndex < zones.Count; zoneIndex++)
+            var destinations = regions[regionIndex].Aetherytes;
+            for (var index = 0; index < destinations.Count; index++)
             {
-                var zone = zones[zoneIndex];
-                if (zone.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+                var aetheryte = destinations[index];
+                if (aetheryte.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
                 {
-                    searchResults.Add(zone);
+                    searchResults.Add(aetheryte);
                 }
             }
         }
     }
 
-    private bool DrawZoneRow(Rect row, MapZone zone)
+    private bool DrawExpansionHeader(MapExpansion expansion, bool expanded)
     {
         var scale = ImGuiHelpers.GlobalScale;
-        var labelSize = Typography.Measure(zone.Name, TextStyles.Body);
-        Typography.Draw(new Vector2(row.Min.X, row.Center.Y - labelSize.Y * 0.5f), zone.Name, frameTheme.TextStrong, TextStyles.Body);
+        ImGui.Dummy(new Vector2(0f, 12f * scale));
 
-        var countLabel = zone.Aetherytes.Count.ToString(Loc.Culture);
-        var countSize = Typography.Measure(countLabel, TextStyles.Footnote);
-        var chevronWidth = 6f * scale;
-        var chevronTip = new Vector2(row.Max.X, row.Center.Y);
-        DrawChevronRight(chevronTip, chevronWidth, 2.2f * scale, frameTheme.TextMuted);
-        Typography.Draw(new Vector2(chevronTip.X - chevronWidth - 12f * scale - countSize.X, row.Center.Y - countSize.Y * 0.5f), countLabel, frameTheme.TextMuted, TextStyles.Footnote);
+        var origin = ImGui.GetCursorScreenPos();
+        var width = ImGui.GetContentRegionAvail().X;
+        var height = ExpansionHeaderHeight * scale;
+        var min = origin;
+        var max = new Vector2(origin.X + width, origin.Y + height);
+        var hovered = ImGui.IsMouseHoveringRect(min, max);
+        var drawList = ImGui.GetWindowDrawList();
 
-        var hovered = ImGui.IsMouseHoveringRect(row.Min, row.Max);
         if (hovered)
         {
-            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+            Squircle.Fill(drawList, new Vector2(min.X - 8f * scale, min.Y), new Vector2(max.X + 8f * scale, max.Y), 10f * scale, ImGui.GetColorU32(Palette.WithAlpha(frameTheme.TextStrong, 0.06f)));
         }
 
-        return hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
-    }
+        var disclosureCenter = new Vector2(min.X + 19f * scale, min.Y + height * 0.5f);
+        var ink = hovered ? frameTheme.TextStrong : frameTheme.TextMuted;
+        DrawDisclosure(drawList, disclosureCenter, 5f * scale, 2.2f * scale, expanded, ink);
 
-    private void DrawDetail(Rect area, MapZone zone)
-    {
-        var context = new PhoneContext(area, frameTheme, frameNavigation);
-        AppHeader.Draw(context, zone.Name, backToList);
-
-        var scale = ImGuiHelpers.GlobalScale;
-        var top = area.Min.Y + AppHeader.Height * scale;
-        var body = new Rect(new Vector2(area.Min.X, top), area.Max);
-
-        using (AppSurface.Begin(body))
-        {
-            DrawMapPreview(zone);
-            DrawAetherytes(zone);
-            ImGui.Dummy(new Vector2(0f, 10f * scale));
-        }
-    }
-
-    private void DrawMapPreview(MapZone zone)
-    {
-        var scale = ImGuiHelpers.GlobalScale;
-        var width = ImGui.GetContentRegionAvail().X;
-        var origin = ImGui.GetCursorScreenPos();
-        var height = MathF.Min(width, MapPreviewMaxHeight * scale);
-        var rect = new Rect(origin, new Vector2(origin.X + width, origin.Y + height));
-        var drawList = ImGui.GetWindowDrawList();
-        var rounding = 16f * scale;
-
-        if (textureCache.TryGetHandle(zone.MapTexturePath, out var handle))
-        {
-            Squircle.Fill(drawList, rect.Min, rect.Max, rounding, ImGui.GetColorU32(frameTheme.SurfaceMuted));
-            drawList.AddImageRounded(handle, rect.Min, rect.Max, Vector2.Zero, Vector2.One, 0xFFFFFFFFu, rounding, ImDrawFlags.RoundCornersAll);
-        }
-        else
-        {
-            Squircle.Fill(drawList, rect.Min, rect.Max, rounding, ImGui.GetColorU32(frameTheme.GroupedCard));
-            Typography.DrawCentered(rect.Center, Loc.T(L.Maps.MapUnavailable), frameTheme.TextMuted, TextStyles.Footnote);
-        }
-
-        Material.EdgeSquircle(drawList, rect.Min, rect.Max, rounding, scale);
+        var titleSize = Typography.Measure(expansion.Name, TextStyles.Headline);
+        Typography.Draw(new Vector2(disclosureCenter.X + 16f * scale, min.Y + height * 0.5f - titleSize.Y * 0.5f), expansion.Name, frameTheme.TextStrong, TextStyles.Headline);
 
         ImGui.SetCursorScreenPos(origin);
-        ImGui.Dummy(new Vector2(width, height + 6f * scale));
+        ImGui.Dummy(new Vector2(width, height));
+
+        if (!hovered)
+        {
+            return false;
+        }
+
+        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+        return ImGui.IsMouseClicked(ImGuiMouseButton.Left);
     }
 
-    private void DrawAetherytes(MapZone zone)
+    private void DrawDestinationRow(Rect row, MapAetheryte aetheryte)
     {
-        SettingsSection.Header(Loc.T(L.Maps.Aetherytes), frameTheme);
+        var scale = ImGuiHelpers.GlobalScale;
+        var drawList = ImGui.GetWindowDrawList();
 
-        var aetherytes = zone.Aetherytes;
-        if (aetherytes.Count == 0)
+        var starRadius = 9f * scale;
+        var starCenter = new Vector2(row.Min.X + starRadius, row.Center.Y);
+        var starHovered = ImGui.IsMouseHoveringRect(new Vector2(row.Min.X, row.Min.Y), new Vector2(starCenter.X + starRadius + 6f * scale, row.Max.Y));
+        var rowHovered = ImGui.IsMouseHoveringRect(row.Min, row.Max);
+        var actionHovered = rowHovered && !starHovered;
+
+        if (actionHovered)
         {
-            var scale = ImGuiHelpers.GlobalScale;
-            Typography.Draw(ImGui.GetCursorScreenPos() + new Vector2(4f * scale, 8f * scale), Loc.T(L.Maps.NoAetherytes), frameTheme.TextMuted, TextStyles.Footnote);
-            ImGui.Dummy(new Vector2(ImGui.GetContentRegionAvail().X, 28f * scale));
+            Squircle.Fill(drawList, new Vector2(row.Min.X - 8f * scale, row.Min.Y + 3f * scale), new Vector2(row.Max.X + 8f * scale, row.Max.Y - 3f * scale), 10f * scale, ImGui.GetColorU32(Palette.WithAlpha(frameTheme.Accent, 0.16f)));
+        }
+
+        var isFavorite = favorites.Contains(aetheryte.RowId);
+        DrawStar(drawList, starCenter, starRadius, isFavorite, FavoriteStar, Palette.WithAlpha(frameTheme.TextMuted, 0.6f), scale);
+
+        var textLeft = starCenter.X + starRadius + 12f * scale;
+        var labelSize = Typography.Measure(aetheryte.Name, TextStyles.Body);
+        Typography.Draw(new Vector2(textLeft, row.Center.Y - labelSize.Y * 0.5f), aetheryte.Name, frameTheme.TextStrong, TextStyles.Body);
+
+        var arrowTip = new Vector2(row.Max.X, row.Center.Y);
+        DrawChevronRight(arrowTip, 6f * scale, 2.2f * scale, actionHovered ? frameTheme.Accent : frameTheme.TextMuted);
+
+        if (starHovered)
+        {
+            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+            if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+            {
+                ToggleFavorite(aetheryte.RowId);
+            }
+
             return;
         }
 
-        var card = GroupCard.Begin(frameTheme, aetherytes.Count, AetheryteRowHeight);
-        for (var index = 0; index < aetherytes.Count; index++)
+        if (!rowHovered)
         {
-            DrawAetheryteRow(card.NextRow(), aetherytes[index]);
+            return;
         }
 
-        card.End();
-    }
-
-    private void DrawAetheryteRow(Rect row, MapAetheryte aetheryte)
-    {
-        var scale = ImGuiHelpers.GlobalScale;
-        var labelSize = Typography.Measure(aetheryte.Name, TextStyles.Body);
-        Typography.Draw(new Vector2(row.Min.X, row.Center.Y - labelSize.Y * 0.5f), aetheryte.Name, frameTheme.TextStrong, TextStyles.Body);
-
-        var buttonWidth = TravelButtonWidth * scale;
-        var buttonHeight = 32f * scale;
-        var buttonMin = new Vector2(row.Max.X - buttonWidth, row.Center.Y - buttonHeight * 0.5f);
-        var buttonRect = new Rect(buttonMin, buttonMin + new Vector2(buttonWidth, buttonHeight));
-
-        if (DrawTravelButton(buttonRect, Loc.T(L.Maps.Travel)))
-        {
-            if (lifestreamAvailable)
-            {
-                LifestreamBridge.TravelToAetheryte(aetheryte.Name);
-            }
-            else
-            {
-                ImGui.SetClipboardText(LifestreamBridge.AetheryteCommand(aetheryte.Name));
-            }
-        }
-
-        if (!lifestreamAvailable && ImGui.IsMouseHoveringRect(buttonRect.Min, buttonRect.Max))
+        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+        if (!lifestreamAvailable)
         {
             ImGui.SetTooltip(Loc.T(L.Maps.NeedsLifestream));
         }
+
+        if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+        {
+            Teleport(aetheryte);
+        }
     }
 
-    private bool DrawTravelButton(Rect rect, string label)
+    private void Teleport(MapAetheryte aetheryte)
     {
-        var scale = ImGuiHelpers.GlobalScale;
-        var drawList = ImGui.GetWindowDrawList();
-        var hovered = ImGui.IsMouseHoveringRect(rect.Min, rect.Max);
-        var rounding = rect.Height * 0.5f;
-
-        var enabled = lifestreamAvailable;
-        var fill = enabled ? frameTheme.Accent : frameTheme.GroupedCard;
-        if (hovered && enabled)
+        if (lifestreamAvailable)
         {
-            fill = Palette.Mix(frameTheme.Accent, frameTheme.TextStrong, 0.12f);
+            LifestreamBridge.TravelToAetheryte(aetheryte.Name);
+        }
+        else
+        {
+            ImGui.SetClipboardText(LifestreamBridge.AetheryteCommand(aetheryte.Name));
+        }
+    }
+
+    private void ToggleFavorite(uint rowId)
+    {
+        if (favorites.Remove(rowId))
+        {
+            configuration.MapFavorites.Remove(rowId);
+        }
+        else
+        {
+            favorites.Add(rowId);
+            configuration.MapFavorites.Add(rowId);
         }
 
-        var ink = enabled ? new Vector4(1f, 1f, 1f, 0.98f) : frameTheme.TextMuted;
-        Squircle.Fill(drawList, rect.Min, rect.Max, rounding, ImGui.GetColorU32(fill));
-        var textSize = Typography.Measure(label, TextStyles.FootnoteEmphasized);
-        Typography.Draw(rect.Center - textSize * 0.5f, label, ink, TextStyles.FootnoteEmphasized);
-
-        if (hovered)
-        {
-            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
-        }
-
-        return hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
+        configuration.Save();
     }
 
     private void DrawEmptyState(string message)
@@ -379,6 +384,36 @@ internal sealed class MapsApp : IPhoneApp
         var scale = ImGuiHelpers.GlobalScale;
         Typography.Draw(ImGui.GetCursorScreenPos() + new Vector2(4f * scale, 16f * scale), message, frameTheme.TextMuted, TextStyles.Footnote);
         ImGui.Dummy(new Vector2(ImGui.GetContentRegionAvail().X, 40f * scale));
+    }
+
+    private static void DrawStar(ImDrawListPtr drawList, Vector2 center, float radius, bool filled, Vector4 fill, Vector4 outline, float scale)
+    {
+        Span<Vector2> points = stackalloc Vector2[10];
+        var innerRadius = radius * 0.44f;
+        for (var index = 0; index < 10; index++)
+        {
+            var pointRadius = (index & 1) == 0 ? radius : innerRadius;
+            var angle = -MathF.PI / 2f + index * (MathF.PI / 5f);
+            points[index] = new Vector2(center.X + MathF.Cos(angle) * pointRadius, center.Y + MathF.Sin(angle) * pointRadius);
+        }
+
+        if (filled)
+        {
+            var packed = ImGui.GetColorU32(fill);
+            for (var index = 0; index < 10; index++)
+            {
+                drawList.AddTriangleFilled(center, points[index], points[(index + 1) % 10], packed);
+            }
+
+            return;
+        }
+
+        var line = ImGui.GetColorU32(outline);
+        var thickness = 1.5f * scale;
+        for (var index = 0; index < 10; index++)
+        {
+            drawList.AddLine(points[index], points[(index + 1) % 10], line, thickness);
+        }
     }
 
     private static void DrawPin(ImDrawListPtr drawList, Vector2 center, float radius, Vector4 color)
@@ -389,6 +424,23 @@ internal sealed class MapsApp : IPhoneApp
         var tip = new Vector2(center.X, center.Y + radius);
         drawList.AddTriangleFilled(new Vector2(headCenter.X - radius * 0.55f, headCenter.Y + radius * 0.2f), new Vector2(headCenter.X + radius * 0.55f, headCenter.Y + radius * 0.2f), tip, packed);
         drawList.AddCircleFilled(headCenter, radius * 0.28f, ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 0.95f)), 16);
+    }
+
+    private static void DrawDisclosure(ImDrawListPtr drawList, Vector2 center, float size, float thickness, bool expanded, Vector4 color)
+    {
+        var packed = ImGui.GetColorU32(color);
+        if (expanded)
+        {
+            var tip = new Vector2(center.X, center.Y + size * 0.7f);
+            drawList.AddLine(new Vector2(center.X - size, center.Y - size * 0.45f), tip, packed, thickness);
+            drawList.AddLine(tip, new Vector2(center.X + size, center.Y - size * 0.45f), packed, thickness);
+        }
+        else
+        {
+            var tip = new Vector2(center.X + size * 0.7f, center.Y);
+            drawList.AddLine(new Vector2(center.X - size * 0.45f, center.Y - size), tip, packed, thickness);
+            drawList.AddLine(tip, new Vector2(center.X - size * 0.45f, center.Y + size), packed, thickness);
+        }
     }
 
     private static void DrawChevronRight(Vector2 tip, float size, float thickness, Vector4 color)

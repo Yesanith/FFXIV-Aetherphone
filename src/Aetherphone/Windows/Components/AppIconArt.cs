@@ -35,6 +35,9 @@ internal static class AppIconArt
             case "venues":
                 DrawVenues(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "maps":
+                DrawMaps(dl, center, extent, inkColor, holeColor);
+                return true;
             case "news":
                 DrawNews(dl, center, extent, inkColor, holeColor);
                 return true;
@@ -743,6 +746,54 @@ internal static class AppIconArt
         dl.AddTriangleFilled(point[0], point[1], point[2], ink);
 
         dl.AddCircleFilled(headCenter, radius * 0.42f, hole, 24);
+    }
+
+    private static void DrawMaps(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)
+    {
+        Span<Vector2> leftPanel = stackalloc Vector2[4]
+        {
+            At(center, extent, -0.88f, -0.46f),
+            At(center, extent, -0.30f, -0.72f),
+            At(center, extent, -0.30f, 0.48f),
+            At(center, extent, -0.88f, 0.74f),
+        };
+        FillConvex(dl, ink, leftPanel);
+
+        Span<Vector2> middlePanel = stackalloc Vector2[4]
+        {
+            At(center, extent, -0.30f, -0.72f),
+            At(center, extent, 0.30f, -0.46f),
+            At(center, extent, 0.30f, 0.74f),
+            At(center, extent, -0.30f, 0.48f),
+        };
+        FillConvex(dl, ink, middlePanel);
+
+        Span<Vector2> rightPanel = stackalloc Vector2[4]
+        {
+            At(center, extent, 0.30f, -0.46f),
+            At(center, extent, 0.88f, -0.72f),
+            At(center, extent, 0.88f, 0.48f),
+            At(center, extent, 0.30f, 0.74f),
+        };
+        FillConvex(dl, ink, rightPanel);
+
+        var creaseThickness = extent * 0.05f;
+        dl.AddLine(At(center, extent, -0.30f, -0.72f), At(center, extent, -0.30f, 0.48f), hole, creaseThickness);
+        dl.AddLine(At(center, extent, 0.30f, -0.46f), At(center, extent, 0.30f, 0.74f), hole, creaseThickness);
+
+        var pinHead = At(center, extent, 0f, -0.10f);
+        var pinRadius = extent * 0.30f;
+        dl.AddCircleFilled(pinHead, pinRadius, hole, 24);
+
+        Span<Vector2> pinTip = stackalloc Vector2[3]
+        {
+            new(pinHead.X - pinRadius * 0.62f, pinHead.Y + pinRadius * 0.30f),
+            new(pinHead.X + pinRadius * 0.62f, pinHead.Y + pinRadius * 0.30f),
+            new(pinHead.X, pinHead.Y + pinRadius * 1.55f),
+        };
+        FillConvex(dl, hole, pinTip);
+
+        dl.AddCircleFilled(pinHead, pinRadius * 0.42f, ink, 16);
     }
 
     private static void DrawNews(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)

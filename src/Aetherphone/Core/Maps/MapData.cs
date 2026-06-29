@@ -11,7 +11,8 @@ internal sealed class MapData
     private readonly IClientState clientState;
 
     private readonly List<MapRegion> regions = new();
-    private readonly Dictionary<uint, MapZone> zonesByTerritory = new();
+    private readonly List<MapExpansion> expansions = new();
+    private readonly Dictionary<uint, MapAetheryte> aetherytesById = new();
 
     private bool built;
 
@@ -30,6 +31,15 @@ internal sealed class MapData
         }
     }
 
+    public IReadOnlyList<MapExpansion> Expansions
+    {
+        get
+        {
+            EnsureBuilt();
+            return expansions;
+        }
+    }
+
     public MapLocation CurrentLocation()
     {
         var territoryId = clientState.TerritoryType;
@@ -43,17 +53,16 @@ internal sealed class MapData
         return new MapLocation(zone, region);
     }
 
-    public bool TryGetCurrentZone(out MapZone zone)
+    public bool TryGetAetheryte(uint rowId, out MapAetheryte aetheryte)
     {
         EnsureBuilt();
-        var territoryId = clientState.TerritoryType;
-        if (territoryId != 0 && zonesByTerritory.TryGetValue(territoryId, out var found))
+        if (rowId != 0 && aetherytesById.TryGetValue(rowId, out var found))
         {
-            zone = found;
+            aetheryte = found;
             return true;
         }
 
-        zone = null!;
+        aetheryte = null!;
         return false;
     }
 
@@ -72,24 +81,12 @@ internal sealed class MapData
     {
         var aetherytesByTerritory = CollectAetherytes();
         var territories = data.GetExcelSheet<TerritoryType>();
-        var zonesByRegion = new Dictionary<string, List<MapZone>>(StringComparer.Ordinal);
+        var aetherytesByRegion = new Dictionary<string, List<MapAetheryte>>(StringComparer.Ordinal);
         var regionOrder = new Dictionary<string, byte>(StringComparer.Ordinal);
-        var seenZoneNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var territory in territories)
         {
             if (!aetherytesByTerritory.TryGetValue(territory.RowId, out var aetherytes) || aetherytes.Count == 0)
-            {
-                continue;
-            }
-
-            var zoneName = PlaceName(territory.PlaceName.RowId);
-            if (zoneName.Length == 0)
-            {
-                continue;
-            }
-
-            if (!seenZoneNames.Add(zoneName))
             {
                 continue;
             }
@@ -102,24 +99,10 @@ internal sealed class MapData
 
             var expansionOrder = (byte)territory.ExVersion.RowId;
 
-            aetherytes.Sort(CompareAetherytes);
-
-            var zone = new MapZone
+            if (!aetherytesByRegion.TryGetValue(regionName, out var bucket))
             {
-                TerritoryRowId = territory.RowId,
-                Name = zoneName,
-                RegionName = regionName,
-                ExpansionOrder = expansionOrder,
-                MapTexturePath = MapTexturePath(territory.Map.RowId),
-                Aetherytes = aetherytes,
-            };
-
-            zonesByTerritory[territory.RowId] = zone;
-
-            if (!zonesByRegion.TryGetValue(regionName, out var bucket))
-            {
-                bucket = new List<MapZone>();
-                zonesByRegion[regionName] = bucket;
+                bucket = new List<MapAetheryte>();
+                aetherytesByRegion[regionName] = bucket;
                 regionOrder[regionName] = expansionOrder;
             }
             else if (expansionOrder < regionOrder[regionName])
@@ -127,22 +110,63 @@ internal sealed class MapData
                 regionOrder[regionName] = expansionOrder;
             }
 
-            bucket.Add(zone);
+            for (var index = 0; index < aetherytes.Count; index++)
+            {
+                var aetheryte = aetherytes[index];
+                if (!aetherytesById.TryAdd(aetheryte.RowId, aetheryte))
+                {
+                    continue;
+                }
+
+                bucket.Add(aetheryte);
+            }
         }
 
         regions.Clear();
-        foreach (var pair in zonesByRegion)
+        foreach (var pair in aetherytesByRegion)
         {
-            pair.Value.Sort(CompareZones);
+            pair.Value.Sort(CompareAetherytes);
             regions.Add(new MapRegion
             {
                 Name = pair.Key,
                 Order = regionOrder[pair.Key],
-                Zones = pair.Value,
+                Aetherytes = pair.Value,
             });
         }
 
         regions.Sort(CompareRegions);
+        BuildExpansions();
+    }
+
+    private void BuildExpansions()
+    {
+        expansions.Clear();
+
+        var regionsByExpansion = new Dictionary<byte, List<MapRegion>>();
+        var expansionSequence = new List<byte>();
+        for (var index = 0; index < regions.Count; index++)
+        {
+            var region = regions[index];
+            if (!regionsByExpansion.TryGetValue(region.Order, out var bucket))
+            {
+                bucket = new List<MapRegion>();
+                regionsByExpansion[region.Order] = bucket;
+                expansionSequence.Add(region.Order);
+            }
+
+            bucket.Add(region);
+        }
+
+        for (var index = 0; index < expansionSequence.Count; index++)
+        {
+            var order = expansionSequence[index];
+            expansions.Add(new MapExpansion
+            {
+                Name = ExpansionName(order),
+                Order = order,
+                Regions = regionsByExpansion[order],
+            });
+        }
     }
 
     private Dictionary<uint, List<MapAetheryte>> CollectAetherytes()
@@ -207,21 +231,18 @@ internal sealed class MapData
         return string.Empty;
     }
 
-    private string MapTexturePath(uint mapRowId)
+    private string ExpansionName(uint exVersionRowId)
     {
-        if (mapRowId == 0 || !data.GetExcelSheet<Map>().TryGetRow(mapRowId, out var map))
+        if (data.GetExcelSheet<ExVersion>().TryGetRow(exVersionRowId, out var exVersion))
         {
-            return string.Empty;
+            var name = exVersion.Name.ExtractText();
+            if (name.Length > 0)
+            {
+                return name;
+            }
         }
 
-        var mapId = map.Id.ExtractText();
-        if (string.IsNullOrEmpty(mapId) || mapId == "0000/0000")
-        {
-            return string.Empty;
-        }
-
-        var rawKey = mapId.Replace("/", string.Empty);
-        return $"ui/map/{mapId}/{rawKey}_m.tex";
+        return UnknownRegionName;
     }
 
     private static int CompareAetherytes(MapAetheryte left, MapAetheryte right)
@@ -230,17 +251,6 @@ internal sealed class MapData
         if (byOrder != 0)
         {
             return byOrder;
-        }
-
-        return string.Compare(left.Name, right.Name, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static int CompareZones(MapZone left, MapZone right)
-    {
-        var byExpansion = left.ExpansionOrder.CompareTo(right.ExpansionOrder);
-        if (byExpansion != 0)
-        {
-            return byExpansion;
         }
 
         return string.Compare(left.Name, right.Name, StringComparison.OrdinalIgnoreCase);

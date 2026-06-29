@@ -43,7 +43,7 @@ internal static class AppRegistry
         apps.Add(new PhotosApp(photoLibrary));
         apps.Add(new SkywatcherApp(services.Weather));
         apps.Add(new VenuesApp(services.Venues, services.Media, services.Http, services.Textures, services.GameData, services.Configuration));
-        apps.Add(new MapsApp(services.Maps, services.Textures));
+        apps.Add(new MapsApp(services.Maps, services.Configuration));
         apps.Add(new NewsApp(services.News, services.Media, services.Http, services.GameData));
         apps.Add(new MarketApp(services.Market, services.MarketIndex, services.MarketAlerts, services.MarketLauncher, services.GameData, services.Textures, services.Configuration));
         apps.Add(new WalletApp(services.GameData, services.Textures));

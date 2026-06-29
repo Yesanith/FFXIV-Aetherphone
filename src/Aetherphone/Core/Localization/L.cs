@@ -61,6 +61,8 @@ internal static class L
 
         public static readonly LocString Fishing = new("app.fishing", "Fishing");
 
+        public static readonly LocString Maps = new("app.maps", "Maps");
+
         public static readonly LocString Settings = new("app.settings", "Settings");
     }
 
@@ -121,6 +123,29 @@ internal static class L
         public static readonly LocString EventsCount = new("venues.eventsCount", "{0} events");
 
         public static readonly LocString MoreCount = new("venues.moreCount", "+{0} more");
+    }
+
+    internal static class Maps
+    {
+        public static readonly LocString Search = new("maps.search", "Search zones");
+
+        public static readonly LocString CurrentLocation = new("maps.currentLocation", "Current Location");
+
+        public static readonly LocString Unknown = new("maps.unknown", "Unknown");
+
+        public static readonly LocString Aetherytes = new("maps.aetherytes", "Aetherytes");
+
+        public static readonly LocString NoAetherytes = new("maps.noAetherytes", "No aetherytes in this zone");
+
+        public static readonly LocString NoZones = new("maps.noZones", "No zones found");
+
+        public static readonly LocString Travel = new("maps.travel", "Travel");
+
+        public static readonly LocString NeedsLifestream = new("maps.needsLifestream", "Lifestream is not installed");
+
+        public static readonly LocString MapUnavailable = new("maps.mapUnavailable", "Map preview unavailable");
+
+        public static readonly LocString ZonesCount = new("maps.zonesCount", "{0} zones");
     }
 
     internal static class Settings

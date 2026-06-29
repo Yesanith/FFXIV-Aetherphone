@@ -26,4 +26,16 @@ internal static class LifestreamBridge
 
         Plugin.CommandManager.ProcessCommand($"/li {code}");
     }
+
+    public static string AetheryteCommand(string aetheryteName) => $"/li tp {aetheryteName}";
+
+    public static void TravelToAetheryte(string aetheryteName)
+    {
+        if (string.IsNullOrWhiteSpace(aetheryteName))
+        {
+            return;
+        }
+
+        Plugin.CommandManager.ProcessCommand(AetheryteCommand(aetheryteName));
+    }
 }

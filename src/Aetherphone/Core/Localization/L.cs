@@ -68,6 +68,57 @@ internal static class L
         public static readonly LocString Inventory = new("app.inventory", "Inventory");
 
         public static readonly LocString Settings = new("app.settings", "Settings");
+
+        public static readonly LocString FindPeople = new("app.findpeople", "Find People");
+    }
+
+    internal static class FindPeople
+    {
+        public static readonly LocString Character = new("findPeople.character", "Character");
+
+        public static readonly LocString FreeCompany = new("findPeople.freeCompany", "Free Company");
+
+        public static readonly LocString NameHint = new("findPeople.nameHint", "Name");
+
+        public static readonly LocString WorldHint = new("findPeople.worldHint", "World or DC (optional)");
+
+        public static readonly LocString Prompt = new("findPeople.prompt", "Search the Lodestone");
+
+        public static readonly LocString PromptHint = new("findPeople.promptHint", "Find characters and free companies");
+
+        public static readonly LocString NoResults = new("findPeople.noResults", "No matches found");
+
+        public static readonly LocString Failed = new("findPeople.failed", "Couldn't reach the Lodestone");
+
+        public static readonly LocString TryAgain = new("findPeople.tryAgain", "Try Again");
+
+        public static readonly LocString Members = new("findPeople.members", "{0} members");
+
+        public static readonly LocString Recruiting = new("findPeople.recruiting", "Recruiting");
+
+        public static readonly LocString Closed = new("findPeople.closed", "Not recruiting");
+
+        public static readonly LocString CharacterTitle = new("findPeople.characterTitle", "Character");
+
+        public static readonly LocString FreeCompanyTitle = new("findPeople.freeCompanyTitle", "Free Company");
+
+        public static readonly LocString Jobs = new("findPeople.jobs", "Jobs");
+
+        public static readonly LocString Gear = new("findPeople.gear", "Gear");
+
+        public static readonly LocString GrandCompany = new("findPeople.grandCompany", "Grand Company");
+
+        public static readonly LocString Slogan = new("findPeople.slogan", "Slogan");
+
+        public static readonly LocString Roster = new("findPeople.roster", "Roster");
+
+        public static readonly LocString Rank = new("findPeople.rank", "Rank");
+
+        public static readonly LocString Message = new("findPeople.message", "Message");
+
+        public static readonly LocString PageOf = new("findPeople.pageOf", "Page {0} of {1}");
+
+        public static readonly LocString Active = new("findPeople.active", "{0} active");
     }
 
     internal static class Collections

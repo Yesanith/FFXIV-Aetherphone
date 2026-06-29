@@ -76,6 +76,24 @@ internal sealed class LodestoneService : IDisposable
         return false;
     }
 
+    public AvatarHandle Remote(string cacheKey, Uri? uri)
+    {
+        if (!configuration.ShowLodestonePortraits || uri is null || cacheKey.Length == 0)
+        {
+            return AvatarHandle.Disabled;
+        }
+
+        var result = media.GetOrRequest(cacheKey, token => http.GetBytesAsync(uri, token));
+        var state = result.Texture is not null
+            ? AvatarLoadState.Ready
+            : result.Loading ? AvatarLoadState.Loading : AvatarLoadState.Failed;
+        return new AvatarHandle(result.Texture, state, cacheKey);
+    }
+
+    public async Task<IDisposable> ThrottleAsync(CancellationToken token) => await throttle.EnterAsync(token).ConfigureAwait(false);
+
+    public Task<LodestoneClient?> ClientAsync(CancellationToken token) => EnsureClientAsync(token);
+
     private AvatarHandle Image(string name, string world, bool fullBody)
     {
         if (!configuration.ShowLodestonePortraits || name.Length == 0 || world.Length == 0)

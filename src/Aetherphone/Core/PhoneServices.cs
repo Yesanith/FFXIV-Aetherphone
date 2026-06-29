@@ -54,6 +54,8 @@ internal sealed class PhoneServices : IDisposable
 
     public CollectService Collect { get; }
 
+    public LookupService Lookup { get; }
+
     public AethernetSession AethernetSession { get; }
 
     public AethernetClient AethernetClient { get; }
@@ -88,7 +90,7 @@ internal sealed class PhoneServices : IDisposable
 
     public InventoryCaptureService InventoryCapture { get; }
 
-    private PhoneServices(Configuration configuration, ThemeProvider themes, GameData gameData, MapData maps, ITextureProvider textures, WeatherService weather, NotificationService notifications, IRingtone ringtone, MessageStore messages, ChatBridge chatBridge, MessageLauncher messageLauncher, HttpService http, MediaCache media, LodestoneService lodestone, CollectService collect, AethernetSession aethernetSession, AethernetClient aethernetClient, MarketItemIndex marketIndex, MarketboardService market, MarketLauncher marketLauncher, MarketAlertService marketAlerts, NewsService news, RadioService radio, RadioPlayer radioPlayer, SongSearchService songSearch, SongPlayer songPlayer, SongHistory songHistory, PlaybackHub playback, GameStatsStore gameStats, VenuesService venues, CollectionsCatalogService collections, InventoryCaptureService inventoryCapture)
+    private PhoneServices(Configuration configuration, ThemeProvider themes, GameData gameData, MapData maps, ITextureProvider textures, WeatherService weather, NotificationService notifications, IRingtone ringtone, MessageStore messages, ChatBridge chatBridge, MessageLauncher messageLauncher, HttpService http, MediaCache media, LodestoneService lodestone, CollectService collect, LookupService lookup, AethernetSession aethernetSession, AethernetClient aethernetClient, MarketItemIndex marketIndex, MarketboardService market, MarketLauncher marketLauncher, MarketAlertService marketAlerts, NewsService news, RadioService radio, RadioPlayer radioPlayer, SongSearchService songSearch, SongPlayer songPlayer, SongHistory songHistory, PlaybackHub playback, GameStatsStore gameStats, VenuesService venues, CollectionsCatalogService collections, InventoryCaptureService inventoryCapture)
     {
         Configuration = configuration;
         Themes = themes;
@@ -105,6 +107,7 @@ internal sealed class PhoneServices : IDisposable
         Media = media;
         Lodestone = lodestone;
         Collect = collect;
+        Lookup = lookup;
         AethernetSession = aethernetSession;
         AethernetClient = aethernetClient;
         MarketIndex = marketIndex;
@@ -146,6 +149,7 @@ internal sealed class PhoneServices : IDisposable
         var collectRoot = new DirectoryInfo(Path.Combine(cacheRoot.FullName, "collect"));
         var collectCache = new DiskCache(collectRoot, 8L * 1024 * 1024);
         var collect = new CollectService(http, collectCache);
+        var lookup = new LookupService(lodestone);
         var aethernetSession = new AethernetSession(configuration);
         var aethernetClient = new AethernetClient(http, aethernetSession);
         var marketIndex = new MarketItemIndex(dataManager);
@@ -171,7 +175,7 @@ internal sealed class PhoneServices : IDisposable
         var inventoryStore = new InventoryStore(inventoryRoot);
         var inventoryCapture = new InventoryCaptureService(framework, inventoryStore);
 
-        return new PhoneServices(configuration, themes, gameData, maps, textures, weather, notifications, ringtone, messages, chatBridge, messageLauncher, http, media, lodestone, collect, aethernetSession, aethernetClient, marketIndex, market, marketLauncher, marketAlerts, news, radio, radioPlayer, songSearch, songPlayer, songHistory, playback, gameStats, venues, collections, inventoryCapture);
+        return new PhoneServices(configuration, themes, gameData, maps, textures, weather, notifications, ringtone, messages, chatBridge, messageLauncher, http, media, lodestone, collect, lookup, aethernetSession, aethernetClient, marketIndex, market, marketLauncher, marketAlerts, news, radio, radioPlayer, songSearch, songPlayer, songHistory, playback, gameStats, venues, collections, inventoryCapture);
     }
 
     public void Dispose()
@@ -185,6 +189,7 @@ internal sealed class PhoneServices : IDisposable
         Radio.Dispose();
         ChatBridge.Dispose();
         Collect.Dispose();
+        Lookup.Dispose();
         Lodestone.Dispose();
         MarketAlerts.Dispose();
         Market.Dispose();

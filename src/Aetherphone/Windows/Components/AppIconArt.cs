@@ -38,6 +38,9 @@ internal static class AppIconArt
             case "maps":
                 DrawMaps(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "findpeople":
+                DrawFindPeople(dl, center, extent, inkColor, holeColor);
+                return true;
             case "news":
                 DrawNews(dl, center, extent, inkColor, holeColor);
                 return true;
@@ -822,6 +825,25 @@ internal static class AppIconArt
         FillConvex(dl, hole, pinTip);
 
         dl.AddCircleFilled(pinHead, pinRadius * 0.42f, ink, 16);
+    }
+
+    private static void DrawFindPeople(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)
+    {
+        var lens = At(center, extent, -0.16f, -0.16f);
+        var lensRadius = extent * 0.66f;
+
+        var handleStart = Polar(lens, extent, 0.66f, MathF.PI / 4f);
+        var handleEnd = Polar(lens, extent, 1.20f, MathF.PI / 4f);
+        dl.AddLine(handleStart, handleEnd, ink, extent * 0.26f);
+
+        dl.AddCircleFilled(lens, lensRadius, ink, 40);
+
+        var headCenter = new Vector2(lens.X, lens.Y - lensRadius * 0.34f);
+        dl.AddCircleFilled(headCenter, lensRadius * 0.26f, hole, 24);
+
+        dl.PathClear();
+        dl.PathArcTo(new Vector2(lens.X, lens.Y + lensRadius * 0.58f), lensRadius * 0.52f, MathF.PI, MathF.PI * 2f, 32);
+        dl.PathFillConvex(hole);
     }
 
     private static void DrawNews(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)

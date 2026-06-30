@@ -44,6 +44,7 @@ internal sealed class AethergramStore : IDisposable
     private volatile UserDto[] discoverResults = Array.Empty<UserDto>();
     private volatile bool searching;
     private volatile bool posting;
+    private volatile bool loadingMe;
 
     public AethergramStore(AethernetSession session, AethernetClient client)
     {
@@ -80,6 +81,27 @@ internal sealed class AethergramStore : IDisposable
     public bool Searching => searching;
 
     public bool Posting => posting;
+
+    public void EnsureMe()
+    {
+        if (!session.IsSignedIn || session.CurrentUser is not null || loadingMe)
+        {
+            return;
+        }
+
+        loadingMe = true;
+        var token = cancellation.Token;
+        _ = Task.Run(async () =>
+        {
+            var me = await client.MeAsync(token).ConfigureAwait(false);
+            if (me is not null)
+            {
+                session.SetUser(me);
+            }
+
+            loadingMe = false;
+        });
+    }
 
     public void RefreshFeed(AethergramFeedScope scope)
     {

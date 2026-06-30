@@ -44,6 +44,9 @@ internal static class AppIconArt
             case "chirper":
                 DrawChirper(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "aethergram":
+                DrawAethergram(dl, center, extent, inkColor);
+                return true;
             case "news":
                 DrawNews(dl, center, extent, inkColor, holeColor);
                 return true;
@@ -880,6 +883,17 @@ internal static class AppIconArt
         FillConvex(dl, ink, tail);
 
         dl.AddCircleFilled(At(center, extent, 0.52f, -0.34f), extent * 0.08f, hole, 16);
+    }
+
+    private static void DrawAethergram(ImDrawListPtr dl, Vector2 center, float extent, uint ink)
+    {
+        var bodyMin = At(center, extent, -0.92f, -0.92f);
+        var bodyMax = At(center, extent, 0.92f, 0.92f);
+        dl.AddRect(bodyMin, bodyMax, ink, extent * 0.46f, ImDrawFlags.RoundCornersAll, extent * 0.20f);
+
+        dl.AddCircle(center, extent * 0.46f, ink, 40, extent * 0.18f);
+
+        dl.AddCircleFilled(At(center, extent, 0.50f, -0.50f), extent * 0.12f, ink, 16);
     }
 
     private static void DrawNews(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)

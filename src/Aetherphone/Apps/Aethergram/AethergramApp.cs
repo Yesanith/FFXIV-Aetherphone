@@ -1010,12 +1010,18 @@ internal sealed class AethergramApp : IPhoneApp
 
     private void DrawEditProfile(Rect area)
     {
-        var me = store.Me;
+        var me = store.Me ?? (store.ProfileUser is { IsMe: true } self ? self : null);
         var context = new PhoneContext(area, theme, navigation);
         AppHeader.Draw(context, Loc.T(L.Aethergram.EditProfile), back);
 
+        var scale = ImGuiHelpers.GlobalScale;
+        var top = area.Min.Y + AppHeader.Height * scale;
+        var body = new Rect(new Vector2(area.Min.X, top), area.Max);
+
         if (me is null)
         {
+            store.EnsureMe();
+            Typography.DrawCentered(body.Center, Loc.T(L.Common.Loading), theme.TextMuted);
             return;
         }
 
@@ -1048,10 +1054,6 @@ internal sealed class AethergramApp : IPhoneApp
         {
             SaveProfile();
         }
-
-        var scale = ImGuiHelpers.GlobalScale;
-        var top = area.Min.Y + AppHeader.Height * scale;
-        var body = new Rect(new Vector2(area.Min.X, top), area.Max);
 
         using (AppSurface.Begin(body))
         {

@@ -88,5 +88,67 @@ internal sealed class AethernetClient
         return http.RequestJsonAsync(HttpMethod.Delete, Url($"/posts/{postId}/reaction"), AethernetJsonContext.Default.PostDto, session.Token, token);
     }
 
+    public Task<PostDto?> LikeAsync(string postId, CancellationToken token)
+    {
+        return http.RequestJsonAsync(HttpMethod.Post, Url($"/posts/{postId}/like"), AethernetJsonContext.Default.PostDto, session.Token, token);
+    }
+
+    public Task<PostDto?> UnlikeAsync(string postId, CancellationToken token)
+    {
+        return http.RequestJsonAsync(HttpMethod.Delete, Url($"/posts/{postId}/like"), AethernetJsonContext.Default.PostDto, session.Token, token);
+    }
+
+    public Task<UploadUrlResponse?> UploadUrlAsync(string contentType, string scope, CancellationToken token)
+    {
+        return http.PostJsonAsync(Url("/media/upload-url"), new UploadUrlRequest(contentType, scope), AethernetJsonContext.Default.UploadUrlRequest, AethernetJsonContext.Default.UploadUrlResponse, session.Token, token);
+    }
+
+    public Task<bool> UploadImageAsync(string uploadUrl, byte[] bytes, string contentType, CancellationToken token)
+    {
+        return http.PutBytesAsync(new Uri(uploadUrl), bytes, contentType, token);
+    }
+
+    public Task<PostDto?> CreateGramAsync(string caption, string mediaKey, int width, int height, CancellationToken token)
+    {
+        return http.PostJsonAsync(Url("/grams"), new CreateGramRequest(caption, mediaKey, width, height), AethernetJsonContext.Default.CreateGramRequest, AethernetJsonContext.Default.PostDto, session.Token, token);
+    }
+
+    public Task<FeedPage?> GramFeedAsync(string scope, string? cursor, CancellationToken token)
+    {
+        var path = $"/feed?scope={scope}&kind=1";
+        if (cursor is not null)
+        {
+            path += $"&cursor={Uri.EscapeDataString(cursor)}";
+        }
+
+        return http.GetJsonAsync(Url(path), AethernetJsonContext.Default.FeedPage, session.Token, token);
+    }
+
+    public Task<FeedPage?> UserGramsAsync(string userId, CancellationToken token)
+    {
+        return http.GetJsonAsync(Url($"/users/{Uri.EscapeDataString(userId)}/posts?kind=1"), AethernetJsonContext.Default.FeedPage, session.Token, token);
+    }
+
+    public Task<CommentPage?> CommentsAsync(string postId, string? cursor, CancellationToken token)
+    {
+        var path = $"/posts/{postId}/comments";
+        if (cursor is not null)
+        {
+            path += $"?cursor={Uri.EscapeDataString(cursor)}";
+        }
+
+        return http.GetJsonAsync(Url(path), AethernetJsonContext.Default.CommentPage, session.Token, token);
+    }
+
+    public Task<CommentDto?> AddCommentAsync(string postId, string text, CancellationToken token)
+    {
+        return http.PostJsonAsync(Url($"/posts/{postId}/comments"), new CreateCommentRequest(text), AethernetJsonContext.Default.CreateCommentRequest, AethernetJsonContext.Default.CommentDto, session.Token, token);
+    }
+
+    public Task<bool> DeleteCommentAsync(string postId, string commentId, CancellationToken token)
+    {
+        return http.SendAsync(HttpMethod.Delete, Url($"/posts/{postId}/comments/{commentId}"), session.Token, token);
+    }
+
     private string Url(string path) => $"{session.BaseUrl.TrimEnd('/')}{path}";
 }

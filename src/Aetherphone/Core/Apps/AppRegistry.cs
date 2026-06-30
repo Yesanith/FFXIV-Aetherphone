@@ -1,3 +1,4 @@
+using Aetherphone.Apps.Aethergram;
 using Aetherphone.Apps.Camera;
 using Aetherphone.Apps.Chirper;
 using Aetherphone.Apps.Clock;
@@ -39,6 +40,7 @@ internal static class AppRegistry
         apps.Add(new ChirperApp(services.AethernetSession, services.AethernetClient, services.Lodestone));
 
         var photoLibrary = new PhotoLibrary(Plugin.PluginInterface.ConfigDirectory);
+        apps.Add(new AethergramApp(services.AethernetSession, services.AethernetClient, services.Lodestone, services.Http, photoLibrary));
         apps.Add(new CameraApp(new PhotoCaptureService(), photoLibrary));
         apps.Add(new PhotosApp(photoLibrary));
         apps.Add(new SkywatcherApp(services.Weather));

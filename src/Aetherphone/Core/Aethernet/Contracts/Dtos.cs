@@ -19,9 +19,11 @@ internal sealed record UserDto(
     int Following,
     int Posts,
     bool IsFollowing,
-    bool IsMe);
+    bool IsMe,
+    string? AvatarUrl,
+    int Grams);
 
-internal sealed record UpdateProfileRequest(string? DisplayName, string? Handle, string? Bio);
+internal sealed record UpdateProfileRequest(string? DisplayName, string? Handle, string? Bio, string? AvatarUrl = null);
 
 internal sealed record CreatePostRequest(string Text);
 
@@ -38,8 +40,35 @@ internal sealed record PostDto(
     long CreatedAtUnix,
     int[] ReactionCounts,
     int TotalReactions,
-    int MyReaction);
+    int MyReaction,
+    int Kind,
+    string? MediaUrl,
+    int MediaWidth,
+    int MediaHeight,
+    string? AuthorAvatarUrl,
+    int CommentCount);
 
 internal sealed record FeedPage(PostDto[] Items, string? NextCursor);
 
 internal sealed record UserSearchResult(UserDto[] Users);
+
+internal sealed record UploadUrlRequest(string ContentType, string Scope);
+
+internal sealed record UploadUrlResponse(string Key, string UploadUrl, string PublicUrl);
+
+internal sealed record CreateGramRequest(string Caption, string MediaKey, int Width, int Height);
+
+internal sealed record CommentDto(
+    string Id,
+    string PostId,
+    string AuthorId,
+    string AuthorName,
+    string AuthorDisplayName,
+    string AuthorHandle,
+    string? AuthorAvatarUrl,
+    string Text,
+    long CreatedAtUnix);
+
+internal sealed record CreateCommentRequest(string Text);
+
+internal sealed record CommentPage(CommentDto[] Items, string? NextCursor);

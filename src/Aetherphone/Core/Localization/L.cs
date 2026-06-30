@@ -33,6 +33,8 @@ internal static class L
 
         public static readonly LocString Chirper = new("app.chirper", "Chirper");
 
+        public static readonly LocString Aethergram = new("app.aethergram", "Aethergram");
+
         public static readonly LocString Camera = new("app.camera", "Camera");
 
         public static readonly LocString Photos = new("app.photos", "Photos");
@@ -585,6 +587,81 @@ internal static class L
         public static readonly LocPlural Posts = new("chirper.posts", "{0} post", "{0} posts");
 
         public static readonly LocPlural Likes = new("chirper.likes", "{0} like", "{0} likes");
+    }
+
+    internal static class Aethergram
+    {
+        public static readonly LocString SetUpAccount = new("aethergram.setUpAccount", "Set up your account in Settings");
+
+        public static readonly LocString ForYou = new("aethergram.forYou", "For You");
+
+        public static readonly LocString Following = new("aethergram.following", "Following");
+
+        public static readonly LocString Follow = new("aethergram.follow", "Follow");
+
+        public static readonly LocString FollowingEmpty = new("aethergram.followingEmpty", "Follow people to see their photos here");
+
+        public static readonly LocString ExploreEmpty = new("aethergram.exploreEmpty", "No photos yet — share the first one");
+
+        public static readonly LocString Empty = new("aethergram.empty", "No photos yet");
+
+        public static readonly LocString ImageFailed = new("aethergram.imageFailed", "Couldn't load image");
+
+        public static readonly LocString ViewComments = new("aethergram.viewComments", "View {0} comments");
+
+        public static readonly LocString NewPost = new("aethergram.newPost", "New Post");
+
+        public static readonly LocString NewAvatar = new("aethergram.newAvatar", "New Photo");
+
+        public static readonly LocString ImportFromPc = new("aethergram.importFromPc", "Import from PC");
+
+        public static readonly LocString MoveAndScale = new("aethergram.moveAndScale", "Move and Scale");
+
+        public static readonly LocString GestureHint = new("aethergram.gestureHint", "Drag to move · scroll to zoom");
+
+        public static readonly LocString Next = new("aethergram.next", "Next");
+
+        public static readonly LocString Use = new("aethergram.use", "Use");
+
+        public static readonly LocString Share = new("aethergram.share", "Share");
+
+        public static readonly LocString Sharing = new("aethergram.sharing", "Sharing…");
+
+        public static readonly LocString Saving = new("aethergram.saving", "Saving…");
+
+        public static readonly LocString PostTitle = new("aethergram.postTitle", "Post");
+
+        public static readonly LocString NoComments = new("aethergram.noComments", "No comments yet");
+
+        public static readonly LocString AddComment = new("aethergram.addComment", "Add a comment…");
+
+        public static readonly LocString ProfileError = new("aethergram.profileError", "Couldn't load this profile");
+
+        public static readonly LocString EditProfile = new("aethergram.editProfile", "Edit Profile");
+
+        public static readonly LocString ChangePhoto = new("aethergram.changePhoto", "Change Photo");
+
+        public static readonly LocString DisplayNameLabel = new("aethergram.displayNameLabel", "Display name");
+
+        public static readonly LocString HandleLabel = new("aethergram.handleLabel", "Username");
+
+        public static readonly LocString BioLabel = new("aethergram.bioLabel", "Bio");
+
+        public static readonly LocString HandleRules = new("aethergram.handleRules", "3–15 characters: letters, numbers, or _");
+
+        public static readonly LocString HandleTaken = new("aethergram.handleTaken", "That username is taken");
+
+        public static readonly LocString Save = new("aethergram.save", "Save");
+
+        public static readonly LocString FindPeople = new("aethergram.findPeople", "Find People");
+
+        public static readonly LocString SearchByName = new("aethergram.searchByName", "Search by name, @username, or world");
+
+        public static readonly LocString NameOrWorld = new("aethergram.nameOrWorld", "Name, @username, or world");
+
+        public static readonly LocPlural Posts = new("aethergram.posts", "{0} post", "{0} posts");
+
+        public static readonly LocPlural Likes = new("aethergram.likes", "{0} like", "{0} likes");
     }
 
     internal static class Clock

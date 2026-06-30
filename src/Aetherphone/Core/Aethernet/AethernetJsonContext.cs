@@ -15,6 +15,12 @@ namespace Aetherphone.Core.Aethernet;
 [JsonSerializable(typeof(PostDto))]
 [JsonSerializable(typeof(FeedPage))]
 [JsonSerializable(typeof(UserSearchResult))]
+[JsonSerializable(typeof(UploadUrlRequest))]
+[JsonSerializable(typeof(UploadUrlResponse))]
+[JsonSerializable(typeof(CreateGramRequest))]
+[JsonSerializable(typeof(CommentDto))]
+[JsonSerializable(typeof(CreateCommentRequest))]
+[JsonSerializable(typeof(CommentPage))]
 internal sealed partial class AethernetJsonContext : JsonSerializerContext
 {
 }

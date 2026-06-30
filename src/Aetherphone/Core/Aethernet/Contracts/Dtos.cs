@@ -72,3 +72,14 @@ internal sealed record CommentDto(
 internal sealed record CreateCommentRequest(string Text);
 
 internal sealed record CommentPage(CommentDto[] Items, string? NextCursor);
+
+internal sealed record AnalyticsEventDto(string Type, string? AppId, DateTime? ClientTime, string? Props);
+
+internal sealed record AnalyticsBatchRequest(
+    string InstallId,
+    string SessionId,
+    string PluginVersion,
+    string GameRegion,
+    AnalyticsEventDto[] Events);
+
+internal sealed record AnalyticsAckDto(int Accepted);

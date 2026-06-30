@@ -59,6 +59,10 @@ internal sealed class Configuration : IPluginConfiguration
 
     public string AethernetToken { get; set; } = string.Empty;
 
+    public string AnalyticsInstallId { get; set; } = string.Empty;
+
+    public bool AnalyticsEnabled { get; set; } = true;
+
     public MarketScopeKind MarketScope { get; set; } = MarketScopeKind.DataCenter;
 
     public bool MarketHqOnly { get; set; }

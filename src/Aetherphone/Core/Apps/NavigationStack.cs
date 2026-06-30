@@ -1,3 +1,4 @@
+using Aetherphone.Core.Analytics;
 using Aetherphone.Core.Animation;
 
 namespace Aetherphone.Core.Apps;
@@ -81,6 +82,7 @@ internal sealed class NavigationStack : INavigator
 
         current = app;
         app.OnOpened();
+        Plugin.Analytics.Track(AnalyticsEvents.AppOpen(app.Id));
         BeginPresent(app, under);
     }
 

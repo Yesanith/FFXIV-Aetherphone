@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Aetherphone.Core.Aethernet.Contracts;
 
@@ -21,6 +22,10 @@ namespace Aetherphone.Core.Aethernet;
 [JsonSerializable(typeof(CommentDto))]
 [JsonSerializable(typeof(CreateCommentRequest))]
 [JsonSerializable(typeof(CommentPage))]
+[JsonSerializable(typeof(AnalyticsBatchRequest))]
+[JsonSerializable(typeof(AnalyticsEventDto))]
+[JsonSerializable(typeof(AnalyticsAckDto))]
+[JsonSerializable(typeof(Dictionary<string, string>))]
 internal sealed partial class AethernetJsonContext : JsonSerializerContext
 {
 }

@@ -22,6 +22,7 @@ internal sealed class ChirperApp : IPhoneApp
     private const int HandleMax = 15;
     private const int BioMax = 200;
     private const float TabsHeight = 40f;
+    private const float FeedTopPadding = 12f;
 
     public string Id => "chirper";
 
@@ -78,6 +79,7 @@ internal sealed class ChirperApp : IPhoneApp
         pickerPostId = null;
         if (store.IsSignedIn)
         {
+            store.EnsureMe();
             store.RefreshFeed(ChirperFeedScope.ForYou);
             store.RefreshFeed(ChirperFeedScope.Following);
         }
@@ -168,6 +170,7 @@ internal sealed class ChirperApp : IPhoneApp
             }
             else
             {
+                ImGui.Dummy(new Vector2(0f, FeedTopPadding * ImGuiHelpers.GlobalScale));
                 for (var index = 0; index < snapshot.Length; index++)
                 {
                     DrawPost(snapshot[index]);
@@ -558,12 +561,18 @@ internal sealed class ChirperApp : IPhoneApp
 
     private void DrawEditProfile(Rect area)
     {
-        var me = store.Me;
+        var me = store.Me ?? (store.ProfileUser is { IsMe: true } self ? self : null);
         var context = new PhoneContext(area, theme, navigation);
         AppHeader.Draw(context, Loc.T(L.Chirper.EditProfile), back);
 
+        var scale = ImGuiHelpers.GlobalScale;
+        var top = area.Min.Y + AppHeader.Height * scale;
+        var body = new Rect(new Vector2(area.Min.X, top), area.Max);
+
         if (me is null)
         {
+            store.EnsureMe();
+            Typography.DrawCentered(body.Center, Loc.T(L.Common.Loading), theme.TextMuted);
             return;
         }
 
@@ -596,10 +605,6 @@ internal sealed class ChirperApp : IPhoneApp
         {
             SaveProfile();
         }
-
-        var scale = ImGuiHelpers.GlobalScale;
-        var top = area.Min.Y + AppHeader.Height * scale;
-        var body = new Rect(new Vector2(area.Min.X, top), area.Max);
 
         using (AppSurface.Begin(body))
         {
@@ -689,8 +694,7 @@ internal sealed class ChirperApp : IPhoneApp
 
     private void SaveProfile()
     {
-        var me = store.Me;
-        if (me is null || editBusy)
+        if (!store.IsSignedIn || editBusy)
         {
             return;
         }

@@ -31,6 +31,7 @@ internal sealed class ChirperStore : IDisposable
     private volatile UserDto[] discoverResults = Array.Empty<UserDto>();
     private volatile bool searching;
     private volatile bool posting;
+    private volatile bool loadingMe;
 
     public ChirperStore(AethernetSession session, AethernetClient client)
     {
@@ -61,6 +62,27 @@ internal sealed class ChirperStore : IDisposable
     public bool Searching => searching;
 
     public bool Posting => posting;
+
+    public void EnsureMe()
+    {
+        if (!session.IsSignedIn || session.CurrentUser is not null || loadingMe)
+        {
+            return;
+        }
+
+        loadingMe = true;
+        var token = cancellation.Token;
+        _ = Task.Run(async () =>
+        {
+            var me = await client.MeAsync(token).ConfigureAwait(false);
+            if (me is not null)
+            {
+                session.SetUser(me);
+            }
+
+            loadingMe = false;
+        });
+    }
 
     public void RefreshFeed(ChirperFeedScope scope)
     {

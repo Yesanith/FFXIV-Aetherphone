@@ -41,6 +41,9 @@ internal static class AppIconArt
             case "findpeople":
                 DrawFindPeople(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "chirper":
+                DrawChirper(dl, center, extent, inkColor, holeColor);
+                return true;
             case "news":
                 DrawNews(dl, center, extent, inkColor, holeColor);
                 return true;
@@ -844,6 +847,39 @@ internal static class AppIconArt
         dl.PathClear();
         dl.PathArcTo(new Vector2(lens.X, lens.Y + lensRadius * 0.58f), lensRadius * 0.52f, MathF.PI, MathF.PI * 2f, 32);
         dl.PathFillConvex(hole);
+    }
+
+    private static void DrawChirper(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)
+    {
+        dl.AddCircleFilled(At(center, extent, -0.06f, 0.22f), extent * 0.54f, ink, 40);
+        dl.AddCircleFilled(At(center, extent, 0.26f, 0.00f), extent * 0.40f, ink, 36);
+        dl.AddCircleFilled(At(center, extent, 0.46f, -0.30f), extent * 0.34f, ink, 36);
+
+        Span<Vector2> beak = stackalloc Vector2[3]
+        {
+            At(center, extent, 0.72f, -0.44f),
+            At(center, extent, 1.06f, -0.36f),
+            At(center, extent, 0.74f, -0.14f),
+        };
+        FillConvex(dl, ink, beak);
+
+        Span<Vector2> wing = stackalloc Vector2[3]
+        {
+            At(center, extent, 0.04f, 0.06f),
+            At(center, extent, -0.78f, -0.50f),
+            At(center, extent, -0.16f, 0.38f),
+        };
+        FillConvex(dl, ink, wing);
+
+        Span<Vector2> tail = stackalloc Vector2[3]
+        {
+            At(center, extent, -0.42f, 0.34f),
+            At(center, extent, -0.98f, 0.64f),
+            At(center, extent, -0.28f, 0.64f),
+        };
+        FillConvex(dl, ink, tail);
+
+        dl.AddCircleFilled(At(center, extent, 0.52f, -0.34f), extent * 0.08f, hole, 16);
     }
 
     private static void DrawNews(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)

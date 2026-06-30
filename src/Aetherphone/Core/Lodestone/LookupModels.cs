@@ -59,13 +59,21 @@ internal sealed class FreeCompanyMatch
     public string CrestKey { get; }
 }
 
+internal enum JobCategory : byte
+{
+    Combat,
+    Crafter,
+    Gatherer,
+}
+
 internal sealed class ClassJobLevel
 {
-    public ClassJobLevel(string name, int level, string levelLabel)
+    public ClassJobLevel(string name, int level, string levelLabel, JobCategory category)
     {
         Name = name;
         Level = level;
         LevelLabel = levelLabel;
+        Category = category;
     }
 
     public string Name { get; }
@@ -73,6 +81,8 @@ internal sealed class ClassJobLevel
     public int Level { get; }
 
     public string LevelLabel { get; }
+
+    public JobCategory Category { get; }
 }
 
 internal sealed class GearPiece

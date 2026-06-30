@@ -11,6 +11,7 @@ using NetStone.Model.Parseables.Search.Character;
 using NetStone.Model.Parseables.Search.FreeCompany;
 using NetStone.Search.Character;
 using NetStone.Search.FreeCompany;
+using NetStone.StaticData;
 
 namespace Aetherphone.Core.Lodestone;
 
@@ -373,6 +374,7 @@ internal sealed class LookupService : IDisposable
         }
 
         var rankWord = Loc.T(L.FindPeople.Rank);
+        var indexByName = new Dictionary<string, int>(32, StringComparer.Ordinal);
         var list = new List<ClassJobLevel>(32);
         foreach (var pair in info.ClassJobDict)
         {
@@ -382,11 +384,50 @@ internal sealed class LookupService : IDisposable
                 continue;
             }
 
-            list.Add(new ClassJobLevel(entry.Name, entry.Level, string.Concat(rankWord, " ", entry.Level.ToString())));
+            var category = Categorize(pair.Key);
+            var label = string.Concat(rankWord, " ", entry.Level.ToString());
+            if (indexByName.TryGetValue(entry.Name, out var existingIndex))
+            {
+                if (entry.Level > list[existingIndex].Level)
+                {
+                    list[existingIndex] = new ClassJobLevel(entry.Name, entry.Level, label, category);
+                }
+
+                continue;
+            }
+
+            indexByName[entry.Name] = list.Count;
+            list.Add(new ClassJobLevel(entry.Name, entry.Level, label, category));
         }
 
-        list.Sort(static (left, right) => right.Level.CompareTo(left.Level));
+        list.Sort(static (left, right) =>
+        {
+            var byLevel = right.Level.CompareTo(left.Level);
+            return byLevel != 0 ? byLevel : string.CompareOrdinal(left.Name, right.Name);
+        });
         return list.ToArray();
+    }
+
+    private static JobCategory Categorize(ClassJob job)
+    {
+        switch (job)
+        {
+            case ClassJob.Carpenter:
+            case ClassJob.Blacksmith:
+            case ClassJob.Armorer:
+            case ClassJob.Goldsmith:
+            case ClassJob.Leatherworker:
+            case ClassJob.Weaver:
+            case ClassJob.Alchemist:
+            case ClassJob.Culinarian:
+                return JobCategory.Crafter;
+            case ClassJob.Miner:
+            case ClassJob.Botanist:
+            case ClassJob.Fisher:
+                return JobCategory.Gatherer;
+            default:
+                return JobCategory.Combat;
+        }
     }
 
     private static CharacterDetail BuildCharacterDetail(string id, LodestoneCharacter character, string fallbackName, string fallbackWorld, ClassJobLevel[] jobs)

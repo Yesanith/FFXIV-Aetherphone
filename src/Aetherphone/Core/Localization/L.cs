@@ -102,7 +102,11 @@ internal static class L
 
         public static readonly LocString FreeCompanyTitle = new("findPeople.freeCompanyTitle", "Free Company");
 
-        public static readonly LocString Jobs = new("findPeople.jobs", "Jobs");
+        public static readonly LocString Combat = new("findPeople.combat", "Combat");
+
+        public static readonly LocString Crafter = new("findPeople.crafter", "Crafters");
+
+        public static readonly LocString Gatherer = new("findPeople.gatherer", "Gatherers");
 
         public static readonly LocString Gear = new("findPeople.gear", "Gear");
 

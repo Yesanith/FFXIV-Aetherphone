@@ -321,7 +321,9 @@ internal sealed class FindPeopleApp : IPhoneApp
             DrawCharacterActions(detail, theme, scale);
 
             DrawInfoCard(detail, theme);
-            DrawJobsCard(detail.Jobs, theme, scale);
+            DrawJobsCard(detail.Jobs, JobCategory.Combat, Loc.T(L.FindPeople.Combat), theme);
+            DrawJobsCard(detail.Jobs, JobCategory.Crafter, Loc.T(L.FindPeople.Crafter), theme);
+            DrawJobsCard(detail.Jobs, JobCategory.Gatherer, Loc.T(L.FindPeople.Gatherer), theme);
             DrawGearCard(detail.Gear, theme);
             ImGui.Dummy(new Vector2(0f, 16f * scale));
         }
@@ -413,19 +415,32 @@ internal sealed class FindPeopleApp : IPhoneApp
         card.End();
     }
 
-    private void DrawJobsCard(IReadOnlyList<ClassJobLevel> jobs, PhoneTheme theme, float scale)
+    private void DrawJobsCard(IReadOnlyList<ClassJobLevel> jobs, JobCategory category, string header, PhoneTheme theme)
     {
-        if (jobs.Count == 0)
+        var count = 0;
+        for (var index = 0; index < jobs.Count; index++)
+        {
+            if (jobs[index].Category == category)
+            {
+                count++;
+            }
+        }
+
+        if (count == 0)
         {
             return;
         }
 
-        var count = Math.Min(jobs.Count, 12);
-        SettingsSection.Header(Loc.T(L.FindPeople.Jobs), theme);
+        SettingsSection.Header(header, theme);
         var card = GroupCard.Begin(theme, count);
-        for (var index = 0; index < count; index++)
+        for (var index = 0; index < jobs.Count; index++)
         {
             var job = jobs[index];
+            if (job.Category != category)
+            {
+                continue;
+            }
+
             SettingsRow.Info(card.NextRow(), job.Name, job.LevelLabel, theme);
         }
 

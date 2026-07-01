@@ -105,12 +105,6 @@ internal sealed class TetrisApp : IMiniGame
             board.Update(deltaSeconds);
         }
 
-        if (board.ClearedLinesThisFrame > 0)
-        {
-            fx.AddTrauma(MathF.Min(0.28f, 0.06f * board.ClearedLinesThisFrame));
-            fx.Flash(new Vector4(0.95f, 0.92f, 1f, 1f), 0.16f);
-        }
-
         particles.Update(deltaSeconds);
         fx.Update(deltaSeconds);
 
@@ -145,6 +139,9 @@ internal sealed class TetrisApp : IMiniGame
             board.HoldPiece();
         }
 
+        var nextRect = new Rect(new Vector2(body.Max.X - 96f * scale, body.Min.Y + 174f * scale), new Vector2(body.Max.X - 12f * scale, body.Min.Y + 268f * scale));
+        renderer.DrawNextSlot(board, nextRect, theme, Accent, scale);
+
         var controlY = body.Max.Y - 26f * scale;
         var controlSpacing = 8f * scale;
         var controlWidth = 46f * scale;
@@ -172,6 +169,12 @@ internal sealed class TetrisApp : IMiniGame
         if (GameHud.Button(new Vector2(centerX + (controlWidth + controlSpacing) * 2f, controlY), new Vector2(controlWidth, 32f * scale), "D", Accent, theme))
         {
             board.HardDrop();
+        }
+
+        if (board.ClearedLinesThisFrame > 0)
+        {
+            fx.AddTrauma(MathF.Min(0.28f, 0.06f * board.ClearedLinesThisFrame));
+            fx.Flash(new Vector4(0.95f, 0.92f, 1f, 1f), 0.16f);
         }
 
         Typography.DrawCentered(new Vector2(body.Center.X, body.Min.Y + 64f * scale), $"{Loc.T(L.Games.Level)} {GameNumber.Label(board.Level)}", theme.TextMuted, TextStyles.Caption1);

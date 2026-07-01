@@ -66,9 +66,9 @@ internal sealed class TetrisScoringSystem
         return clearedLines switch
         {
             1 => 100 * level,
-            2 => 300 * level,
-            3 => 500 * level,
-            _ => (backToBackTetris ? 1200 : 800) * level,
+            2 => 200 * level,
+            3 => 300 * level,
+            _ => 400 * level,
         };
     }
 

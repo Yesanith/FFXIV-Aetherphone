@@ -19,6 +19,8 @@ internal sealed class TetrisBoard
 
     public const int Rows = 20;
 
+    private static readonly (int X, int Y)[] WallKicks = { (0, 0), (-1, 0), (1, 0), (-2, 0), (2, 0), (0, -1) };
+
     private static readonly (int X, int Y)[][][] Shapes =
     {
         new[]
@@ -118,6 +120,8 @@ internal sealed class TetrisBoard
 
     public TetrisPieceKind ActiveKind => activeKind;
 
+    public TetrisPieceKind NextPieceKind => bagIndex < bag.Length ? bag[bagIndex] : (TetrisPieceKind)0;
+
     public int ActiveRotation => activeRotation;
 
     public int ActiveX => activeX;
@@ -186,11 +190,10 @@ internal sealed class TetrisBoard
         }
 
         var nextRotation = (activeRotation + (direction >= 0 ? 1 : 3)) & 3;
-        var kicks = new (int X, int Y)[] { (0, 0), (-1, 0), (1, 0), (-2, 0), (2, 0), (0, -1) };
 
-        for (var index = 0; index < kicks.Length; index++)
+        for (var index = 0; index < WallKicks.Length; index++)
         {
-            var kick = kicks[index];
+            var kick = WallKicks[index];
             if (!CanPlace(activeX + kick.X, activeY + kick.Y, nextRotation))
             {
                 continue;

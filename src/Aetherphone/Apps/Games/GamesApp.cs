@@ -295,6 +295,7 @@ internal sealed class GamesApp : IPhoneApp
             case "flap":
             case "whack":
             case "snake":
+            case "tetris":
             {
                 var best = stats.Get(gameId).BestScore;
                 return best > 0 ? GameNumber.Label(best) : string.Empty;

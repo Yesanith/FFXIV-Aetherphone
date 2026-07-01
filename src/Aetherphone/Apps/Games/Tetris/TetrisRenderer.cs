@@ -21,6 +21,14 @@ internal sealed class TetrisRenderer
         new(0.95f, 0.48f, 0.52f, 1f),
     };
 
+    private static readonly (int X, int Y)[] DrawCells =
+    {
+        (0, 0),
+        (0, 0),
+        (0, 0),
+        (0, 0),
+    };
+
     public void Draw(TetrisBoard board, GameGrid grid, Vector4 accent, float scale)
     {
         var drawList = ImGui.GetWindowDrawList();
@@ -83,6 +91,19 @@ internal sealed class TetrisRenderer
         return hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
     }
 
+    public void DrawNextSlot(TetrisBoard board, Rect rect, PhoneTheme theme, Vector4 accent, float scale)
+    {
+        var drawList = ImGui.GetWindowDrawList();
+
+        Elevation.Floating(drawList, rect.Min, rect.Max, 18f * scale, scale, 0.8f);
+        Squircle.Fill(drawList, rect.Min, rect.Max, 18f * scale, ImGui.GetColorU32(new Vector4(0.08f, 0.09f, 0.12f, 1f)));
+        Squircle.Stroke(drawList, rect.Min, rect.Max, 18f * scale, ImGui.GetColorU32(GamePalette.Lighten(accent, 0.32f) with { W = 0.35f }), 1f * scale);
+
+        Typography.DrawCentered(new Vector2(rect.Center.X, rect.Min.Y + 12f * scale), "Next", theme.TextMuted, TextStyles.Caption2);
+
+        DrawPiecePreview(drawList, rect, board.NextPieceKind, accent, scale);
+    }
+
     private static void DrawGridLines(ImDrawListPtr drawList, GameGrid grid, float scale)
     {
         var lineColor = ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 0.06f));
@@ -102,17 +123,14 @@ internal sealed class TetrisRenderer
     private static void DrawActivePiece(ImDrawListPtr drawList, TetrisBoard board, GameGrid grid, int boardY, float alpha, float scale)
     {
         var tint = GamePalette.Lighten(PieceColorOf((int)board.ActiveKind), 0.12f);
-        var cells = new (int X, int Y)[]
-        {
-            board.GetCell(0),
-            board.GetCell(1),
-            board.GetCell(2),
-            board.GetCell(3),
-        };
+        DrawCells[0] = board.GetCell(0);
+        DrawCells[1] = board.GetCell(1);
+        DrawCells[2] = board.GetCell(2);
+        DrawCells[3] = board.GetCell(3);
 
-        for (var index = 0; index < cells.Length; index++)
+        for (var index = 0; index < DrawCells.Length; index++)
         {
-            var cell = cells[index];
+            var cell = DrawCells[index];
             DrawCell(drawList, grid, board.ActiveX + cell.X, boardY + cell.Y, tint, alpha, scale);
         }
     }

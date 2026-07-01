@@ -38,6 +38,15 @@ internal static class AppIconArt
             case "maps":
                 DrawMaps(dl, center, extent, inkColor, holeColor);
                 return true;
+            case "findpeople":
+                DrawFindPeople(dl, center, extent, inkColor, holeColor);
+                return true;
+            case "chirper":
+                DrawChirper(dl, center, extent, inkColor, holeColor);
+                return true;
+            case "aethergram":
+                DrawAethergram(dl, center, extent, inkColor);
+                return true;
             case "news":
                 DrawNews(dl, center, extent, inkColor, holeColor);
                 return true;
@@ -822,6 +831,69 @@ internal static class AppIconArt
         FillConvex(dl, hole, pinTip);
 
         dl.AddCircleFilled(pinHead, pinRadius * 0.42f, ink, 16);
+    }
+
+    private static void DrawFindPeople(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)
+    {
+        var lens = At(center, extent, -0.16f, -0.16f);
+        var lensRadius = extent * 0.66f;
+
+        var handleStart = Polar(lens, extent, 0.66f, MathF.PI / 4f);
+        var handleEnd = Polar(lens, extent, 1.20f, MathF.PI / 4f);
+        dl.AddLine(handleStart, handleEnd, ink, extent * 0.26f);
+
+        dl.AddCircleFilled(lens, lensRadius, ink, 40);
+
+        var headCenter = new Vector2(lens.X, lens.Y - lensRadius * 0.34f);
+        dl.AddCircleFilled(headCenter, lensRadius * 0.26f, hole, 24);
+
+        dl.PathClear();
+        dl.PathArcTo(new Vector2(lens.X, lens.Y + lensRadius * 0.58f), lensRadius * 0.52f, MathF.PI, MathF.PI * 2f, 32);
+        dl.PathFillConvex(hole);
+    }
+
+    private static void DrawChirper(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)
+    {
+        dl.AddCircleFilled(At(center, extent, -0.06f, 0.22f), extent * 0.54f, ink, 40);
+        dl.AddCircleFilled(At(center, extent, 0.26f, 0.00f), extent * 0.40f, ink, 36);
+        dl.AddCircleFilled(At(center, extent, 0.46f, -0.30f), extent * 0.34f, ink, 36);
+
+        Span<Vector2> beak = stackalloc Vector2[3]
+        {
+            At(center, extent, 0.72f, -0.44f),
+            At(center, extent, 1.06f, -0.36f),
+            At(center, extent, 0.74f, -0.14f),
+        };
+        FillConvex(dl, ink, beak);
+
+        Span<Vector2> wing = stackalloc Vector2[3]
+        {
+            At(center, extent, 0.04f, 0.06f),
+            At(center, extent, -0.78f, -0.50f),
+            At(center, extent, -0.16f, 0.38f),
+        };
+        FillConvex(dl, ink, wing);
+
+        Span<Vector2> tail = stackalloc Vector2[3]
+        {
+            At(center, extent, -0.42f, 0.34f),
+            At(center, extent, -0.98f, 0.64f),
+            At(center, extent, -0.28f, 0.64f),
+        };
+        FillConvex(dl, ink, tail);
+
+        dl.AddCircleFilled(At(center, extent, 0.52f, -0.34f), extent * 0.08f, hole, 16);
+    }
+
+    private static void DrawAethergram(ImDrawListPtr dl, Vector2 center, float extent, uint ink)
+    {
+        var bodyMin = At(center, extent, -0.92f, -0.92f);
+        var bodyMax = At(center, extent, 0.92f, 0.92f);
+        dl.AddRect(bodyMin, bodyMax, ink, extent * 0.46f, ImDrawFlags.RoundCornersAll, extent * 0.20f);
+
+        dl.AddCircle(center, extent * 0.46f, ink, 40, extent * 0.18f);
+
+        dl.AddCircleFilled(At(center, extent, 0.50f, -0.50f), extent * 0.12f, ink, 16);
     }
 
     private static void DrawNews(ImDrawListPtr dl, Vector2 center, float extent, uint ink, uint hole)

@@ -47,6 +47,7 @@ internal sealed class SettingsApp : IPhoneApp, ISettingsNavigator
 
         var groups = new IReadOnlyList<ISettingsPage>[]
         {
+            new ISettingsPage[] { accountPage },
             new ISettingsPage[] { appearance, language, immersion },
             new ISettingsPage[] { notifications, ringtonePage },
             new ISettingsPage[] { about },

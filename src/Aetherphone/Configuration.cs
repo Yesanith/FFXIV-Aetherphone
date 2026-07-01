@@ -59,7 +59,9 @@ internal sealed class Configuration : IPluginConfiguration
 
     public string AethernetToken { get; set; } = string.Empty;
 
-    public bool ChirperEnabled { get; set; }
+    public string AnalyticsInstallId { get; set; } = string.Empty;
+
+    public bool AnalyticsEnabled { get; set; } = true;
 
     public MarketScopeKind MarketScope { get; set; } = MarketScopeKind.DataCenter;
 

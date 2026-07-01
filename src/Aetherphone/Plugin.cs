@@ -1,6 +1,7 @@
 using System.IO;
 using System.Numerics;
 using Aetherphone.Core;
+using Aetherphone.Core.Analytics;
 using Aetherphone.Core.Apps;
 using Aetherphone.Core.Device;
 using Aetherphone.Core.Emote;
@@ -43,6 +44,7 @@ public sealed class Plugin : IDalamudPlugin
     internal static WallpaperLibrary Wallpapers { get; private set; } = null!;
     internal static WallpaperImageCache WallpaperImages { get; private set; } = null!;
     internal static DeviceStatus Device { get; private set; } = null!;
+    internal static IAnalyticsService Analytics { get; private set; } = null!;
 
     private readonly WindowSystem windowSystem = new(AepConstants.Name);
     private readonly PhoneServices services;
@@ -69,6 +71,8 @@ public sealed class Plugin : IDalamudPlugin
         Device = new DeviceStatus(ClientState, ObjectTable, DataManager);
 
         services = PhoneServices.Build(Cfg, ChatGui, DataManager, ObjectTable, ClientState, Framework, TextureProvider, PluginInterface.ConfigDirectory);
+        Analytics = services.Analytics;
+        Analytics.Track(AnalyticsEvents.SessionStart());
         aboutWindow = new AboutWindow();
         shell = new PhoneShell(services.Themes, AppRegistry.BuildDefault(services, ShowAbout), services.Notifications, services.Playback);
         phoneWindow = new PhoneWindow(shell) { IsOpen = Cfg.OpenOnStartup };

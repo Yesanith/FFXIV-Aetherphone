@@ -71,12 +71,46 @@ internal sealed class HttpService : IDisposable
         return await SendForJsonAsync(request, typeInfo, bearer, token).ConfigureAwait(false);
     }
 
-    public async Task<TResponse?> PostJsonAsync<TRequest, TResponse>(string url, TRequest body, JsonTypeInfo<TRequest> requestInfo, JsonTypeInfo<TResponse> responseInfo, string? bearer, CancellationToken token)
+    public Task<TResponse?> PostJsonAsync<TRequest, TResponse>(string url, TRequest body, JsonTypeInfo<TRequest> requestInfo, JsonTypeInfo<TResponse> responseInfo, string? bearer, CancellationToken token)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, url);
+        return SendJsonAsync(HttpMethod.Post, url, body, requestInfo, responseInfo, bearer, token);
+    }
+
+    public async Task<TResponse?> SendJsonAsync<TRequest, TResponse>(HttpMethod method, string url, TRequest body, JsonTypeInfo<TRequest> requestInfo, JsonTypeInfo<TResponse> responseInfo, string? bearer, CancellationToken token)
+    {
+        using var request = new HttpRequestMessage(method, url);
         var payload = JsonSerializer.Serialize(body, requestInfo);
         request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
         return await SendForJsonAsync(request, responseInfo, bearer, token).ConfigureAwait(false);
+    }
+
+    public async Task<TResponse?> RequestJsonAsync<TResponse>(HttpMethod method, string url, JsonTypeInfo<TResponse> responseInfo, string? bearer, CancellationToken token)
+    {
+        using var request = new HttpRequestMessage(method, url);
+        return await SendForJsonAsync(request, responseInfo, bearer, token).ConfigureAwait(false);
+    }
+
+    public async Task<bool> PutBytesAsync(Uri uri, byte[] content, string contentType, CancellationToken token)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Put, uri)
+        {
+            Content = new ByteArrayContent(content),
+        };
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+        try
+        {
+            using var response = await client.SendAsync(request, token).ConfigureAwait(false);
+            return response.IsSuccessStatusCode;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            AepLog.Warning($"HTTP PUT failed for {uri}: {exception.Message}");
+            return false;
+        }
     }
 
     public async Task<bool> SendAsync(HttpMethod method, string url, string? bearer, CancellationToken token)

@@ -76,6 +76,30 @@ internal sealed class GameData
         return string.Empty;
     }
 
+    public bool IsDataCenterName(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return false;
+        }
+
+        var sheet = data.GetExcelSheet<WorldDCGroupType>();
+        foreach (var group in sheet)
+        {
+            if (group.RowId == 0)
+            {
+                continue;
+            }
+
+            if (string.Equals(group.Name.ExtractText(), value, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public string RegionName(uint worldId)
     {
         if (worldId != 0 && data.GetExcelSheet<World>().TryGetRow(worldId, out var world) && world.DataCenter.RowId != 0)

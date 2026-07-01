@@ -33,6 +33,8 @@ internal static class L
 
         public static readonly LocString Chirper = new("app.chirper", "Chirper");
 
+        public static readonly LocString Aethergram = new("app.aethergram", "Aethergram");
+
         public static readonly LocString Camera = new("app.camera", "Camera");
 
         public static readonly LocString Photos = new("app.photos", "Photos");
@@ -68,6 +70,61 @@ internal static class L
         public static readonly LocString Inventory = new("app.inventory", "Inventory");
 
         public static readonly LocString Settings = new("app.settings", "Settings");
+
+        public static readonly LocString FindPeople = new("app.findpeople", "Find People");
+    }
+
+    internal static class FindPeople
+    {
+        public static readonly LocString Character = new("findPeople.character", "Character");
+
+        public static readonly LocString FreeCompany = new("findPeople.freeCompany", "Free Company");
+
+        public static readonly LocString NameHint = new("findPeople.nameHint", "Name");
+
+        public static readonly LocString WorldHint = new("findPeople.worldHint", "World or DC (optional)");
+
+        public static readonly LocString Prompt = new("findPeople.prompt", "Search the Lodestone");
+
+        public static readonly LocString PromptHint = new("findPeople.promptHint", "Find characters and free companies");
+
+        public static readonly LocString NoResults = new("findPeople.noResults", "No matches found");
+
+        public static readonly LocString Failed = new("findPeople.failed", "Couldn't reach the Lodestone");
+
+        public static readonly LocString TryAgain = new("findPeople.tryAgain", "Try Again");
+
+        public static readonly LocString Members = new("findPeople.members", "{0} members");
+
+        public static readonly LocString Recruiting = new("findPeople.recruiting", "Recruiting");
+
+        public static readonly LocString Closed = new("findPeople.closed", "Not recruiting");
+
+        public static readonly LocString CharacterTitle = new("findPeople.characterTitle", "Character");
+
+        public static readonly LocString FreeCompanyTitle = new("findPeople.freeCompanyTitle", "Free Company");
+
+        public static readonly LocString Combat = new("findPeople.combat", "Combat");
+
+        public static readonly LocString Crafter = new("findPeople.crafter", "Crafters");
+
+        public static readonly LocString Gatherer = new("findPeople.gatherer", "Gatherers");
+
+        public static readonly LocString Gear = new("findPeople.gear", "Gear");
+
+        public static readonly LocString GrandCompany = new("findPeople.grandCompany", "Grand Company");
+
+        public static readonly LocString Slogan = new("findPeople.slogan", "Slogan");
+
+        public static readonly LocString Roster = new("findPeople.roster", "Roster");
+
+        public static readonly LocString Rank = new("findPeople.rank", "Rank");
+
+        public static readonly LocString Message = new("findPeople.message", "Message");
+
+        public static readonly LocString PageOf = new("findPeople.pageOf", "Page {0} of {1}");
+
+        public static readonly LocString Active = new("findPeople.active", "{0} active");
     }
 
     internal static class Collections
@@ -471,19 +528,140 @@ internal static class L
 
         public static readonly LocString Empty = new("chirper.empty", "No chirps yet — post the first one");
 
+        public static readonly LocString FollowingEmpty = new("chirper.followingEmpty", "Follow people to see their chirps here");
+
+        public static readonly LocString ExploreEmpty = new("chirper.exploreEmpty", "No chirps yet — be the first to post");
+
         public static readonly LocString FindPeople = new("chirper.findPeople", "Find People");
 
-        public static readonly LocString SearchByName = new("chirper.searchByName", "Search by name or name@world");
+        public static readonly LocString SearchByName = new("chirper.searchByName", "Search by name, @username, or world");
+
+        public static readonly LocString ForYou = new("chirper.forYou", "For You");
 
         public static readonly LocString Following = new("chirper.following", "Following");
 
         public static readonly LocString Follow = new("chirper.follow", "Follow");
 
-        public static readonly LocString NameOrWorld = new("chirper.nameOrWorld", "Name or Name@World");
+        public static readonly LocString NameOrWorld = new("chirper.nameOrWorld", "Name, @username, or world");
 
-        public static readonly LocString Compose = new("chirper.compose", "Chirp something");
+        public static readonly LocString Compose = new("chirper.compose", "What's happening?");
+
+        public static readonly LocString NewChirp = new("chirper.newChirp", "New Chirp");
+
+        public static readonly LocString Post = new("chirper.post", "Post");
+
+        public static readonly LocString EditProfile = new("chirper.editProfile", "Edit Profile");
+
+        public static readonly LocString DisplayNameLabel = new("chirper.displayNameLabel", "Display name");
+
+        public static readonly LocString HandleLabel = new("chirper.handleLabel", "Username");
+
+        public static readonly LocString BioLabel = new("chirper.bioLabel", "Bio");
+
+        public static readonly LocString BioHint = new("chirper.bioHint", "Add a bio");
+
+        public static readonly LocString Save = new("chirper.save", "Save");
+
+        public static readonly LocString Saving = new("chirper.saving", "Saving…");
+
+        public static readonly LocString HandleTaken = new("chirper.handleTaken", "That username is taken");
+
+        public static readonly LocString HandleRules = new("chirper.handleRules", "3–15 characters: letters, numbers, or _");
+
+        public static readonly LocString ProfileError = new("chirper.profileError", "Couldn't load this profile");
+
+        public static readonly LocString React = new("chirper.react", "React");
+
+        public static readonly LocString ReactLike = new("chirper.reactLike", "Like");
+
+        public static readonly LocString ReactLove = new("chirper.reactLove", "Love");
+
+        public static readonly LocString ReactLaugh = new("chirper.reactLaugh", "Haha");
+
+        public static readonly LocString ReactWow = new("chirper.reactWow", "Wow");
+
+        public static readonly LocString ReactSad = new("chirper.reactSad", "Sad");
+
+        public static readonly LocString ReactAngry = new("chirper.reactAngry", "Angry");
+
+        public static readonly LocPlural Posts = new("chirper.posts", "{0} post", "{0} posts");
 
         public static readonly LocPlural Likes = new("chirper.likes", "{0} like", "{0} likes");
+    }
+
+    internal static class Aethergram
+    {
+        public static readonly LocString SetUpAccount = new("aethergram.setUpAccount", "Set up your account in Settings");
+
+        public static readonly LocString ForYou = new("aethergram.forYou", "For You");
+
+        public static readonly LocString Following = new("aethergram.following", "Following");
+
+        public static readonly LocString Follow = new("aethergram.follow", "Follow");
+
+        public static readonly LocString FollowingEmpty = new("aethergram.followingEmpty", "Follow people to see their photos here");
+
+        public static readonly LocString ExploreEmpty = new("aethergram.exploreEmpty", "No photos yet — share the first one");
+
+        public static readonly LocString Empty = new("aethergram.empty", "No photos yet");
+
+        public static readonly LocString ImageFailed = new("aethergram.imageFailed", "Couldn't load image");
+
+        public static readonly LocString ViewComments = new("aethergram.viewComments", "View {0} comments");
+
+        public static readonly LocString NewPost = new("aethergram.newPost", "New Post");
+
+        public static readonly LocString NewAvatar = new("aethergram.newAvatar", "New Photo");
+
+        public static readonly LocString ImportFromPc = new("aethergram.importFromPc", "Import from PC");
+
+        public static readonly LocString MoveAndScale = new("aethergram.moveAndScale", "Move and Scale");
+
+        public static readonly LocString GestureHint = new("aethergram.gestureHint", "Drag to move · scroll to zoom");
+
+        public static readonly LocString Next = new("aethergram.next", "Next");
+
+        public static readonly LocString Use = new("aethergram.use", "Use");
+
+        public static readonly LocString Share = new("aethergram.share", "Share");
+
+        public static readonly LocString Sharing = new("aethergram.sharing", "Sharing…");
+
+        public static readonly LocString Saving = new("aethergram.saving", "Saving…");
+
+        public static readonly LocString PostTitle = new("aethergram.postTitle", "Post");
+
+        public static readonly LocString NoComments = new("aethergram.noComments", "No comments yet");
+
+        public static readonly LocString AddComment = new("aethergram.addComment", "Add a comment…");
+
+        public static readonly LocString ProfileError = new("aethergram.profileError", "Couldn't load this profile");
+
+        public static readonly LocString EditProfile = new("aethergram.editProfile", "Edit Profile");
+
+        public static readonly LocString ChangePhoto = new("aethergram.changePhoto", "Change Photo");
+
+        public static readonly LocString DisplayNameLabel = new("aethergram.displayNameLabel", "Display name");
+
+        public static readonly LocString HandleLabel = new("aethergram.handleLabel", "Username");
+
+        public static readonly LocString BioLabel = new("aethergram.bioLabel", "Bio");
+
+        public static readonly LocString HandleRules = new("aethergram.handleRules", "3–15 characters: letters, numbers, or _");
+
+        public static readonly LocString HandleTaken = new("aethergram.handleTaken", "That username is taken");
+
+        public static readonly LocString Save = new("aethergram.save", "Save");
+
+        public static readonly LocString FindPeople = new("aethergram.findPeople", "Find People");
+
+        public static readonly LocString SearchByName = new("aethergram.searchByName", "Search by name, @username, or world");
+
+        public static readonly LocString NameOrWorld = new("aethergram.nameOrWorld", "Name, @username, or world");
+
+        public static readonly LocPlural Posts = new("aethergram.posts", "{0} post", "{0} posts");
+
+        public static readonly LocPlural Likes = new("aethergram.likes", "{0} like", "{0} likes");
     }
 
     internal static class Clock
